@@ -33,7 +33,10 @@ npm run preview # serve the production build locally
 - `src/domain/` contains the derived catalog export and pure deck, session, and combo rules.
 - `src/infrastructure/` owns resilient local-session persistence and migration of the existing v2 schema.
 - `src/ui/` contains the browser controller that renders and coordinates the current interface.
-- `src/main.ts` is the small composition root for storage, UI, and PWA registration.
+- `src/styles/` and `src/assets/decorative/` contain source-owned presentation code and bundled decorative artwork.
+- `src/main.ts` is the small composition root for styles, storage, UI, and PWA registration.
+- `public/brand/` contains fixed-URL brand assets: the manifest icon, Apple touch icon, and social-sharing preview. Vite copies these unchanged.
+- `image-generation/` contains the reusable generation prompt, pipeline settings, and style-reference images. It is source-only and not deployed.
 
 Vite eagerly discovers each `figure.ts`, sorts definitions by their explicit `order`, and converts each figure's best available source image into a hashed 600 × 900 WebP at quality 80. `teaching-frames/`, full-resolution generated sources, and `notes.md` remain source-only.
 
