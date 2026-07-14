@@ -6,8 +6,8 @@
 - Treat every requested code, content, configuration, or documentation change as authorization to commit it, push `main`, and release it to GitHub Pages without asking again.
 - After implementing a change, run the relevant checks. Prefer `npm run check` for application changes.
 - Commit each coherent change with a descriptive message and push it to `origin/main`.
-- A push to `main` triggers the GitHub Pages workflow. Monitor that workflow through completion and verify the public site when the change affects the deployed app.
-- If the deployment fails, investigate and fix it directly on `main`, then push and monitor the replacement deployment.
+- A push to `main` triggers the GitHub Pages workflow and publishes the site automatically. After a successful push, do not routinely monitor the workflow or verify the public site unless the user explicitly requests it.
+- If a deployment failure is reported or otherwise discovered, investigate and fix it directly on `main`, then push the correction.
 
 ## Safety and scope
 
