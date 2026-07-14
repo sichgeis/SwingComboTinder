@@ -38,6 +38,33 @@ const imageCell = (label, url, emptyText, figureName) => `
     ${url ? `<button class="image-zoom" type="button" data-image-url="${escapeHtml(url)}" data-image-label="${escapeHtml(`${figureName} · ${label}`)}" aria-label="Magnify ${escapeHtml(label)} for ${escapeHtml(figureName)}"><img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" loading="lazy"></button>` : `<div class="empty-image">${escapeHtml(emptyText)}</div>`}
   </div>`;
 
+const formatCandidateDate = (value) => new Intl.DateTimeFormat(undefined, {
+  dateStyle: "medium",
+  timeStyle: "short"
+}).format(new Date(value));
+
+const candidateGallery = (figure) => {
+  if (!figure.candidates.length) return "";
+  return `<details class="candidate-gallery">
+    <summary>All candidates <span class="candidate-count">${figure.candidates.length}</span></summary>
+    <div class="candidate-grid">
+      ${figure.candidates.map((candidate, index) => `
+        <article class="candidate-item">
+          <button class="image-zoom candidate-preview" type="button" data-image-url="${escapeHtml(candidate.url)}" data-image-label="${escapeHtml(`${figure.name} · Candidate ${index + 1}`)}" aria-label="Magnify candidate ${index + 1} for ${escapeHtml(figure.name)}">
+            <img src="${escapeHtml(candidate.url)}" alt="Candidate ${index + 1}" loading="lazy">
+          </button>
+          <div class="candidate-info">
+            <div>
+              <strong>Candidate ${index + 1}</strong>
+              <span>${escapeHtml(formatCandidateDate(candidate.createdAt))}</span>
+            </div>
+            <button type="button" class="secondary" data-action="promote-candidate" data-candidate-index="${index}">Promote</button>
+          </div>
+        </article>`).join("")}
+    </div>
+  </details>`;
+};
+
 const openImageDialog = (url, label) => {
   imageDialogTitle.textContent = label;
   imageDialogMeta.textContent = "Loading original image…";
@@ -98,6 +125,7 @@ const render = () => {
         ${imageCell(figure.currentIsFallback ? "Fallback card" : "Current master", figure.currentUrl, "No current artwork", figure.name)}
         ${imageCell("Latest candidate", latest?.url, "Generate a candidate", figure.name)}
       </div>
+      ${candidateGallery(figure)}
       <details class="generation-note" ${figure.generationNote ? "open" : ""}>
         <summary>Generation note${figure.generationNote ? '<span class="note-saved">saved</span>' : ""}</summary>
         <div class="generation-note-editor">
@@ -198,14 +226,15 @@ grid.addEventListener("click", async (event) => {
       promptContent.textContent = "Loading…";
       promptDialog.showModal();
       promptContent.textContent = (await request(`/api/prompt?id=${encodeURIComponent(id)}`)).prompt;
-    } else if (button.dataset.action === "promote") {
-      const latest = figure.candidates[0];
-      if (!latest) throw new Error("No candidate is available.");
-      if (!confirm(`Promote the latest candidate for ${figure.name}? The current master will be archived.`)) return;
+    } else if (button.dataset.action === "promote" || button.dataset.action === "promote-candidate") {
+      const candidateIndex = button.dataset.action === "promote" ? 0 : Number(button.dataset.candidateIndex);
+      const candidate = figure.candidates[candidateIndex];
+      if (!candidate) throw new Error("The selected candidate is no longer available.");
+      if (!confirm(`Promote candidate ${candidateIndex + 1} for ${figure.name}? The current master will be archived.`)) return;
       await request("/api/promote", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ id, path: latest.path })
+        body: JSON.stringify({ id, path: candidate.path })
       });
       await loadFigures();
     } else if (button.dataset.action === "mark") {
