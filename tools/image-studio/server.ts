@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { dirname, extname, relative, resolve, sep } from "node:path";
@@ -5,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 import { getImageEnvironment, loadEnvironment } from "./environment";
 import { generateFigure } from "./generate";
+import { createLogger, type Logger } from "./logger";
 import { figuresRoot, repositoryRoot } from "./paths";
 import { mapWithConcurrency } from "./pool";
 import { planGeneration } from "./plan";
@@ -20,8 +22,16 @@ import {
 } from "./types";
 
 const staticRoot = resolve(dirname(fileURLToPath(import.meta.url)), "static");
-loadEnvironment();
-const environment = getImageEnvironment();
+const logger = createLogger("image-studio");
+const environment = (() => {
+  try {
+    loadEnvironment();
+    return getImageEnvironment();
+  } catch (error) {
+    logger.error("configuration-failed", { error });
+    throw error;
+  }
+})();
 const port = environment.studioPort;
 const model = environment.model;
 const clients = new Set<ServerResponse>();
@@ -54,6 +64,7 @@ const readJson = async (request: IncomingMessage): Promise<unknown> => {
 };
 
 const event = (type: string, payload: Record<string, unknown> = {}): void => {
+  logger.debug("event-broadcast", { type, clients: clients.size, payload });
   const message = `event: ${type}\ndata: ${JSON.stringify({ type, ...payload })}\n\n`;
   for (const client of clients) client.write(message);
 };
@@ -121,14 +132,33 @@ const parseRunRequest = (value: unknown): RunRequest => {
 };
 
 const runGeneration = async (request: RunRequest): Promise<void> => {
+  const runId = randomUUID();
+  const runLogger = logger.child({ runId });
+  const startedAt = Date.now();
   runActive = true;
   const selection: SelectionOptions = {
     mode: request.mode,
     ...(request.style === undefined ? {} : { style: request.style }),
     ...(request.ids === undefined ? {} : { ids: request.ids })
   };
+  runLogger.info("run-started", {
+    mode: request.mode,
+    style: request.style,
+    ids: request.ids,
+    quality: request.quality,
+    count: request.count,
+    concurrency: request.concurrency,
+    model,
+    size: environment.imageSize
+  });
   try {
     const plan = planGeneration(await discoverFigures(), selection);
+    runLogger.info("run-planned", {
+      ready: plan.ready.length,
+      blocked: plan.blocked.length,
+      readyIds: plan.ready.map((figure) => figure.id),
+      blockedIds: plan.blocked.map((figure) => figure.id)
+    });
     event("run-started", { ready: plan.ready.length, blocked: plan.blocked.length });
     for (const figure of plan.blocked) {
       event("job-blocked", {
@@ -137,6 +167,9 @@ const runGeneration = async (request: RunRequest): Promise<void> => {
       });
     }
     await mapWithConcurrency(plan.ready, request.concurrency, async (figure) => {
+      const jobLogger = runLogger.child({ figureId: figure.id });
+      const jobStartedAt = Date.now();
+      jobLogger.info("job-started");
       event("job-started", { id: figure.id });
       try {
         const result = await generateFigure(figure, {
@@ -155,7 +188,15 @@ const runGeneration = async (request: RunRequest): Promise<void> => {
           durationMs: result.durationMs,
           requestId: result.requestId
         });
+        jobLogger.info("job-completed", {
+          candidateRunId: result.runId,
+          candidates: result.candidates.length,
+          requestId: result.requestId,
+          durationMs: Date.now() - jobStartedAt,
+          usage: result.usage
+        });
       } catch (error) {
+        jobLogger.error("job-failed", { durationMs: Date.now() - jobStartedAt, error });
         event("job-failed", {
           id: figure.id,
           message: error instanceof Error ? error.message : String(error)
@@ -163,10 +204,13 @@ const runGeneration = async (request: RunRequest): Promise<void> => {
       }
     });
     event("run-completed");
+    runLogger.info("run-completed", { durationMs: Date.now() - startedAt });
   } catch (error) {
+    runLogger.error("run-failed", { durationMs: Date.now() - startedAt, error });
     event("run-failed", { message: error instanceof Error ? error.message : String(error) });
   } finally {
     runActive = false;
+    runLogger.debug("run-state-cleared");
   }
 };
 
@@ -205,7 +249,11 @@ const serveMedia = async (response: ServerResponse, path: string | null): Promis
   response.end(await readFile(absolutePath));
 };
 
-const handleRequest = async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+const handleRequest = async (
+  request: IncomingMessage,
+  response: ServerResponse,
+  requestLogger: Logger
+): Promise<void> => {
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "localhost"}`);
   if (request.method === "GET" && url.pathname === "/api/config") {
     sendJson(response, 200, {
@@ -235,7 +283,11 @@ const handleRequest = async (request: IncomingMessage, response: ServerResponse)
     });
     response.write(`event: connected\ndata: ${JSON.stringify({ type: "connected" })}\n\n`);
     clients.add(response);
-    request.on("close", () => clients.delete(response));
+    requestLogger.info("event-client-connected", { clients: clients.size });
+    request.on("close", () => {
+      clients.delete(response);
+      requestLogger.info("event-client-disconnected", { clients: clients.size });
+    });
     return;
   }
   if (request.method === "POST" && url.pathname === "/api/runs") {
@@ -244,6 +296,14 @@ const handleRequest = async (request: IncomingMessage, response: ServerResponse)
       return;
     }
     const runRequest = parseRunRequest(await readJson(request));
+    requestLogger.info("generation-run-accepted", {
+      mode: runRequest.mode,
+      style: runRequest.style,
+      ids: runRequest.ids,
+      quality: runRequest.quality,
+      count: runRequest.count,
+      concurrency: runRequest.concurrency
+    });
     sendJson(response, 202, { accepted: true });
     void runGeneration(runRequest);
     return;
@@ -256,6 +316,7 @@ const handleRequest = async (request: IncomingMessage, response: ServerResponse)
       throw new Error("Promotion requires figure id and candidate path.");
     }
     await promoteCandidate(await findFigure(values.id), values.path);
+    requestLogger.info("candidate-promoted", { figureId: values.id, candidatePath: values.path });
     event("figure-updated", { id: values.id });
     sendJson(response, 200, { promoted: true });
     return;
@@ -268,6 +329,7 @@ const handleRequest = async (request: IncomingMessage, response: ServerResponse)
       throw new Error("Marking requires figure id and marked state.");
     }
     await setNeedsRework(await findFigure(values.id), values.marked);
+    requestLogger.info("figure-mark-updated", { figureId: values.id, marked: values.marked });
     event("figure-updated", { id: values.id });
     sendJson(response, 200, { marked: values.marked });
     return;
@@ -284,7 +346,29 @@ const handleRequest = async (request: IncomingMessage, response: ServerResponse)
 };
 
 const server = createServer((request, response) => {
-  handleRequest(request, response).catch((error: unknown) => {
+  const requestId = randomUUID().slice(0, 8);
+  const startedAt = Date.now();
+  const requestLogger = logger.child({
+    requestId,
+    method: request.method ?? "UNKNOWN",
+    path: new URL(request.url ?? "/", "http://localhost").pathname
+  });
+  requestLogger.debug("request-started", {
+    remoteAddress: request.socket.remoteAddress,
+    userAgent: request.headers["user-agent"]
+  });
+  response.on("finish", () => {
+    requestLogger.debug("request-completed", {
+      status: response.statusCode,
+      durationMs: Date.now() - startedAt
+    });
+  });
+  handleRequest(request, response, requestLogger).catch((error: unknown) => {
+    requestLogger.error("request-failed", {
+      status: response.headersSent ? response.statusCode : 400,
+      durationMs: Date.now() - startedAt,
+      error
+    });
     if (!response.headersSent) {
       sendJson(response, 400, { error: error instanceof Error ? error.message : String(error) });
     } else {
@@ -293,9 +377,30 @@ const server = createServer((request, response) => {
   });
 });
 
+server.on("clientError", (error, socket) => {
+  logger.warn("client-error", { socketDestroyed: socket.destroyed, error });
+});
+
+server.on("error", (error) => {
+  logger.error("server-error", { port, error });
+});
+
 server.listen(port, "127.0.0.1", () => {
+  logger.info("listening", {
+    url: `http://127.0.0.1:${port}`,
+    model,
+    size: environment.imageSize,
+    quality: environment.imageQuality,
+    timeoutMs: environment.requestTimeoutMs,
+    logLevel: environment.logLevel,
+    proxyConfigured: Boolean(environment.litellmApiKey && environment.litellmBaseUrl)
+  });
   console.log(`Dance Card Image Studio: http://127.0.0.1:${port}`);
   if (!environment.litellmApiKey || !environment.litellmBaseUrl) {
+    logger.warn("proxy-not-configured", {
+      proxyKeyConfigured: Boolean(environment.litellmApiKey),
+      baseUrlConfigured: Boolean(environment.litellmBaseUrl)
+    });
     console.log("LiteLLM proxy credentials are not set; browsing and dry planning still work.");
   }
 });

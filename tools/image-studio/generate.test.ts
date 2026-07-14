@@ -9,14 +9,18 @@ import { generateFigure } from "./generate";
 import type { FigureRecord } from "./types";
 
 const temporaryDirectories: string[] = [];
+const originalLogLevel = process.env.IMAGE_STUDIO_LOG_LEVEL;
 
 afterEach(async () => {
   vi.unstubAllGlobals();
+  if (originalLogLevel === undefined) delete process.env.IMAGE_STUDIO_LOG_LEVEL;
+  else process.env.IMAGE_STUDIO_LOG_LEVEL = originalLogLevel;
   await Promise.all(temporaryDirectories.splice(0).map((directory) => rm(directory, { recursive: true })));
 });
 
 describe("generateFigure", () => {
   it("sends the teaching frame and style references through LiteLLM", async () => {
+    process.env.IMAGE_STUDIO_LOG_LEVEL = "error";
     const directory = await mkdtemp(resolve(tmpdir(), "image-studio-generate-"));
     temporaryDirectories.push(directory);
     const posePath = resolve(directory, "selected.png");

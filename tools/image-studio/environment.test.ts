@@ -13,7 +13,8 @@ const variableNames = [
   "IMAGE_SIZE",
   "IMAGE_QUALITY",
   "REQUEST_TIMEOUT_SECONDS",
-  "IMAGE_STUDIO_PORT"
+  "IMAGE_STUDIO_PORT",
+  "IMAGE_STUDIO_LOG_LEVEL"
 ] as const;
 const originalEnvironment = new Map(variableNames.map((name) => [name, process.env[name]]));
 const temporaryDirectories: string[] = [];
@@ -48,6 +49,7 @@ IMAGE_SIZE=1024x1536
 IMAGE_QUALITY=high
 REQUEST_TIMEOUT_SECONDS=42
 IMAGE_STUDIO_PORT=4321
+IMAGE_STUDIO_LOG_LEVEL=debug
 `);
 
     loadEnvironment(path);
@@ -59,7 +61,8 @@ IMAGE_STUDIO_PORT=4321
       imageSize: "1024x1536",
       imageQuality: "high",
       requestTimeoutMs: 42_000,
-      studioPort: 4321
+      studioPort: 4321,
+      logLevel: "debug"
     });
   });
 
@@ -72,5 +75,10 @@ IMAGE_STUDIO_PORT=4321
   it("rejects an output size unsupported by GPT Image 2", () => {
     process.env.IMAGE_SIZE = "100x200";
     expect(() => getImageEnvironment()).toThrow(/dimension constraints/);
+  });
+
+  it("rejects an unknown log level", () => {
+    process.env.IMAGE_STUDIO_LOG_LEVEL = "verbose";
+    expect(() => getImageEnvironment()).toThrow(/must be error, warn, info, or debug/);
   });
 });

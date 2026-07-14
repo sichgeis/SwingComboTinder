@@ -75,6 +75,14 @@ tasks:
     cmds:
       - npm run images:studio
 
+  images:studio:debug:
+    desc: Start the image studio with detailed diagnostic logging
+    deps: [install]
+    env:
+      IMAGE_STUDIO_LOG_LEVEL: debug
+    cmds:
+      - npm run images:studio
+
   images:plan:
     desc: Preview an image batch without making API calls (MODE=missing|marked|all|selected)
     deps: [install]

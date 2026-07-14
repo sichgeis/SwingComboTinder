@@ -2,6 +2,7 @@ import { loadEnvFile } from "node:process";
 import { resolve } from "node:path";
 
 import { repositoryRoot } from "./paths";
+import { logLevels, type LogLevel } from "./logger";
 import { imageQualities, type ImageQuality } from "./types";
 
 export interface ImageEnvironment {
@@ -12,6 +13,7 @@ export interface ImageEnvironment {
   readonly imageQuality: ImageQuality;
   readonly requestTimeoutMs: number;
   readonly studioPort: number;
+  readonly logLevel: LogLevel;
 }
 
 const normalizeLiteLLMBaseUrl = (value: string | undefined): string | undefined => {
@@ -63,6 +65,10 @@ export const getImageEnvironment = (): ImageEnvironment => {
   if (!Number.isInteger(studioPort) || studioPort > 65_535) {
     throw new Error("IMAGE_STUDIO_PORT must be an integer from 1 to 65535.");
   }
+  const logLevel = process.env.IMAGE_STUDIO_LOG_LEVEL?.toLowerCase() ?? "info";
+  if (!logLevels.includes(logLevel as LogLevel)) {
+    throw new Error("IMAGE_STUDIO_LOG_LEVEL must be error, warn, info, or debug.");
+  }
 
   return {
     litellmApiKey: process.env.LITELLM_API_KEY,
@@ -72,6 +78,7 @@ export const getImageEnvironment = (): ImageEnvironment => {
     imageQuality: quality as ImageQuality,
     requestTimeoutMs:
       positiveNumber(process.env.REQUEST_TIMEOUT_SECONDS, 300, "REQUEST_TIMEOUT_SECONDS") * 1000,
-    studioPort
+    studioPort,
+    logLevel: logLevel as LogLevel
   };
 };

@@ -4,6 +4,7 @@ import { basename, relative, resolve } from "node:path";
 
 import sharp from "sharp";
 
+import { createLogger, type Logger } from "./logger";
 import { repositoryRoot, styleReferencePaths } from "./paths";
 import { buildPrompt, hashText } from "./prompt";
 import type {
@@ -61,6 +62,19 @@ const prepareInput = async (path: string): Promise<Buffer> =>
     .webp({ quality: 90 })
     .toBuffer();
 
+const safeUrl = (value: string): string => {
+  try {
+    const url = new URL(value);
+    url.username = "";
+    url.password = "";
+    url.search = "";
+    url.hash = "";
+    return url.toString();
+  } catch {
+    return "[invalid URL]";
+  }
+};
+
 const parseLiteLLMResponse = (value: unknown): LiteLLMResponse => {
   if (typeof value !== "object" || value === null) {
     throw new Error("LiteLLM returned an unexpected response shape.");
@@ -91,9 +105,12 @@ const postWithRetries = async (
   url: string,
   apiKey: string,
   body: FormData,
-  timeoutMs: number
+  timeoutMs: number,
+  logger: Logger
 ): Promise<Response> => {
   for (let attempt = 0; attempt < 3; attempt += 1) {
+    const startedAt = Date.now();
+    logger.debug("proxy-request-attempt", { attempt: attempt + 1, timeoutMs });
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -101,25 +118,64 @@ const postWithRetries = async (
         body,
         signal: AbortSignal.timeout(timeoutMs)
       });
-      if ((response.status !== 429 && response.status < 500) || attempt === 2) return response;
+      const retryable = response.status === 429 || response.status >= 500;
+      logger.info("proxy-response", {
+        attempt: attempt + 1,
+        status: response.status,
+        statusText: response.statusText,
+        requestId: response.headers.get("x-request-id"),
+        contentType: response.headers.get("content-type"),
+        durationMs: Date.now() - startedAt,
+        retryable
+      });
+      if (!retryable || attempt === 2) return response;
     } catch (error) {
-      if (attempt === 2) throw new Error(`Could not reach LiteLLM proxy: ${String(error)}`, { cause: error });
+      logger.warn("proxy-request-error", {
+        attempt: attempt + 1,
+        durationMs: Date.now() - startedAt,
+        willRetry: attempt < 2,
+        error
+      });
+      if (attempt === 2) {
+        throw new Error(`Could not reach LiteLLM proxy: ${String(error)}`, { cause: error });
+      }
     }
-    await new Promise((resolveDelay) => setTimeout(resolveDelay, 250 * 2 ** attempt));
+    const retryDelayMs = 250 * 2 ** attempt;
+    logger.warn("proxy-request-retrying", { attempt: attempt + 1, retryDelayMs });
+    await new Promise((resolveDelay) => setTimeout(resolveDelay, retryDelayMs));
   }
   throw new Error("Could not reach LiteLLM proxy.");
 };
 
-const imageBytes = async (image: LiteLLMImageResult, timeoutMs: number): Promise<Buffer> => {
+const imageBytes = async (
+  image: LiteLLMImageResult,
+  timeoutMs: number,
+  index: number,
+  logger: Logger
+): Promise<Buffer> => {
   if (image.b64_json) {
     const decoded = Buffer.from(image.b64_json, "base64");
     if (decoded.length === 0) throw new Error("LiteLLM returned invalid base64 image data.");
+    logger.debug("candidate-decoded", { candidate: index + 1, source: "base64", bytes: decoded.length });
     return decoded;
   }
   if (image.url) {
+    const startedAt = Date.now();
+    logger.debug("candidate-download-started", {
+      candidate: index + 1,
+      url: safeUrl(image.url),
+      timeoutMs
+    });
     const response = await fetch(image.url, { signal: AbortSignal.timeout(timeoutMs) });
     if (!response.ok) throw new Error(`Could not download LiteLLM image result: HTTP ${response.status}.`);
-    return Buffer.from(await response.arrayBuffer());
+    const downloaded = Buffer.from(await response.arrayBuffer());
+    logger.info("candidate-downloaded", {
+      candidate: index + 1,
+      status: response.status,
+      bytes: downloaded.length,
+      durationMs: Date.now() - startedAt
+    });
+    return downloaded;
   }
   throw new Error("A LiteLLM image result contained neither b64_json nor url.");
 };
@@ -150,15 +206,40 @@ export const generateFigure = async (
   options: GenerationOptions,
   connection: LiteLLMConnection
 ): Promise<GeneratedCandidateSet> => {
+  const logger = createLogger("image-generation", { figureId: figure.id });
   if (!connection.apiKey || !connection.baseUrl) {
+    logger.error("configuration-missing", {
+      proxyKeyConfigured: Boolean(connection.apiKey),
+      baseUrlConfigured: Boolean(connection.baseUrl)
+    });
     throw new Error("LITELLM_API_KEY and LITELLM_BASE_URL must be set in .env or the shell.");
   }
   if (!figure.hasPose) throw new Error(`${figure.id} has no teaching-frames/selected.png.`);
   if (options.count < 1 || options.count > 4) throw new Error("Candidate count must be 1–4.");
 
+  const operationStartedAt = Date.now();
+  logger.info("started", {
+    model: options.model,
+    size: options.size,
+    quality: options.quality,
+    candidateCount: options.count,
+    timeoutMs: options.timeoutMs,
+    endpoint: safeUrl(`${connection.baseUrl}/v1/images/edits`)
+  });
   const prompt = await buildPrompt(figure);
+  logger.debug("prompt-built", { characters: prompt.length, sha256: hashText(prompt) });
   const inputPaths = [figure.posePath, ...styleReferencePaths];
+  const preparationStartedAt = Date.now();
   const preparedInputs = await Promise.all(inputPaths.map(prepareInput));
+  logger.info("inputs-prepared", {
+    inputs: preparedInputs.map((buffer, index) => ({
+      role: index === 0 ? "teaching-frame" : "style-reference",
+      path: relative(repositoryRoot, inputPaths[index] ?? "").split("\\").join("/"),
+      uploadBytes: buffer.length
+    })),
+    totalUploadBytes: preparedInputs.reduce((total, buffer) => total + buffer.length, 0),
+    durationMs: Date.now() - preparationStartedAt
+  });
   const request = new FormData();
   preparedInputs.forEach((buffer, index) => {
     const filename =
@@ -178,19 +259,34 @@ export const generateFigure = async (
     `${connection.baseUrl}/v1/images/edits`,
     connection.apiKey,
     request,
-    options.timeoutMs
+    options.timeoutMs,
+    logger
   );
   const durationMs = Date.now() - startedAt;
   const requestId = proxyResponse.headers.get("x-request-id");
   if (!proxyResponse.ok) {
+    const responseBody = (await proxyResponse.text()).slice(0, 2000);
+    logger.error("proxy-response-failed", {
+      status: proxyResponse.status,
+      statusText: proxyResponse.statusText,
+      requestId,
+      durationMs,
+      responseBody
+    });
     throw new Error(
-      `LiteLLM returned HTTP ${proxyResponse.status}: ${(await proxyResponse.text()).slice(0, 2000)}`
+      `LiteLLM returned HTTP ${proxyResponse.status}: ${responseBody}`
     );
   }
   const response = parseLiteLLMResponse(await proxyResponse.json());
   if (response.data.length === 0) throw new Error("LiteLLM returned no image candidates.");
+  logger.info("proxy-response-parsed", {
+    candidates: response.data.length,
+    requestId,
+    durationMs,
+    usage: normalizeUsage(response.usage)
+  });
   const generatedImages = await Promise.all(
-    response.data.map(async (image) => imageBytes(image, options.timeoutMs))
+    response.data.map(async (image, index) => imageBytes(image, options.timeoutMs, index, logger))
   );
 
   const runId = createRunId();
@@ -206,6 +302,11 @@ export const generateFigure = async (
       relativePath: relative(repositoryRoot, absolutePath).split("\\").join("/"),
       createdAt,
       runId
+    });
+    logger.debug("candidate-written", {
+      candidate: index + 1,
+      path: relative(repositoryRoot, absolutePath).split("\\").join("/"),
+      bytes: image.length
     });
   }
 
@@ -227,7 +328,17 @@ export const generateFigure = async (
     outputs: candidates.map((candidate) => basename(candidate.absolutePath)),
     ...(usage === undefined ? {} : { usage })
   };
-  await writeFile(resolve(runDirectory, "metadata.json"), `${JSON.stringify(metadata, null, 2)}\n`);
+  const metadataPath = resolve(runDirectory, "metadata.json");
+  await writeFile(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`);
+  logger.info("completed", {
+    runId,
+    candidates: candidates.length,
+    requestId,
+    proxyDurationMs: durationMs,
+    totalDurationMs: Date.now() - operationStartedAt,
+    runDirectory: relative(repositoryRoot, runDirectory).split("\\").join("/"),
+    metadataPath: relative(repositoryRoot, metadataPath).split("\\").join("/")
+  });
 
   return {
     runId,

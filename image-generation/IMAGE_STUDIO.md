@@ -11,7 +11,21 @@ cp .env.example .env
 # Edit .env and set LITELLM_API_KEY and LITELLM_BASE_URL.
 ```
 
-Both the studio and CLI load `.env` from the repository root. Existing shell environment variables take precedence. `IMAGE_MODEL` is the image-capable alias exposed by the proxy. The file also supports `IMAGE_SIZE`, `IMAGE_QUALITY`, `REQUEST_TIMEOUT_SECONDS`, and `IMAGE_STUDIO_PORT`; see [`.env.example`](../.env.example). Never commit `.env`.
+Both the studio and CLI load `.env` from the repository root. Existing shell environment variables take precedence. `IMAGE_MODEL` is the image-capable alias exposed by the proxy. The file also supports `IMAGE_SIZE`, `IMAGE_QUALITY`, `REQUEST_TIMEOUT_SECONDS`, `IMAGE_STUDIO_PORT`, and `IMAGE_STUDIO_LOG_LEVEL`; see [`.env.example`](../.env.example). Never commit `.env`.
+
+## Diagnostic logging
+
+Both entry points emit timestamped logs to stderr. The default `info` level reports configuration state, batch plans, job lifecycle, preprocessing, LiteLLM response status and request IDs, token usage, output locations, and elapsed times. Use debug logging when diagnosing a failure:
+
+```sh
+task images:studio:debug
+task images:generate MODE=marked -- --debug
+IMAGE_STUDIO_LOG_LEVEL=debug npm run images:generate -- --mode missing --dry-run
+```
+
+Supported levels are `error`, `warn`, `info`, and `debug`. Set `IMAGE_STUDIO_LOG_LEVEL` in `.env` for a persistent choice. Debug adds inbound studio requests, proxy attempts, retry decisions, prepared input sizes, candidate writes, and complete nested error stacks. Credentials and authorization-shaped fields are redacted, prompts and image payloads are never printed, and signed query strings are removed from logged image URLs.
+
+When reporting a LiteLLM failure, include the timestamp, figure ID, HTTP status, proxy `requestId`, and the final error block. These fields make it possible to correlate a local job with proxy-side logs without sharing credentials.
 
 ## Browser studio
 

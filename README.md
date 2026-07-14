@@ -31,6 +31,7 @@ npm run dev
 | `task build` | Create the production build in `dist/` |
 | `task preview` | Build and serve the production application locally |
 | `task images:studio` | Start the local image-generation studio |
+| `task images:studio:debug` | Start the studio with request traces and error stacks |
 | `task images:plan` | Preview the missing-image batch without API calls |
 | `task images:generate` | Generate the missing-image batch through LiteLLM |
 
@@ -41,6 +42,7 @@ task dev -- --host
 task test -- --reporter=verbose
 task images:plan MODE=marked -- --style lindy
 task images:generate MODE=all CONCURRENCY=3 -- --quality medium --count 2
+task images:generate MODE=marked -- --debug
 ```
 
 ## Image generation
@@ -55,6 +57,8 @@ task images:studio
 The studio runs at <http://127.0.0.1:4174> by default. It previews source frames and candidates, runs independent figure requests concurrently, and only changes live artwork when a candidate is explicitly promoted.
 
 Required settings are `LITELLM_API_KEY` and `LITELLM_BASE_URL`; `IMAGE_MODEL` names the image-capable alias configured on the proxy. See [`.env.example`](.env.example) and [`image-generation/IMAGE_STUDIO.md`](image-generation/IMAGE_STUDIO.md) for configuration, batch modes, storage, and promotion details.
+
+The image tools write timestamped diagnostic logs to the terminal. Set `IMAGE_STUDIO_LOG_LEVEL=debug`, use `task images:studio:debug`, or add `--debug` to an image-generation CLI command for request attempts, timings, paths, and complete error stacks. API keys and authorization values are redacted.
 
 ## Figure packages
 
