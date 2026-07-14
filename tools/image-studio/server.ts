@@ -272,7 +272,8 @@ const handleRequest = async (
   if (request.method === "GET" && url.pathname === "/api/prompt") {
     const id = url.searchParams.get("id");
     if (!id) throw new Error("Missing figure ID.");
-    sendJson(response, 200, { prompt: await buildPrompt(await findFigure(id)) });
+    await findFigure(id);
+    sendJson(response, 200, { prompt: buildPrompt() });
     return;
   }
   if (request.method === "GET" && url.pathname === "/api/events") {

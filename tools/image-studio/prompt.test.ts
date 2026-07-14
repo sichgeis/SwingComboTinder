@@ -1,19 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { buildPrompt } from "./prompt";
-import { findFigure } from "./repository";
+import { buildPrompt, DEFAULT_INSTRUCTIONS } from "./prompt";
 
 describe("buildPrompt", () => {
-  it("assigns the ordered references and fills move-specific directions", async () => {
-    const figure = await findFigure("lindy/swingout-open");
-    const prompt = await buildPrompt(figure);
-
-    expect(prompt).toContain("Image 1 is the authoritative teaching frame");
-    expect(prompt).toContain("Images 2–4 are style references only");
-    expect(prompt).toContain("Dance figure: Swingout from Open");
-    expect(prompt).toContain(figure.poseDirection);
-    expect(prompt).toContain(figure.characterDirection);
-    expect(prompt).not.toContain("[MOVE NAME]");
-    expect(prompt).not.toContain("[PASTE FROM");
+  it("returns the fixed base instructions without move-specific additions", () => {
+    expect(buildPrompt()).toBe(DEFAULT_INSTRUCTIONS);
+    expect(buildPrompt()).toContain("IMAGE 1 — STRICT POSE AND COMPOSITION REFERENCE");
+    expect(buildPrompt()).toContain("IMAGES 2–5 — STYLE REFERENCES ONLY");
+    expect(buildPrompt()).toContain("IDENTITY REPLACEMENT AND COMMUNITY REPRESENTATION");
+    expect(buildPrompt()).toContain("Create one clean instructional Lindy Hop dance-card illustration.");
+    expect(buildPrompt()).not.toContain("Pose direction");
+    expect(buildPrompt()).not.toContain("Character direction");
   });
 });

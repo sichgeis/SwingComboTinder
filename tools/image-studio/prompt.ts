@@ -1,36 +1,69 @@
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
 
-import { promptTemplatePath } from "./paths";
-import type { FigureRecord } from "./types";
+export const DEFAULT_INSTRUCTIONS = `IMAGE 1 — STRICT POSE AND COMPOSITION REFERENCE
 
-const INPUT_ASSIGNMENT = `Image 1 is the authoritative teaching frame. Preserve its full-body pose, weight placement, foot positions, facing directions, handholds, spacing, and composition. Images 2–4 are style references only. Use their illustration technique, palette, lighting, clothing treatment, texture, and background atmosphere. Do not copy their people, poses, or composition.`;
+Preserve the exact dance pose shown in Image 1.
 
-const extractUniversalPrompt = (markdown: string): string => {
-  const marker = "## Universal prompt";
-  const start = markdown.indexOf(marker);
-  if (start < 0) throw new Error(`${promptTemplatePath} is missing "${marker}".`);
-  return markdown
-    .slice(start + marker.length)
-    .trim()
-    .split(/\r?\n/)
-    .map((line) => line.replace(/^> ?/, ""))
-    .join("\n")
-    .replaceAll("**", "")
-    .trim();
-};
+The following properties are hard constraints:
 
-export const buildPrompt = async (figure: FigureRecord): Promise<string> => {
-  if (!figure.poseDirection || !figure.characterDirection) {
-    throw new Error(`${figure.id} needs Pose direction and Character direction in notes.md.`);
-  }
-  const template = extractUniversalPrompt(await readFile(promptTemplatePath, "utf8"));
-  const body = template
-    .replace("[MOVE NAME]", figure.name)
-    .replace("[PASTE FROM THE MOVE'S `notes.md`]", figure.poseDirection)
-    .replace("[PASTE FROM THE MOVE'S `notes.md`]", figure.characterDirection);
-  return `${INPUT_ASSIGNMENT}\n\n${body}`;
-};
+- exact joint positions and limb angles
+- torso orientation and lean
+- head direction
+- weight-bearing leg
+- foot placement and foot rotation
+- hand positions and partner contact points
+- distance, overlap, and relative scale between the dancers
+- camera angle, framing, and perspective
+
+Do not simplify, improve, reinterpret, mirror, or reverse the pose.
+
+IMAGES 2–5 — STYLE REFERENCES ONLY
+
+Apply the visual style shown in the style references, including:
+
+- illustration technique
+- line quality
+- color palette
+- shading
+- background treatment
+- clothing design language
+- degree of facial abstraction
+
+Do not copy poses or compositions from the style-reference images.
+
+IDENTITY REPLACEMENT AND COMMUNITY REPRESENTATION
+
+Completely replace the photographed people with fictional, non-identifiable dancers.
+
+Do not preserve:
+
+- faces or facial structure
+- hairstyles
+- apparent age
+- tattoos
+- body-specific identifying features
+- clothing, logos, patterns, or accessories
+- skin details from the original photograph
+
+Represent the diversity of the Lindy Hop and swing dance community with care and authenticity. For each generated image, select the dancers from a varied range of racial and ethnic backgrounds, skin tones, body types, ages, gender identities, and gender expressions.
+
+Do not assign dance roles according to gender. Lead and follow are dance roles, not gender roles, and any dancer may appear in either role.
+
+Respect the African American origins and cultural heritage of Lindy Hop. The result should feel connected to the warmth, rhythm, individuality, joy, and social character of the dance without relying on stereotypes, caricatures, or exaggerated period imagery.
+
+Allow representation to vary naturally across the full card deck rather than forcing every individual image to display every form of diversity.
+
+OUTPUT
+
+Create one clean instructional Lindy Hop dance-card illustration.
+
+Show the full bodies of all dancers.
+
+Preserve the exact teaching pose and make the body positions easy to understand.
+
+Do not include text, labels, borders, additional people, additional limbs, distorted anatomy, or cropped feet.`;
+
+export const buildPrompt = (): string => DEFAULT_INSTRUCTIONS;
 
 export const hashText = (value: string): string =>
   createHash("sha256").update(value).digest("hex");

@@ -13,7 +13,7 @@ Send a multipart request through the configured LiteLLM proxy to `POST /v1/image
 3. `references/02-inside-turn.png` — style only.
 4. `references/03-charleston-kick-throughs.png` — style only.
 
-The prompt must identify the images by index. Image 1 controls weight placement, feet, facing directions, handholds, spacing, and composition. Images 2–4 control illustration technique, palette, lighting, texture, clothing treatment, and background atmosphere; they must not override or contribute a pose.
+The fixed runtime prompt identifies Image 1 as the strict pose and composition reference. Every later uploaded image is style-only and must not contribute a pose or composition.
 
 ## Input preparation
 
@@ -54,17 +54,9 @@ Use the quality levels as follows:
 
 Keep the generated master as a 1024 × 1536 PNG. The application build should convert that master to WebP quality 80 for delivery. Do not repeatedly recompress an already lossy WebP.
 
-## Prompt assembly
+## Prompt
 
-Start from [`PROMPT.md`](PROMPT.md), then replace its placeholders with:
-
-- the move name;
-- `Pose direction` from the move's `notes.md`;
-- `Character direction` from the move's `notes.md`.
-
-Prepend this input assignment when necessary:
-
-> Image 1 is the authoritative teaching frame. Preserve its full-body pose, weight placement, foot positions, facing directions, handholds, spacing, and composition. Images 2–4 are style references only. Use their illustration technique, palette, lighting, clothing treatment, texture, and background atmosphere. Do not copy their people, poses, or composition.
+Use [`DEFAULT_INSTRUCTIONS`](../tools/image-studio/prompt.ts) verbatim for every request. Do not add a move name, `Pose direction`, `Character direction`, or a second input-assignment preamble. The teaching frame itself carries the move-specific information.
 
 ## Validation and telemetry
 

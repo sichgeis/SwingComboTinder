@@ -226,7 +226,7 @@ export const generateFigure = async (
     timeoutMs: options.timeoutMs,
     endpoint: safeUrl(`${connection.baseUrl}/v1/images/edits`)
   });
-  const prompt = await buildPrompt(figure);
+  const prompt = buildPrompt();
   logger.debug("prompt-built", { characters: prompt.length, sha256: hashText(prompt) });
   const inputPaths = [figure.posePath, ...styleReferencePaths];
   const preparationStartedAt = Date.now();
