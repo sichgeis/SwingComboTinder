@@ -133,10 +133,6 @@ export class SwingThingController {
       const key = element.dataset.i18nHtml as TranslationKey | undefined;
       if (key) element.innerHTML = this.t(key);
     });
-    document.querySelectorAll<HTMLElement>("[data-i18n-aria]").forEach((element) => {
-      const key = element.dataset.i18nAria as TranslationKey | undefined;
-      if (key) element.setAttribute("aria-label", this.t(key));
-    });
     this.query<HTMLElement>("#languageCurrent").textContent = this.language.toUpperCase();
     this.query<HTMLElement>("#languageOther").textContent = this.language === "en" ? "DE" : "EN";
     this.query<HTMLButtonElement>("#languageButton").ariaLabel = this.t("languageAria");
@@ -211,16 +207,12 @@ export class SwingThingController {
   }
 
   private updateModeControls(): void {
-    const browseCount = this.browseMoves().length;
     const buildButton = this.query<HTMLButtonElement>("#buildModeButton");
     const browseButton = this.query<HTMLButtonElement>("#browseModeButton");
     buildButton.classList.toggle("is-active", this.mode === "build");
     browseButton.classList.toggle("is-active", this.mode === "browse");
     buildButton.setAttribute("aria-pressed", String(this.mode === "build"));
     browseButton.setAttribute("aria-pressed", String(this.mode === "browse"));
-    const count = this.query<HTMLElement>("#browseModeCount");
-    count.textContent = String(browseCount);
-    count.hidden = browseCount === 0;
   }
 
   private showMode(mode: AppMode): void {
@@ -690,8 +682,6 @@ export class SwingThingController {
     window.addEventListener("pointerup", (event) => this.finishPointer(event));
     window.addEventListener("pointercancel", (event) => this.cancelPointer(event));
 
-    this.query("#browsePrevious").addEventListener("click", () => this.browse("previous"));
-    this.query("#browseNext").addEventListener("click", () => this.browse("next"));
     this.browseStage.addEventListener("pointerdown", (event) => {
       if (!(event.target instanceof Element) || !event.target.closest("#browseCard")) return;
       if (this.browseAnimating || event.target.closest("a, button")) return;

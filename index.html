@@ -42,9 +42,7 @@
       <nav class="mode-switch" id="modeSwitch" aria-label="App mode">
         <span class="mode-switch-indicator" aria-hidden="true"></span>
         <button class="mode-option is-active" id="buildModeButton" type="button" aria-pressed="true" data-i18n="buildMode">DECK BAUEN</button>
-        <button class="mode-option" id="browseModeButton" type="button" aria-pressed="false">
-          <span data-i18n="browseMode">DURCHBLÄTTERN</span><span class="mode-count" id="browseModeCount" hidden>0</span>
-        </button>
+        <button class="mode-option" id="browseModeButton" type="button" aria-pressed="false" data-i18n="browseMode">DURCHBLÄTTERN</button>
       </nav>
       <header class="topbar">
         <button class="brand" id="brandButton" aria-label="Go to welcome screen">
@@ -145,11 +143,6 @@
             <div class="progress-track browse-progress" aria-hidden="true"><span id="browseProgressBar"></span></div>
             <div class="browse-stage" id="browseStage">
               <article class="move-card browse-card" id="browseCard" tabindex="0" aria-live="polite"></article>
-            </div>
-            <div class="browse-controls">
-              <button id="browsePrevious" type="button" data-i18n-aria="previousFigure" aria-label="Previous figure">&#8592;</button>
-              <span data-i18n="browseSwipeHint">SWIPE TO BROWSE</span>
-              <button id="browseNext" type="button" data-i18n-aria="nextFigure" aria-label="Next figure">&#8594;</button>
             </div>
           </div>
         </section>
