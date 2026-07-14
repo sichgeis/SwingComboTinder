@@ -94,6 +94,7 @@ const tagsFor = (figure, job) => {
   tags.push(figure.hasPose ? '<span class="tag good">pose ready</span>' : '<span class="tag bad">no pose</span>');
   if (!figure.hasCurrent) tags.push('<span class="tag warn">missing master</span>');
   if (figure.marked) tags.push('<span class="tag warn">rework</span>');
+  if (figure.imageApproved) tags.push('<span class="tag approved">image approved</span>');
   if (figure.candidates.length) tags.push(`<span class="tag good">${figure.candidates.length} candidate${figure.candidates.length === 1 ? "" : "s"}</span>`);
   if (job) tags.push(`<span class="tag ${job.state === "failed" ? "bad" : "warn"}">${escapeHtml(job.state)}</span>`);
   return tags.join("");
@@ -104,22 +105,20 @@ const render = () => {
   const visible = style ? state.figures.filter((figure) => figure.style === style) : state.figures;
   const missing = state.figures.filter((figure) => !figure.hasCurrent).length;
   const marked = state.figures.filter((figure) => figure.marked).length;
+  const approved = state.figures.filter((figure) => figure.imageApproved).length;
   const blocked = state.figures.filter((figure) => !figure.hasPose).length;
-  summary.textContent = `${state.figures.length} figures · ${missing} missing masters · ${marked} marked · ${blocked} missing pose references · ${state.selected.size} selected`;
+  summary.textContent = `${state.figures.length} figures · ${approved} approved · ${missing} missing masters · ${marked} marked · ${blocked} missing pose references · ${state.selected.size} selected`;
   runButton.disabled = state.runActive;
 
   grid.innerHTML = visible.map((figure) => {
     const latest = figure.candidates[0];
     const job = state.jobs.get(figure.id);
-    const classes = ["figure-card", job?.state === "running" ? "running" : "", job?.state === "failed" ? "failed" : ""].filter(Boolean).join(" ");
-    return `<article class="${classes}" data-id="${escapeHtml(figure.id)}">
-      <header class="card-header">
-        <label class="select-title">
-          <input class="figure-select" type="checkbox" ${state.selected.has(figure.id) ? "checked" : ""}>
-          <span><h2>${escapeHtml(figure.name)}</h2><span class="figure-id">${escapeHtml(figure.id)}</span></span>
-        </label>
-        <div class="tags">${tagsFor(figure, job)}</div>
-      </header>
+    const classes = ["figure-card", figure.imageApproved ? "approved" : "", job?.state === "running" ? "running" : "", job?.state === "failed" ? "failed" : ""].filter(Boolean).join(" ");
+    const cardBody = figure.imageApproved ? `
+      <div class="approved-summary">
+        <span>This move has an image you approved.</span>
+        <button type="button" class="secondary" data-action="image-approval">Reopen</button>
+      </div>` : `
       <div class="comparison">
         ${imageCell("Teaching pose", figure.poseUrl, "Add teaching-frames/selected.png", figure.name)}
         ${imageCell(figure.currentIsFallback ? "Fallback card" : "Current master", figure.currentUrl, "No current artwork", figure.name)}
@@ -144,8 +143,18 @@ const render = () => {
         <button type="button" class="secondary" data-action="prompt" ${figure.hasPose ? "" : "disabled"}>Prompt</button>
         <button type="button" class="secondary" data-action="promote" ${latest ? "" : "disabled"}>Promote latest</button>
         <button type="button" class="secondary ${figure.marked ? "danger" : ""}" data-action="mark">${figure.marked ? "Clear rework" : "Mark rework"}</button>
+        <button type="button" class="secondary approve-action" data-action="image-approval">Approve image</button>
       </div>
-      <p class="job-message">${escapeHtml(job?.message || "")}</p>
+      <p class="job-message">${escapeHtml(job?.message || "")}</p>`;
+    return `<article class="${classes}" data-id="${escapeHtml(figure.id)}">
+      <header class="card-header">
+        <label class="select-title">
+          <input class="figure-select" type="checkbox" ${state.selected.has(figure.id) ? "checked" : ""}>
+          <span><h2>${escapeHtml(figure.name)}</h2><span class="figure-id">${escapeHtml(figure.id)}</span></span>
+        </label>
+        <div class="tags">${tagsFor(figure, job)}</div>
+      </header>
+      ${cardBody}
     </article>`;
   }).join("");
 };
@@ -243,6 +252,18 @@ grid.addEventListener("click", async (event) => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id, marked: !figure.marked })
       });
+      await loadFigures();
+    } else if (button.dataset.action === "image-approval") {
+      const approved = !figure.imageApproved;
+      await request("/api/image-approval", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id, approved })
+      });
+      runStatus.className = "success";
+      runStatus.textContent = approved
+        ? `Approved the image for ${figure.name}.`
+        : `Reopened ${figure.name} for image review.`;
       await loadFigures();
     } else if (button.dataset.action === "save-note") {
       const note = button.closest(".generation-note-editor").querySelector("textarea[data-generation-note]").value;

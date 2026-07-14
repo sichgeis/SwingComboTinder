@@ -10,7 +10,7 @@ import { createLogger, type Logger } from "./logger";
 import { figuresRoot, repositoryRoot } from "./paths";
 import { mapWithConcurrency } from "./pool";
 import { planGeneration } from "./plan";
-import { promoteCandidate, setNeedsRework } from "./promote";
+import { promoteCandidate, setImageApproved, setNeedsRework } from "./promote";
 import { buildPrompt, MAX_GENERATION_NOTE_LENGTH } from "./prompt";
 import { discoverFigures, findFigure, setGenerationNote } from "./repository";
 import {
@@ -79,6 +79,7 @@ const serializeFigures = async (): Promise<unknown> =>
     slug: figure.slug,
     name: figure.name,
     marked: figure.marked,
+    imageApproved: figure.imageApproved,
     hasPose: figure.hasPose,
     hasCurrent: figure.hasCurrent,
     poseDirection: figure.poseDirection,
@@ -334,6 +335,19 @@ const handleRequest = async (
     requestLogger.info("figure-mark-updated", { figureId: values.id, marked: values.marked });
     event("figure-updated", { id: values.id });
     sendJson(response, 200, { marked: values.marked });
+    return;
+  }
+  if (request.method === "POST" && url.pathname === "/api/image-approval") {
+    const body = await readJson(request);
+    if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
+    const values = body as Record<string, unknown>;
+    if (typeof values.id !== "string" || typeof values.approved !== "boolean") {
+      throw new Error("Image approval requires figure id and approved state.");
+    }
+    await setImageApproved(await findFigure(values.id), values.approved);
+    requestLogger.info("image-approval-updated", { figureId: values.id, approved: values.approved });
+    event("figure-updated", { id: values.id });
+    sendJson(response, 200, { approved: values.approved });
     return;
   }
   if (request.method === "POST" && url.pathname === "/api/generation-note") {

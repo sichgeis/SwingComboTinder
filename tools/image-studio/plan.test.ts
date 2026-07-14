@@ -23,6 +23,7 @@ const figure = (
     hasCurrent: options.hasCurrent ?? true,
     hasFallback: true,
     marked: options.marked ?? false,
+    imageApproved: false,
     poseDirection: "Pose",
     characterDirection: "Characters",
     generationNote: "",

@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 
 import { afterEach, describe, expect, it } from "vitest";
 
-import { promoteCandidate } from "./promote";
+import { promoteCandidate, setImageApproved } from "./promote";
 import type { FigureRecord } from "./types";
 
 const temporaryDirectories: string[] = [];
@@ -46,6 +46,7 @@ describe("promoteCandidate", () => {
       hasCurrent: true,
       hasFallback: true,
       marked: true,
+      imageApproved: false,
       poseDirection: "Pose",
       characterDirection: "Characters",
       generationNote: "",
@@ -61,5 +62,21 @@ describe("promoteCandidate", () => {
     if (!archivedMaster) throw new Error("Expected an archived master.");
     expect(await readFile(resolve(generated, "archive", archivedMaster), "utf8")).toBe("old");
     expect(await readFile(figure.notesPath, "utf8")).toContain("- [ ] Needs rework");
+  });
+
+  it("persists image approval in the artwork status section", async () => {
+    const directory = await mkdtemp(resolve(tmpdir(), "image-studio-approval-"));
+    temporaryDirectories.push(directory);
+    const notesPath = resolve(directory, "notes.md");
+    await writeFile(notesPath, "# Test\n\n## Artwork status\n\n- [x] Card artwork installed\n- [ ] Needs rework\n");
+    const figure = {
+      id: "lindy/test",
+      notesPath
+    } as FigureRecord;
+
+    await setImageApproved(figure, true);
+    expect(await readFile(notesPath, "utf8")).toContain("- [x] Image approved");
+    await setImageApproved(figure, false);
+    expect(await readFile(notesPath, "utf8")).toContain("- [ ] Image approved");
   });
 });

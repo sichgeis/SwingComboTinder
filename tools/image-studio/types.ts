@@ -26,6 +26,7 @@ export interface FigureRecord {
   readonly hasCurrent: boolean;
   readonly hasFallback: boolean;
   readonly marked: boolean;
+  readonly imageApproved: boolean;
   readonly poseDirection: string;
   readonly characterDirection: string;
   readonly generationNote: string;

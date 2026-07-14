@@ -72,10 +72,11 @@ button:disabled { opacity: .45; cursor: wait; }
 #run-status.error { color: var(--red); }
 #run-status.success { color: var(--mint); }
 
-.figure-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1rem; }
+.figure-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1rem; align-items: start; }
 .figure-card { border: 1px solid var(--line); border-radius: 1rem; overflow: hidden; background: var(--panel); }
 .figure-card.running { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber); }
 .figure-card.failed { border-color: var(--red); }
+.figure-card.approved { border-color: #397560; background: linear-gradient(135deg, #0d2a2c, var(--panel)); }
 .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; padding: 1rem; }
 .select-title { display: flex; gap: .7rem; align-items: flex-start; }
 .select-title input { width: auto; margin-top: .3rem; accent-color: var(--amber); }
@@ -84,6 +85,7 @@ button:disabled { opacity: .45; cursor: wait; }
 .tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; }
 .tag { border: 1px solid var(--line); border-radius: 999px; padding: .2rem .45rem; color: var(--muted); font-size: .68rem; }
 .tag.good { color: var(--mint); border-color: #397560; }
+.tag.approved { color: #07151f; border-color: var(--mint); background: var(--mint); }
 .tag.warn { color: var(--amber); border-color: #7b6033; }
 .tag.bad { color: var(--red); border-color: #7b3f3a; }
 .comparison { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); }
@@ -118,8 +120,11 @@ button:disabled { opacity: .45; cursor: wait; }
 .generation-note-footer { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
 .generation-note-count { color: var(--muted); font-size: .68rem; font-variant-numeric: tabular-nums; }
 .generation-note-footer button { padding: .4rem .65rem; font-size: .72rem; }
+.approved-summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .75rem 1rem; border-top: 1px solid #284d46; color: var(--mint); font-size: .78rem; }
+.approved-summary button { flex: none; padding: .4rem .65rem; font-size: .72rem; }
 .card-actions { display: flex; flex-wrap: wrap; gap: .5rem; padding: .8rem; }
 .card-actions button { padding: .45rem .65rem; font-size: .76rem; }
+.card-actions .approve-action { margin-left: auto; color: var(--mint); border-color: #397560; }
 .job-message { margin: 0; padding: 0 1rem 1rem; min-height: 1.4rem; color: var(--amber); font-size: .8rem; }
 
 dialog { width: min(900px, 92vw); max-height: 88vh; border: 1px solid var(--line); border-radius: 1rem; background: #07151f; color: #fff; }

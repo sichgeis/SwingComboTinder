@@ -45,6 +45,7 @@ describe("generateFigure", () => {
       hasCurrent: false,
       hasFallback: false,
       marked: false,
+      imageApproved: false,
       poseDirection: "Keep the dancers' feet and frame exactly as shown.",
       characterDirection: "Render both dancers as warm, expressive characters.",
       generationNote: "The left dancer raises the right leg.",

@@ -23,6 +23,7 @@ const updateNotes = async (figure: FigureRecord): Promise<void> => {
   const updated = source
     .replace(/^- \[[ xX]\] Card artwork installed$/m, "- [x] Card artwork installed")
     .replace(/^- \[[xX]\] Needs rework$/m, "- [ ] Needs rework")
+    .replace(/^- \[[xX]\] Image approved$/m, "- [ ] Image approved")
     .replace(/^- Full-resolution source:.*$/m, "- Full-resolution source: `generated/current.png`");
   if (updated !== source) await writeFile(figure.notesPath, updated);
 };
@@ -62,4 +63,17 @@ export const setNeedsRework = async (figure: FigureRecord, marked: boolean): Pro
   );
   if (updated === source) throw new Error(`${figure.id} has no Needs rework checkbox.`);
   await writeFile(figure.notesPath, updated);
+};
+
+export const setImageApproved = async (figure: FigureRecord, approved: boolean): Promise<void> => {
+  const source = await readFile(figure.notesPath, "utf8");
+  const checkbox = approved ? "- [x] Image approved" : "- [ ] Image approved";
+  const hasApprovalCheckbox = /^- \[[ xX]\] Image approved$/m.test(source);
+  const updated = hasApprovalCheckbox
+    ? source.replace(/^- \[[ xX]\] Image approved$/m, checkbox)
+    : source.replace(/^- \[[ xX]\] Card artwork installed$/m, (line) => `${line}\n${checkbox}`);
+  if (updated === source && !hasApprovalCheckbox) {
+    throw new Error(`${figure.id} has no Artwork status section for image approval.`);
+  }
+  if (updated !== source) await writeFile(figure.notesPath, updated);
 };

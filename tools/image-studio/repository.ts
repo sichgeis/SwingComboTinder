@@ -105,6 +105,7 @@ export const discoverFigures = async (): Promise<readonly FigureRecord[]> => {
         hasCurrent: await exists(currentPath),
         hasFallback: await exists(fallbackPath),
         marked: /^- \[[xX]\] Needs rework\s*$/m.test(markdown),
+        imageApproved: /^- \[[xX]\] Image approved\s*$/m.test(markdown),
         poseDirection: readSection(markdown, "Pose direction"),
         characterDirection: readSection(markdown, "Character direction"),
         generationNote: readSection(markdown, "Generation note"),

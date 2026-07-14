@@ -35,9 +35,11 @@ task env
 task images:studio
 ```
 
-Open <http://127.0.0.1:4174>. The studio shows the teaching frame, live master or fallback card, and latest generated candidate together. Expand **All candidates** to compare every locally generated option, open any candidate at its original pixel dimensions, and promote the chosen one directly. Close an image preview with its button, the backdrop, or Escape. Expand **Generation note** on a figure to save a short pose correction directly into that figure's `notes.md`. The correction is appended only to that figure's effective prompt, which can be checked with **Prompt** before generation. The studio can generate explicit selections, every missing master, figures whose `Needs rework` checkbox is checked, or the complete catalog. Independent figure requests run concurrently and report live status in the browser.
+Open <http://127.0.0.1:4174>. The studio shows the teaching frame, live master or fallback card, and latest generated candidate together. Expand **All candidates** to compare every locally generated option, open any candidate at its original pixel dimensions, and promote the chosen one directly. Close an image preview with its button, the backdrop, or Escape. Expand **Generation note** on a figure to save a short pose correction directly into that figure's `notes.md`. The correction is appended only to that figure's effective prompt, which can be checked with **Prompt** before generation. Choose **Approve image** when a move has artwork you like: the approval is saved in `notes.md` and the completed card collapses to a compact row. Choose **Reopen** to restore its review controls. The studio can generate explicit selections, every missing master, figures whose `Needs rework` checkbox is checked, or the complete catalog. Independent figure requests run concurrently and report live status in the browser.
 
 Generation never replaces live artwork. Use **Promote latest** for the newest option or **Promote** beside any entry in **All candidates**. Promotion archives an existing `generated/current.png`, installs the selected candidate atomically, switches a fallback `figure.ts` import to the generated master, and clears the rework checkbox.
+
+Promoting a different candidate also clears an existing image approval so changed artwork returns to the review queue.
 
 ## CLI batches
 
