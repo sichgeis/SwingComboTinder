@@ -145,7 +145,10 @@ const runGeneration = async (request: RunRequest): Promise<void> => {
           size: environment.imageSize,
           count: request.count,
           timeoutMs: environment.requestTimeoutMs
-        }, environment.apiKey);
+        }, {
+          apiKey: environment.litellmApiKey,
+          baseUrl: environment.litellmBaseUrl
+        });
         event("job-completed", {
           id: figure.id,
           candidates: result.candidates.length,
@@ -209,7 +212,7 @@ const handleRequest = async (request: IncomingMessage, response: ServerResponse)
       model,
       imageSize: environment.imageSize,
       imageQuality: environment.imageQuality,
-      apiKeyConfigured: Boolean(environment.apiKey),
+      proxyConfigured: Boolean(environment.litellmApiKey && environment.litellmBaseUrl),
       runActive
     });
     return;
@@ -292,7 +295,7 @@ const server = createServer((request, response) => {
 
 server.listen(port, "127.0.0.1", () => {
   console.log(`Dance Card Image Studio: http://127.0.0.1:${port}`);
-  if (!environment.apiKey) {
-    console.log("OPENAI_API_KEY is not set; browsing and dry planning work, generation does not.");
+  if (!environment.litellmApiKey || !environment.litellmBaseUrl) {
+    console.log("LiteLLM proxy credentials are not set; browsing and dry planning still work.");
   }
 });

@@ -128,7 +128,10 @@ const main = async (): Promise<void> => {
         size: options.size,
         count: options.count,
         timeoutMs: environment.requestTimeoutMs
-      }, environment.apiKey);
+      }, {
+        apiKey: environment.litellmApiKey,
+        baseUrl: environment.litellmBaseUrl
+      });
       console.log(
         `Created ${result.candidates.length} candidate(s) for ${figure.id} in ${(result.durationMs / 1000).toFixed(1)}s.`
       );

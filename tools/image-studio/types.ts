@@ -50,6 +50,11 @@ export interface GenerationOptions {
   readonly timeoutMs: number;
 }
 
+export interface LiteLLMConnection {
+  readonly apiKey: string | undefined;
+  readonly baseUrl: string | undefined;
+}
+
 export interface TokenUsage {
   readonly inputTokens: number;
   readonly inputImageTokens: number;

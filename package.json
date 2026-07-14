@@ -27,7 +27,6 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "openai": "^6.46.0",
     "sharp": "^0.35.3"
   }
 }

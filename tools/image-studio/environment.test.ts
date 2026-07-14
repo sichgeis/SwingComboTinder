@@ -7,7 +7,8 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getImageEnvironment, loadEnvironment } from "./environment";
 
 const variableNames = [
-  "OPENAI_API_KEY",
+  "LITELLM_API_KEY",
+  "LITELLM_BASE_URL",
   "IMAGE_MODEL",
   "IMAGE_SIZE",
   "IMAGE_QUALITY",
@@ -40,7 +41,8 @@ const writeEnvironment = async (content: string): Promise<string> => {
 
 describe("image studio environment", () => {
   it("loads the supported settings from an env file", async () => {
-    const path = await writeEnvironment(`OPENAI_API_KEY=test-key
+    const path = await writeEnvironment(`LITELLM_API_KEY=test-key
+LITELLM_BASE_URL=https://litellm.example.test/v1/
 IMAGE_MODEL=test-image-model
 IMAGE_SIZE=1024x1536
 IMAGE_QUALITY=high
@@ -51,7 +53,8 @@ IMAGE_STUDIO_PORT=4321
     loadEnvironment(path);
 
     expect(getImageEnvironment()).toEqual({
-      apiKey: "test-key",
+      litellmApiKey: "test-key",
+      litellmBaseUrl: "https://litellm.example.test",
       model: "test-image-model",
       imageSize: "1024x1536",
       imageQuality: "high",

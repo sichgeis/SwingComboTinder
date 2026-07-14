@@ -5,13 +5,20 @@ import { repositoryRoot } from "./paths";
 import { imageQualities, type ImageQuality } from "./types";
 
 export interface ImageEnvironment {
-  readonly apiKey: string | undefined;
+  readonly litellmApiKey: string | undefined;
+  readonly litellmBaseUrl: string | undefined;
   readonly model: string;
   readonly imageSize: string;
   readonly imageQuality: ImageQuality;
   readonly requestTimeoutMs: number;
   readonly studioPort: number;
 }
+
+const normalizeLiteLLMBaseUrl = (value: string | undefined): string | undefined => {
+  if (value === undefined || value.trim() === "") return undefined;
+  const normalized = value.trim().replace(/\/+$/, "");
+  return normalized.endsWith("/v1") ? normalized.slice(0, -3) : normalized;
+};
 
 const positiveNumber = (value: string | undefined, fallback: number, name: string): number => {
   const parsed = value === undefined ? fallback : Number(value);
@@ -58,7 +65,8 @@ export const getImageEnvironment = (): ImageEnvironment => {
   }
 
   return {
-    apiKey: process.env.OPENAI_API_KEY,
+    litellmApiKey: process.env.LITELLM_API_KEY,
+    litellmBaseUrl: normalizeLiteLLMBaseUrl(process.env.LITELLM_BASE_URL),
     model: process.env.IMAGE_MODEL ?? "gpt-image-2",
     imageSize: imageSize(process.env.IMAGE_SIZE),
     imageQuality: quality as ImageQuality,

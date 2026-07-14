@@ -6,7 +6,7 @@ The implemented local UI and batch commands are documented in [`IMAGE_STUDIO.md`
 
 ## Request layout
 
-Use the Image API edit endpoint with four ordered inputs:
+Send a multipart request through the configured LiteLLM proxy to `POST /v1/images/edits`, with four ordered `image` fields:
 
 1. The move's `figures/<style>/<move>/teaching-frames/selected.png` — authoritative for pose and composition.
 2. `references/01-swingout-open.png` — style only.
@@ -35,8 +35,9 @@ Rules:
 ## API defaults
 
 ```text
-endpoint: images.edit
-model: gpt-image-2
+endpoint: <LITELLM_BASE_URL>/v1/images/edits
+authorization: Bearer <LITELLM_API_KEY>
+model: <IMAGE_MODEL proxy alias>
 size: 1024x1536
 quality: medium
 output_format: png

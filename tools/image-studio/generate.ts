@@ -2,7 +2,6 @@ import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { basename, relative, resolve } from "node:path";
 
-import OpenAI, { toFile } from "openai";
 import sharp from "sharp";
 
 import { repositoryRoot, styleReferencePaths } from "./paths";
@@ -12,6 +11,7 @@ import type {
   FigureRecord,
   GeneratedCandidateSet,
   GenerationOptions,
+  LiteLLMConnection,
   TokenUsage
 } from "./types";
 
@@ -21,6 +21,23 @@ interface InputMetadata {
   readonly bytes: number;
   readonly width?: number;
   readonly height?: number;
+}
+
+interface LiteLLMImageResult {
+  readonly b64_json?: string;
+  readonly url?: string;
+}
+
+interface LiteLLMUsage {
+  readonly input_tokens: number;
+  readonly input_tokens_details: { readonly image_tokens: number; readonly text_tokens: number };
+  readonly output_tokens: number;
+  readonly total_tokens: number;
+}
+
+interface LiteLLMResponse {
+  readonly data: readonly LiteLLMImageResult[];
+  readonly usage?: LiteLLMUsage;
 }
 
 const hashFile = async (path: string): Promise<string> =>
@@ -43,6 +60,69 @@ const prepareInput = async (path: string): Promise<Buffer> =>
     .resize({ width: 1536, height: 1536, fit: "inside", withoutEnlargement: true })
     .webp({ quality: 90 })
     .toBuffer();
+
+const parseLiteLLMResponse = (value: unknown): LiteLLMResponse => {
+  if (typeof value !== "object" || value === null) {
+    throw new Error("LiteLLM returned an unexpected response shape.");
+  }
+  const response = value as Record<string, unknown>;
+  if (!Array.isArray(response.data)) {
+    throw new Error("LiteLLM returned an unexpected response shape.");
+  }
+  const data = response.data.map((item) => {
+    if (typeof item !== "object" || item === null) {
+      throw new Error("LiteLLM returned an invalid image result.");
+    }
+    const result = item as Record<string, unknown>;
+    return {
+      ...(typeof result.b64_json === "string" ? { b64_json: result.b64_json } : {}),
+      ...(typeof result.url === "string" ? { url: result.url } : {})
+    };
+  });
+  return {
+    data,
+    ...(typeof response.usage === "object" && response.usage !== null
+      ? { usage: response.usage as LiteLLMUsage }
+      : {})
+  };
+};
+
+const postWithRetries = async (
+  url: string,
+  apiKey: string,
+  body: FormData,
+  timeoutMs: number
+): Promise<Response> => {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { authorization: `Bearer ${apiKey}` },
+        body,
+        signal: AbortSignal.timeout(timeoutMs)
+      });
+      if ((response.status !== 429 && response.status < 500) || attempt === 2) return response;
+    } catch (error) {
+      if (attempt === 2) throw new Error(`Could not reach LiteLLM proxy: ${String(error)}`, { cause: error });
+    }
+    await new Promise((resolveDelay) => setTimeout(resolveDelay, 250 * 2 ** attempt));
+  }
+  throw new Error("Could not reach LiteLLM proxy.");
+};
+
+const imageBytes = async (image: LiteLLMImageResult, timeoutMs: number): Promise<Buffer> => {
+  if (image.b64_json) {
+    const decoded = Buffer.from(image.b64_json, "base64");
+    if (decoded.length === 0) throw new Error("LiteLLM returned invalid base64 image data.");
+    return decoded;
+  }
+  if (image.url) {
+    const response = await fetch(image.url, { signal: AbortSignal.timeout(timeoutMs) });
+    if (!response.ok) throw new Error(`Could not download LiteLLM image result: HTTP ${response.status}.`);
+    return Buffer.from(await response.arrayBuffer());
+  }
+  throw new Error("A LiteLLM image result contained neither b64_json nor url.");
+};
 
 const createRunId = (): string => {
   const timestamp = new Date().toISOString().replaceAll(":", "-").replace(".", "-");
@@ -68,10 +148,10 @@ const normalizeUsage = (usage: {
 export const generateFigure = async (
   figure: FigureRecord,
   options: GenerationOptions,
-  apiKey = process.env.OPENAI_API_KEY
+  connection: LiteLLMConnection
 ): Promise<GeneratedCandidateSet> => {
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not set. Add it to the shell running the studio or CLI.");
+  if (!connection.apiKey || !connection.baseUrl) {
+    throw new Error("LITELLM_API_KEY and LITELLM_BASE_URL must be set in .env or the shell.");
   }
   if (!figure.hasPose) throw new Error(`${figure.id} has no teaching-frames/selected.png.`);
   if (options.count < 1 || options.count > 4) throw new Error("Candidate count must be 1–4.");
@@ -79,41 +159,48 @@ export const generateFigure = async (
   const prompt = await buildPrompt(figure);
   const inputPaths = [figure.posePath, ...styleReferencePaths];
   const preparedInputs = await Promise.all(inputPaths.map(prepareInput));
-  const uploads = await Promise.all(
-    preparedInputs.map(async (buffer, index) =>
-      toFile(buffer, index === 0 ? "01-teaching-frame.webp" : `${String(index + 1).padStart(2, "0")}-style-reference.webp`, {
-        type: "image/webp"
-      })
-    )
-  );
+  const request = new FormData();
+  preparedInputs.forEach((buffer, index) => {
+    const filename =
+      index === 0
+        ? "01-teaching-frame.webp"
+        : `${String(index + 1).padStart(2, "0")}-style-reference.webp`;
+    request.append("image", new Blob([new Uint8Array(buffer)], { type: "image/webp" }), filename);
+  });
+  request.set("model", options.model);
+  request.set("prompt", prompt);
+  request.set("n", String(options.count));
+  request.set("size", options.size);
+  request.set("quality", options.quality);
 
-  const client = new OpenAI({ apiKey, maxRetries: 2, timeout: options.timeoutMs });
   const startedAt = Date.now();
-  const { data: response, request_id: requestId } = await client.images
-    .edit({
-      model: options.model,
-      image: uploads,
-      prompt,
-      n: options.count,
-      size: options.size,
-      quality: options.quality,
-      output_format: "png",
-      background: "opaque"
-    })
-    .withResponse();
+  const proxyResponse = await postWithRetries(
+    `${connection.baseUrl}/v1/images/edits`,
+    connection.apiKey,
+    request,
+    options.timeoutMs
+  );
   const durationMs = Date.now() - startedAt;
-  const images = response.data ?? [];
-  if (images.length === 0) throw new Error("OpenAI returned no image candidates.");
+  const requestId = proxyResponse.headers.get("x-request-id");
+  if (!proxyResponse.ok) {
+    throw new Error(
+      `LiteLLM returned HTTP ${proxyResponse.status}: ${(await proxyResponse.text()).slice(0, 2000)}`
+    );
+  }
+  const response = parseLiteLLMResponse(await proxyResponse.json());
+  if (response.data.length === 0) throw new Error("LiteLLM returned no image candidates.");
+  const generatedImages = await Promise.all(
+    response.data.map(async (image) => imageBytes(image, options.timeoutMs))
+  );
 
   const runId = createRunId();
   const runDirectory = resolve(figure.directory, "generated/candidates", runId);
   await mkdir(runDirectory, { recursive: true });
   const createdAt = new Date().toISOString();
   const candidates: CandidateImage[] = [];
-  for (const [index, image] of images.entries()) {
-    if (!image.b64_json) throw new Error(`Candidate ${index + 1} did not contain image data.`);
+  for (const [index, image] of generatedImages.entries()) {
     const absolutePath = resolve(runDirectory, `candidate-${index + 1}.png`);
-    await writeFile(absolutePath, Buffer.from(image.b64_json, "base64"));
+    await writeFile(absolutePath, image);
     candidates.push({
       absolutePath,
       relativePath: relative(repositoryRoot, absolutePath).split("\\").join("/"),

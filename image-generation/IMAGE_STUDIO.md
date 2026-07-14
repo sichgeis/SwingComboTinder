@@ -1,17 +1,17 @@
 # Dance Card Image Studio
 
-The repository includes a local TypeScript studio and CLI for generating card-image candidates through OpenAI's Image API. Both interfaces share the same figure discovery, prompt assembly, request, concurrency, candidate storage, and promotion code.
+The repository includes a local TypeScript studio and CLI for generating card-image candidates through a LiteLLM proxy backed by OpenAI's Image API. Both interfaces share the same figure discovery, prompt assembly, request, concurrency, candidate storage, and promotion code.
 
 ## Authentication
 
-Copy the example configuration and add your OpenAI API key. The browser never receives it.
+Copy the example configuration and add your LiteLLM virtual key and proxy URL. The browser never receives either credential.
 
 ```sh
 cp .env.example .env
-# Edit .env and replace sk-your-openai-api-key.
+# Edit .env and set LITELLM_API_KEY and LITELLM_BASE_URL.
 ```
 
-Both the studio and CLI load `.env` from the repository root. Existing shell environment variables take precedence. The file also supports `IMAGE_MODEL`, `IMAGE_SIZE`, `IMAGE_QUALITY`, `REQUEST_TIMEOUT_SECONDS`, and `IMAGE_STUDIO_PORT`; see [`.env.example`](../.env.example). Never commit `.env`.
+Both the studio and CLI load `.env` from the repository root. Existing shell environment variables take precedence. `IMAGE_MODEL` is the image-capable alias exposed by the proxy. The file also supports `IMAGE_SIZE`, `IMAGE_QUALITY`, `REQUEST_TIMEOUT_SECONDS`, and `IMAGE_STUDIO_PORT`; see [`.env.example`](../.env.example). Never commit `.env`.
 
 ## Browser studio
 
