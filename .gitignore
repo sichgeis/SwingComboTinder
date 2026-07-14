@@ -5,4 +5,7 @@ coverage/
 .DS_Store
 .env
 .env.local
-figures/*/*/generated/candidates/
+# Generation runs, metadata, and archived masters stay local. Only the promoted
+# production master is versioned so clean checkouts can build the web app.
+figures/*/*/generated/**
+!figures/*/*/generated/current.png

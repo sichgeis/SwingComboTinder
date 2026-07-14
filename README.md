@@ -72,7 +72,7 @@ generated/
 notes.md
 ```
 
-`figure.ts` contains the typed metadata, localized copy, video provenance, and card links. A figure can use `generated/current.png` as its full-resolution card source or fall back to `card.jpg`. Vite discovers all figure definitions automatically, orders them by their explicit `order`, and emits the selected artwork as a hashed 600 × 900 WebP at quality 80. Teaching frames, generation history, and editorial notes stay source-only.
+`figure.ts` contains the typed metadata, localized copy, video provenance, and card links. A figure can use `generated/current.png` as its full-resolution card source or fall back to `card.jpg`. Vite discovers all figure definitions automatically, orders them by their explicit `order`, and emits the selected artwork as a hashed 600 × 900 WebP at quality 80. Teaching frames remain versioned source material. Generation runs, metadata, and archived masters stay local; only a promoted `generated/current.png` is committed so clean checkouts can reproduce the production build.
 
 See [`figures/README.md`](figures/README.md) for the add and rework workflow.
 
@@ -102,4 +102,4 @@ Deck focus and progress are stored locally. The application installs as an offli
 
 ## Release
 
-Every push to `main` runs `npm run check` in GitHub Actions and publishes the generated `dist/` artifact to GitHub Pages. Dependencies, local `.env` files, image candidates, and build output are intentionally not committed.
+Every push to `main` runs `npm run check` in GitHub Actions and publishes the generated `dist/` artifact to GitHub Pages. Dependencies, local `.env` files, unpromoted or archived image output, and build output are intentionally not committed.

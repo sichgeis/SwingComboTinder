@@ -78,6 +78,6 @@ figures/<style>/<move>/generated/candidates/<run-id>/
   metadata.json
 ```
 
-`metadata.json` records the model, quality, output size, effective prompt and hash, original input hashes and dimensions, request ID, duration, and token usage when returned. Candidate directories are ignored by Git. Promoted `current.png` files and archived masters remain normal repository assets.
+`metadata.json` records the model, quality, output size, effective prompt and hash, original input hashes and dimensions, request ID, duration, and token usage when returned. The entire generated workspace stays local and is ignored by Git, including candidates, metadata, and archived masters. The sole exception is a promoted `generated/current.png`, which is versioned because it is the source used by clean production builds.
 
 The `missing` and `all` modes report figures without `teaching-frames/selected.png` as blocked. They are not downgraded to text-only generation because the teaching pose is an authoritative input.
