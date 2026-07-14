@@ -1,7 +1,88 @@
 version: "3"
 
+vars:
+  MODE: '{{default "missing" .MODE}}'
+  CONCURRENCY: '{{default "3" .CONCURRENCY}}'
+
 tasks:
-  catalog:
-    desc: Open the numbered YouTube screenshot list
+  default:
+    desc: List the available repository tasks
     cmds:
-      - open research/reference-catalog/youtube-screenshot-list.html
+      - task --list
+
+  install:
+    desc: Install the pinned Node.js dependencies
+    sources:
+      - package.json
+      - package-lock.json
+    generates:
+      - node_modules/.package-lock.json
+    cmds:
+      - npm ci
+
+  env:
+    desc: Create a local image-generation environment file if it is missing
+    status:
+      - test -f .env
+    cmds:
+      - cp .env.example .env
+
+  dev:
+    desc: Start the Vite development server
+    deps: [install]
+    cmds:
+      - npm run dev -- {{.CLI_ARGS}}
+
+  build:
+    desc: Type-check and create the production build in dist/
+    deps: [install]
+    cmds:
+      - npm run build
+
+  preview:
+    desc: Build and serve the production application locally
+    deps: [build]
+    cmds:
+      - npm run preview -- {{.CLI_ARGS}}
+
+  check:
+    desc: Run linting, type checks, tests, and the production build
+    deps: [install]
+    cmds:
+      - npm run check
+
+  lint:
+    desc: Run ESLint
+    deps: [install]
+    cmds:
+      - npm run lint
+
+  typecheck:
+    desc: Run the TypeScript compiler without emitting files
+    deps: [install]
+    cmds:
+      - npm run typecheck
+
+  test:
+    desc: Run the test suite once
+    deps: [install]
+    cmds:
+      - npm run test -- {{.CLI_ARGS}}
+
+  images:studio:
+    desc: Start the local dance-card image studio
+    deps: [install]
+    cmds:
+      - npm run images:studio
+
+  images:plan:
+    desc: Preview an image batch without making API calls (MODE=missing|marked|all|selected)
+    deps: [install]
+    cmds:
+      - npm run images:generate -- --mode {{.MODE}} --dry-run {{.CLI_ARGS}}
+
+  images:generate:
+    desc: Generate an image batch through LiteLLM (MODE=missing|marked|all|selected)
+    deps: [install]
+    cmds:
+      - npm run images:generate -- --mode {{.MODE}} --concurrency {{.CONCURRENCY}} {{.CLI_ARGS}}

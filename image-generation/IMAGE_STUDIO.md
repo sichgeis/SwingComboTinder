@@ -16,7 +16,9 @@ Both the studio and CLI load `.env` from the repository root. Existing shell env
 ## Browser studio
 
 ```sh
-npm run images:studio
+task env
+# Edit .env, then:
+task images:studio
 ```
 
 Open <http://127.0.0.1:4174>. The studio shows the teaching frame, live master or fallback card, and latest generated candidate together. It can generate explicit selections, every missing master, figures whose `Needs rework` checkbox is checked, or the complete catalog. Independent figure requests run concurrently and report live status in the browser.
@@ -28,25 +30,26 @@ Generation never replaces live artwork. Use **Promote latest** after reviewing a
 Preview a production plan without spending API credits:
 
 ```sh
-npm run images:generate -- --mode missing --dry-run
-npm run images:generate -- --mode marked --style lindy --dry-run
+task images:plan
+task images:plan MODE=marked -- --style lindy
 ```
 
 Generate candidates with three parallel requests:
 
 ```sh
-npm run images:generate -- --mode missing --concurrency 3
-npm run images:generate -- --mode marked --quality medium --count 2
-npm run images:generate -- --mode all --concurrency 3
+task images:generate
+task images:generate MODE=marked -- --quality medium --count 2
+task images:generate MODE=all CONCURRENCY=3
 ```
 
 Generate explicit figures:
 
 ```sh
-npm run images:generate -- \
-  --mode selected \
+task images:generate MODE=selected -- \
   --ids lindy/swingout-open,charleston/kick-throughs
 ```
+
+The Task commands delegate to the npm scripts. If Task is unavailable, use `npm run images:studio` or `npm run images:generate --` with the same CLI options.
 
 Add `--promote` only when the first returned candidate should immediately become the live master. Normal production runs should generate candidates first and promote them after review.
 

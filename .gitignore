@@ -1,6 +1,7 @@
 node_modules/
 dist/
 coverage/
+.task/
 .DS_Store
 .env
 .env.local

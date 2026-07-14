@@ -20,7 +20,7 @@ figures/<style>/<figure-id>/
 3. Replace `generated/current.png`; the production WebP is derived from it during the Vite build.
 4. Update the artwork status and pose observations in `notes.md`.
 5. Update YouTube provenance or card links in `figure.ts` when sources change.
-6. Run `npm run check` before publishing.
+6. Run `task check` (or `npm run check`) before publishing.
 
 ## Adding a figure
 

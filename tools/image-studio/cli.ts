@@ -27,10 +27,11 @@ interface CliOptions {
   readonly promote: boolean;
 }
 
-const HELP = `Generate Swing Thing card candidates with OpenAI GPT Image.
+const HELP = `Generate Swing Thing card candidates with OpenAI GPT Image through LiteLLM.
 
 Usage:
   npm run images:generate -- [options]
+  task images:generate -- [options]
 
 Options:
   --mode <selected|missing|marked|all>  Figure selection (default: missing)
@@ -39,8 +40,8 @@ Options:
   --quality <low|medium|high>           Output quality (default: medium)
   --count <1-4>                         Candidates per figure (default: 1)
   --concurrency <1-6>                   Parallel figure requests (default: 3)
-  --model <model>                       Image model (default: gpt-image-2)
-  --size <widthxheight>                 Output size (default: 1024x1536)
+  --model <model>                       LiteLLM model alias (default: IMAGE_MODEL)
+  --size <widthxheight>                 Output size (default: IMAGE_SIZE)
   --dry-run                             Print the plan without API calls
   --promote                             Promote the first candidate after each success
   --help                                Show this help
