@@ -3,7 +3,7 @@
 ## Artwork status
 
 - [x] Card artwork installed
-- [ ] Needs rework
+- [x] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
 - Migrated status: Generated from `tandem-charleston.png` with fictional characters
