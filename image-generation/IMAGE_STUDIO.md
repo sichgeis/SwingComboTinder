@@ -35,7 +35,7 @@ task env
 task images:studio
 ```
 
-Open <http://127.0.0.1:4174>. The studio shows the teaching frame, live master or fallback card, and latest generated candidate together. Click any available image to inspect it at its original pixel dimensions in a scrollable preview; close the preview with its button, the backdrop, or Escape. The studio can generate explicit selections, every missing master, figures whose `Needs rework` checkbox is checked, or the complete catalog. Independent figure requests run concurrently and report live status in the browser.
+Open <http://127.0.0.1:4174>. The studio shows the teaching frame, live master or fallback card, and latest generated candidate together. Click any available image to inspect it at its original pixel dimensions in a scrollable preview; close the preview with its button, the backdrop, or Escape. Expand **Generation note** on a figure to save a short pose correction directly into that figure's `notes.md`. The correction is appended only to that figure's effective prompt, which can be checked with **Prompt** before generation. The studio can generate explicit selections, every missing master, figures whose `Needs rework` checkbox is checked, or the complete catalog. Independent figure requests run concurrently and report live status in the browser.
 
 Generation never replaces live artwork. Use **Promote latest** after reviewing a candidate. Promotion archives an existing `generated/current.png`, installs the candidate atomically, switches a fallback `figure.ts` import to the generated master, and clears the rework checkbox.
 

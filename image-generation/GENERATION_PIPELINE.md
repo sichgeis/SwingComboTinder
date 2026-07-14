@@ -56,7 +56,7 @@ Keep the generated master as a 1024 × 1536 PNG. The application build should co
 
 ## Prompt
 
-Use [`DEFAULT_INSTRUCTIONS`](../tools/image-studio/prompt.ts) verbatim for every request. Do not add a move name, `Pose direction`, `Character direction`, or a second input-assignment preamble. The teaching frame itself carries the move-specific information.
+Start every request with [`DEFAULT_INSTRUCTIONS`](../tools/image-studio/prompt.ts). Do not add a move name, `Pose direction`, `Character direction`, or a second input-assignment preamble. The teaching frame itself carries the move-specific information. When a figure has a short `Generation note` in `notes.md`, append only that note under the `FIGURE-SPECIFIC CORRECTION` heading.
 
 ## Validation and telemetry
 

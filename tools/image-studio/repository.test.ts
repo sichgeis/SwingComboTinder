@@ -11,5 +11,8 @@ describe("discoverFigures", () => {
     expect(figures.filter(({ style }) => style === "shag")).toHaveLength(8);
     expect(figures.filter(({ hasPose }) => hasPose)).toHaveLength(34);
     expect(figures.filter(({ hasCurrent }) => hasCurrent)).toHaveLength(34);
+    expect(figures.find(({ id }) => id === "charleston/side-charleston")?.generationNote).toContain(
+      "dancer on the right has the left leg raised"
+    );
   });
 });

@@ -16,6 +16,10 @@ Show side-by-side Charleston with both facing the same direction in a compact ne
 
 two Black men, both adults, in 1940s workwear-inspired clothing
 
+## Generation note
+
+The dancer on the right has the left leg raised; the dancer on the left has the right leg raised. Do not give both dancers the same raised leg.
+
 ## Working notes
 
 Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.

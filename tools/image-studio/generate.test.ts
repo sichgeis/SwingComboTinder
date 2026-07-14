@@ -47,6 +47,7 @@ describe("generateFigure", () => {
       marked: false,
       poseDirection: "Keep the dancers' feet and frame exactly as shown.",
       characterDirection: "Render both dancers as warm, expressive characters.",
+      generationNote: "The left dancer raises the right leg.",
       candidates: []
     };
     const generatedBytes = Buffer.from("generated-image");
@@ -60,6 +61,7 @@ describe("generateFigure", () => {
       expect(form.get("n")).toBe("1");
       expect(form.get("size")).toBe("1024x1536");
       expect(form.get("quality")).toBe("medium");
+      expect(form.get("prompt")).toContain("The left dancer raises the right leg.");
       return Promise.resolve(new Response(
         JSON.stringify({
           data: [{ b64_json: generatedBytes.toString("base64") }],

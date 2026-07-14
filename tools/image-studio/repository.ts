@@ -1,7 +1,8 @@
-import { access, readdir, readFile, stat } from "node:fs/promises";
+import { access, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { relative, resolve } from "node:path";
 
 import { figuresRoot, repositoryRoot } from "./paths";
+import { MAX_GENERATION_NOTE_LENGTH } from "./prompt";
 import type { CandidateImage, FigureRecord } from "./types";
 
 const exists = async (path: string): Promise<boolean> => {
@@ -23,6 +24,25 @@ const readSection = (markdown: string, heading: string): string => {
     content.push(line);
   }
   return content.join("\n").trim();
+};
+
+const writeSection = (markdown: string, heading: string, content: string): string => {
+  const lines = markdown.replaceAll("\r\n", "\n").split("\n");
+  const headingLine = `## ${heading}`;
+  const start = lines.findIndex((line) => line.trim() === headingLine);
+  const replacement = [headingLine, "", ...content.trim().split("\n"), ""];
+
+  if (start >= 0) {
+    const nextHeading = lines.findIndex((line, index) => index > start && line.startsWith("## "));
+    const end = nextHeading < 0 ? lines.length : nextHeading;
+    lines.splice(start, end - start, ...replacement);
+  } else {
+    const workingNotes = lines.findIndex((line) => line.trim() === "## Working notes");
+    const insertion = workingNotes < 0 ? lines.length : workingNotes;
+    lines.splice(insertion, 0, ...replacement);
+  }
+
+  return `${lines.join("\n").trimEnd()}\n`;
 };
 
 const discoverCandidates = async (directory: string): Promise<readonly CandidateImage[]> => {
@@ -87,12 +107,22 @@ export const discoverFigures = async (): Promise<readonly FigureRecord[]> => {
         marked: /^- \[[xX]\] Needs rework\s*$/m.test(markdown),
         poseDirection: readSection(markdown, "Pose direction"),
         characterDirection: readSection(markdown, "Character direction"),
+        generationNote: readSection(markdown, "Generation note"),
         candidates: await discoverCandidates(directory)
       });
     }
   }
 
   return figures.sort((left, right) => left.id.localeCompare(right.id));
+};
+
+export const setGenerationNote = async (figure: FigureRecord, note: string): Promise<void> => {
+  const normalized = note.trim();
+  if (normalized.length > MAX_GENERATION_NOTE_LENGTH) {
+    throw new Error(`Generation note must be at most ${MAX_GENERATION_NOTE_LENGTH} characters.`);
+  }
+  const source = await readFile(figure.notesPath, "utf8");
+  await writeFile(figure.notesPath, writeSection(source, "Generation note", normalized));
 };
 
 export const findFigure = async (id: string): Promise<FigureRecord> => {

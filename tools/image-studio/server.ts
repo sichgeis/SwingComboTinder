@@ -11,8 +11,8 @@ import { figuresRoot, repositoryRoot } from "./paths";
 import { mapWithConcurrency } from "./pool";
 import { planGeneration } from "./plan";
 import { promoteCandidate, setNeedsRework } from "./promote";
-import { buildPrompt } from "./prompt";
-import { discoverFigures, findFigure } from "./repository";
+import { buildPrompt, MAX_GENERATION_NOTE_LENGTH } from "./prompt";
+import { discoverFigures, findFigure, setGenerationNote } from "./repository";
 import {
   generationModes,
   imageQualities,
@@ -83,6 +83,7 @@ const serializeFigures = async (): Promise<unknown> =>
     hasCurrent: figure.hasCurrent,
     poseDirection: figure.poseDirection,
     characterDirection: figure.characterDirection,
+    generationNote: figure.generationNote,
     poseUrl: figure.hasPose ? mediaUrl(figure.posePath) : null,
     currentUrl: figure.hasCurrent
       ? mediaUrl(figure.currentPath)
@@ -272,8 +273,8 @@ const handleRequest = async (
   if (request.method === "GET" && url.pathname === "/api/prompt") {
     const id = url.searchParams.get("id");
     if (!id) throw new Error("Missing figure ID.");
-    await findFigure(id);
-    sendJson(response, 200, { prompt: buildPrompt() });
+    const figure = await findFigure(id);
+    sendJson(response, 200, { prompt: buildPrompt(figure.generationNote) });
     return;
   }
   if (request.method === "GET" && url.pathname === "/api/events") {
@@ -333,6 +334,26 @@ const handleRequest = async (
     requestLogger.info("figure-mark-updated", { figureId: values.id, marked: values.marked });
     event("figure-updated", { id: values.id });
     sendJson(response, 200, { marked: values.marked });
+    return;
+  }
+  if (request.method === "POST" && url.pathname === "/api/generation-note") {
+    const body = await readJson(request);
+    if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
+    const values = body as Record<string, unknown>;
+    if (typeof values.id !== "string" || typeof values.note !== "string") {
+      throw new Error("Saving a generation note requires figure id and note text.");
+    }
+    if (values.note.trim().length > MAX_GENERATION_NOTE_LENGTH) {
+      throw new Error(`Generation note must be at most ${MAX_GENERATION_NOTE_LENGTH} characters.`);
+    }
+    const figure = await findFigure(values.id);
+    await setGenerationNote(figure, values.note);
+    requestLogger.info("generation-note-saved", {
+      figureId: values.id,
+      characters: values.note.trim().length
+    });
+    event("figure-updated", { id: values.id });
+    sendJson(response, 200, { saved: true, note: values.note.trim() });
     return;
   }
   if (request.method === "GET" && url.pathname === "/media") {

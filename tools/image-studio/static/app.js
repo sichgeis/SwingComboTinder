@@ -98,6 +98,19 @@ const render = () => {
         ${imageCell(figure.currentIsFallback ? "Fallback card" : "Current master", figure.currentUrl, "No current artwork", figure.name)}
         ${imageCell("Latest candidate", latest?.url, "Generate a candidate", figure.name)}
       </div>
+      <details class="generation-note" ${figure.generationNote ? "open" : ""}>
+        <summary>Generation note${figure.generationNote ? '<span class="note-saved">saved</span>' : ""}</summary>
+        <div class="generation-note-editor">
+          <label>
+            <span>Small pose correction appended to this figure's prompt</span>
+            <textarea data-generation-note maxlength="500" rows="3" placeholder="Example: The dancer on the left raises the right leg, while the dancer on the right raises the left leg.">${escapeHtml(figure.generationNote || "")}</textarea>
+          </label>
+          <div class="generation-note-footer">
+            <span class="generation-note-count">${(figure.generationNote || "").length}/500</span>
+            <button type="button" class="secondary" data-action="save-note">Save note</button>
+          </div>
+        </div>
+      </details>
       <div class="card-actions">
         <button type="button" data-action="generate" ${figure.hasPose && !state.runActive ? "" : "disabled"}>Generate</button>
         <button type="button" class="secondary" data-action="prompt" ${figure.hasPose ? "" : "disabled"}>Prompt</button>
@@ -161,6 +174,12 @@ grid.addEventListener("change", (event) => {
   render();
 });
 
+grid.addEventListener("input", (event) => {
+  const textarea = event.target.closest("textarea[data-generation-note]");
+  if (!textarea) return;
+  textarea.closest(".generation-note-editor").querySelector(".generation-note-count").textContent = `${textarea.value.length}/500`;
+});
+
 grid.addEventListener("click", async (event) => {
   const imageButton = event.target.closest("button[data-image-url]");
   if (imageButton) {
@@ -195,6 +214,16 @@ grid.addEventListener("click", async (event) => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id, marked: !figure.marked })
       });
+      await loadFigures();
+    } else if (button.dataset.action === "save-note") {
+      const note = button.closest(".generation-note-editor").querySelector("textarea[data-generation-note]").value;
+      await request("/api/generation-note", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id, note })
+      });
+      runStatus.className = "success";
+      runStatus.textContent = `Saved generation note for ${figure.name}.`;
       await loadFigures();
     }
   } catch (error) {

@@ -19,6 +19,7 @@ figures/<style>/<figure-id>/
 2. Generate and compare candidates locally. Candidate runs and replaced versions under `generated/archive/` are ignored by Git.
 3. Promote the selected candidate to `generated/current.png`; this is the only generated file committed, and the production WebP is derived from it during the Vite build.
 4. Update the artwork status and pose observations in `notes.md`.
+   Use its optional `Generation note` for a short correction that should be appended to this figure's next image-generation prompt.
 5. Update YouTube provenance or card links in `figure.ts` when sources change.
 6. Run `task check` (or `npm run check`) before publishing.
 

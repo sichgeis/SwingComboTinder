@@ -25,6 +25,7 @@ const figure = (
     marked: options.marked ?? false,
     poseDirection: "Pose",
     characterDirection: "Characters",
+    generationNote: "",
     candidates: []
   };
 };

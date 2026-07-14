@@ -12,4 +12,12 @@ describe("buildPrompt", () => {
     expect(buildPrompt()).not.toContain("Pose direction");
     expect(buildPrompt()).not.toContain("Character direction");
   });
+
+  it("appends a concise figure-specific correction when provided", () => {
+    const prompt = buildPrompt("The right dancer raises the left leg.");
+
+    expect(prompt.startsWith(DEFAULT_INSTRUCTIONS)).toBe(true);
+    expect(prompt).toContain("FIGURE-SPECIFIC CORRECTION");
+    expect(prompt).toContain("The right dancer raises the left leg.");
+  });
 });

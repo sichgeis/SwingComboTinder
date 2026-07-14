@@ -63,7 +63,19 @@ Preserve the exact teaching pose and make the body positions easy to understand.
 
 Do not include text, labels, borders, additional people, additional limbs, distorted anatomy, or cropped feet.`;
 
-export const buildPrompt = (): string => DEFAULT_INSTRUCTIONS;
+export const MAX_GENERATION_NOTE_LENGTH = 500;
+
+export const buildPrompt = (generationNote = ""): string => {
+  const correction = generationNote.trim();
+  if (!correction) return DEFAULT_INSTRUCTIONS;
+  return `${DEFAULT_INSTRUCTIONS}
+
+FIGURE-SPECIFIC CORRECTION
+
+Apply this concise correction to the teaching pose while preserving every other instruction above:
+
+${correction}`;
+};
 
 export const hashText = (value: string): string =>
   createHash("sha256").update(value).digest("hex");

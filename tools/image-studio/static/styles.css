@@ -14,7 +14,7 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
 
 .masthead {
@@ -49,7 +49,7 @@ main { padding: 1.25rem clamp(1rem, 4vw, 4rem) 4rem; }
   backdrop-filter: blur(14px);
 }
 .toolbar label { display: grid; gap: .35rem; color: var(--muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .08em; }
-select, input {
+select, input, textarea {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: .55rem;
@@ -70,6 +70,7 @@ button.danger { color: var(--red); }
 button:disabled { opacity: .45; cursor: wait; }
 .summary { display: flex; justify-content: space-between; gap: 1rem; color: var(--muted); min-height: 3.5rem; align-items: center; }
 #run-status.error { color: var(--red); }
+#run-status.success { color: var(--mint); }
 
 .figure-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1rem; }
 .figure-card { border: 1px solid var(--line); border-radius: 1rem; overflow: hidden; background: var(--panel); }
@@ -95,6 +96,16 @@ button:disabled { opacity: .45; cursor: wait; }
 .image-zoom:focus-visible { position: relative; z-index: 1; outline: 3px solid var(--amber); outline-offset: -3px; }
 .image-zoom, .image-zoom img { cursor: zoom-in; }
 .empty-image { display: grid; place-items: center; padding: .5rem; color: #607984; text-align: center; font-size: .75rem; }
+.generation-note { border-bottom: 1px solid var(--line); background: #0a1c27; }
+.generation-note summary { display: flex; align-items: center; gap: .45rem; padding: .65rem .8rem; color: var(--muted); cursor: pointer; font-size: .76rem; font-weight: 800; }
+.generation-note summary:hover { color: #fff; }
+.note-saved { border: 1px solid #397560; border-radius: 999px; padding: .12rem .38rem; color: var(--mint); font-size: .62rem; font-weight: 700; }
+.generation-note-editor { display: grid; gap: .55rem; padding: 0 .8rem .8rem; }
+.generation-note-editor label { display: grid; gap: .35rem; color: var(--muted); font-size: .7rem; }
+.generation-note-editor textarea { min-height: 5rem; resize: vertical; line-height: 1.4; }
+.generation-note-footer { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.generation-note-count { color: var(--muted); font-size: .68rem; font-variant-numeric: tabular-nums; }
+.generation-note-footer button { padding: .4rem .65rem; font-size: .72rem; }
 .card-actions { display: flex; flex-wrap: wrap; gap: .5rem; padding: .8rem; }
 .card-actions button { padding: .45rem .65rem; font-size: .76rem; }
 .job-message { margin: 0; padding: 0 1rem 1rem; min-height: 1.4rem; color: var(--amber); font-size: .8rem; }

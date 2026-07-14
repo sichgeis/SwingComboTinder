@@ -48,6 +48,7 @@ describe("promoteCandidate", () => {
       marked: true,
       poseDirection: "Pose",
       characterDirection: "Characters",
+      generationNote: "",
       candidates: []
     };
 

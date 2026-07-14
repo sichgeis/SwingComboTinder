@@ -28,6 +28,7 @@ export interface FigureRecord {
   readonly marked: boolean;
   readonly poseDirection: string;
   readonly characterDirection: string;
+  readonly generationNote: string;
   readonly candidates: readonly CandidateImage[];
 }
 
