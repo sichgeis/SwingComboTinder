@@ -66,6 +66,19 @@
       <pre id="prompt-content"></pre>
     </dialog>
 
+    <dialog id="image-dialog" class="image-dialog" aria-labelledby="image-dialog-title">
+      <header class="image-dialog-header">
+        <div>
+          <h2 id="image-dialog-title">Image preview</h2>
+          <p id="image-dialog-meta">Original size</p>
+        </div>
+        <button id="image-dialog-close" type="button" aria-label="Close image preview">Close</button>
+      </header>
+      <div class="image-dialog-viewport">
+        <img id="image-dialog-content" alt="">
+      </div>
+    </dialog>
+
     <template id="empty-image">
       <div class="empty-image">Not available</div>
     </template>

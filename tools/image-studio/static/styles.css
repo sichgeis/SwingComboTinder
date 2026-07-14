@@ -89,6 +89,11 @@ button:disabled { opacity: .45; cursor: wait; }
 .image-cell { background: #07151f; min-width: 0; }
 .image-cell h3 { margin: 0; padding: .45rem .55rem; color: var(--muted); font-size: .66rem; text-transform: uppercase; letter-spacing: .08em; }
 .image-cell img, .empty-image { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; background: #061019; }
+.image-zoom { display: block; width: 100%; padding: 0; border: 0; border-radius: 0; background: #061019; overflow: hidden; }
+.image-zoom img { transition: transform 160ms ease, filter 160ms ease; }
+.image-zoom:hover img { transform: scale(1.025); filter: brightness(1.08); }
+.image-zoom:focus-visible { position: relative; z-index: 1; outline: 3px solid var(--amber); outline-offset: -3px; }
+.image-zoom, .image-zoom img { cursor: zoom-in; }
 .empty-image { display: grid; place-items: center; padding: .5rem; color: #607984; text-align: center; font-size: .75rem; }
 .card-actions { display: flex; flex-wrap: wrap; gap: .5rem; padding: .8rem; }
 .card-actions button { padding: .45rem .65rem; font-size: .76rem; }
@@ -99,6 +104,40 @@ dialog::backdrop { background: #02080dcc; }
 .dialog-header { display: flex; justify-content: space-between; align-items: center; }
 .dialog-header h2 { margin: 0; }
 pre { white-space: pre-wrap; color: #cbd9da; line-height: 1.55; }
+
+.image-dialog {
+  width: min(96vw, 112rem);
+  height: 96vh;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  overflow: hidden;
+}
+.image-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.image-dialog-header h2 { margin: 0; font-size: 1rem; }
+.image-dialog-header p { margin: .18rem 0 0; color: var(--muted); font-size: .74rem; }
+.image-dialog-header button { padding: .45rem .7rem; }
+.image-dialog-viewport {
+  height: calc(96vh - 4.2rem);
+  overflow: auto;
+  background-color: #030a0f;
+  background-image:
+    linear-gradient(45deg, #0c1a22 25%, transparent 25%),
+    linear-gradient(-45deg, #0c1a22 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #0c1a22 75%),
+    linear-gradient(-45deg, transparent 75%, #0c1a22 75%);
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  background-size: 16px 16px;
+}
+.image-dialog-viewport img { display: block; width: auto; height: auto; max-width: none; max-height: none; margin: 0 auto; }
 
 @media (max-width: 900px) {
   .toolbar { grid-template-columns: repeat(2, 1fr); position: static; }

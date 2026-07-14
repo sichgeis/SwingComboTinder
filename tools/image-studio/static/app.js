@@ -13,6 +13,11 @@ const form = document.querySelector("#run-form");
 const runButton = document.querySelector("#run-button");
 const promptDialog = document.querySelector("#prompt-dialog");
 const promptContent = document.querySelector("#prompt-content");
+const imageDialog = document.querySelector("#image-dialog");
+const imageDialogTitle = document.querySelector("#image-dialog-title");
+const imageDialogMeta = document.querySelector("#image-dialog-meta");
+const imageDialogContent = document.querySelector("#image-dialog-content");
+const imageDialogClose = document.querySelector("#image-dialog-close");
 
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
@@ -27,11 +32,35 @@ const request = async (url, options) => {
   return payload;
 };
 
-const imageCell = (label, url, emptyText) => `
+const imageCell = (label, url, emptyText, figureName) => `
   <div class="image-cell">
     <h3>${label}</h3>
-    ${url ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" loading="lazy">` : `<div class="empty-image">${escapeHtml(emptyText)}</div>`}
+    ${url ? `<button class="image-zoom" type="button" data-image-url="${escapeHtml(url)}" data-image-label="${escapeHtml(`${figureName} · ${label}`)}" aria-label="Magnify ${escapeHtml(label)} for ${escapeHtml(figureName)}"><img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" loading="lazy"></button>` : `<div class="empty-image">${escapeHtml(emptyText)}</div>`}
   </div>`;
+
+const openImageDialog = (url, label) => {
+  imageDialogTitle.textContent = label;
+  imageDialogMeta.textContent = "Loading original image…";
+  imageDialogContent.alt = label;
+  imageDialogContent.src = url;
+  imageDialog.showModal();
+};
+
+imageDialogContent.addEventListener("load", () => {
+  imageDialogMeta.textContent = `${imageDialogContent.naturalWidth} × ${imageDialogContent.naturalHeight} px · shown at original size`;
+});
+imageDialogContent.addEventListener("error", () => {
+  imageDialogMeta.textContent = "The original image could not be loaded.";
+});
+
+imageDialogClose.addEventListener("click", () => imageDialog.close());
+imageDialog.addEventListener("click", (event) => {
+  if (event.target === imageDialog) imageDialog.close();
+});
+imageDialog.addEventListener("close", () => {
+  imageDialogContent.removeAttribute("src");
+  imageDialogContent.alt = "";
+});
 
 const tagsFor = (figure, job) => {
   const tags = [`<span class="tag">${escapeHtml(figure.style)}</span>`];
@@ -65,9 +94,9 @@ const render = () => {
         <div class="tags">${tagsFor(figure, job)}</div>
       </header>
       <div class="comparison">
-        ${imageCell("Teaching pose", figure.poseUrl, "Add teaching-frames/selected.png")}
-        ${imageCell(figure.currentIsFallback ? "Fallback card" : "Current master", figure.currentUrl, "No current artwork")}
-        ${imageCell("Latest candidate", latest?.url, "Generate a candidate")}
+        ${imageCell("Teaching pose", figure.poseUrl, "Add teaching-frames/selected.png", figure.name)}
+        ${imageCell(figure.currentIsFallback ? "Fallback card" : "Current master", figure.currentUrl, "No current artwork", figure.name)}
+        ${imageCell("Latest candidate", latest?.url, "Generate a candidate", figure.name)}
       </div>
       <div class="card-actions">
         <button type="button" data-action="generate" ${figure.hasPose && !state.runActive ? "" : "disabled"}>Generate</button>
@@ -133,6 +162,11 @@ grid.addEventListener("change", (event) => {
 });
 
 grid.addEventListener("click", async (event) => {
+  const imageButton = event.target.closest("button[data-image-url]");
+  if (imageButton) {
+    openImageDialog(imageButton.dataset.imageUrl, imageButton.dataset.imageLabel);
+    return;
+  }
   const button = event.target.closest("button[data-action]");
   if (!button) return;
   const id = button.closest("[data-id]").dataset.id;
