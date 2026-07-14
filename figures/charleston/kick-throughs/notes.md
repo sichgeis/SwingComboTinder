@@ -3,7 +3,8 @@
 ## Artwork status
 
 - [x] Card artwork installed
-- [x] Needs rework
+- [x] Image approved
+- [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
 - Migrated status: Generated from `charleston-kick-throughs.png` with fictional characters
@@ -15,6 +16,10 @@ Show Charleston kick-throughs face to face: partners keep a safe distance and st
 ## Character direction
 
 an older Black man and an older white woman, both adults, in relaxed social-dance clothes
+
+## Generation note
+
+The Charleston kick through, which was shown here, is a kick. So the dancers stand on their behind leg, so the weight is shifted on their rear leg, and the front leg is kicked in the air, not too high, but a little bit above the ground, as depicted in the original photo.
 
 ## Working notes
 

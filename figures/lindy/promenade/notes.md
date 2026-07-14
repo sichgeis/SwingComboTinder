@@ -3,6 +3,7 @@
 ## Artwork status
 
 - [x] Card artwork installed
+- [x] Image approved
 - [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
@@ -15,6 +16,10 @@ Show promenade with both bodies turned toward the same direction and walking on 
 ## Character direction
 
 an older East Asian couple, both adults, in elegant 1930s-inspired clothing
+
+## Generation note
+
+In the promenade dance move: the man in front has his right foot in front of him and his left foot behind him. The woman in the picture, from her perspective, her right foot is in front of her, her left foot is in the back of her. So when I take a look at the picture, at the photograph, from the outside, from our perspective, I start from the left and I see her left foot, her right foot, his right foot, his left foot.
 
 ## Working notes
 

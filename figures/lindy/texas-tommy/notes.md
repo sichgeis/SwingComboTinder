@@ -3,6 +3,7 @@
 ## Artwork status
 
 - [x] Card artwork installed
+- [x] Image approved
 - [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
@@ -15,6 +16,10 @@ Show the signature Texas Tommy hand change: after swingout-like rotation, the tu
 ## Character direction
 
 two Black men, both adults, in waistcoats and high-waisted 1930s trousers
+
+## Generation note
+
+
 
 ## Working notes
 

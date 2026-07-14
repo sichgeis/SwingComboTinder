@@ -3,7 +3,8 @@
 ## Artwork status
 
 - [x] Card artwork installed
-- [ ] Needs rework
+- [x] Image approved
+- [x] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
 - Migrated status: Reworked into a compact shared circular travel; previous wide-stance version preserved as `02_lindy-circle-v1-wide-stance.png`

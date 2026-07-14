@@ -3,7 +3,8 @@
 ## Artwork status
 
 - [x] Card artwork installed
-- [x] Needs rework
+- [x] Image approved
+- [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
 - Migrated status: Generated from `side-by-side-charleston.png` with fictional characters
@@ -18,7 +19,7 @@ two Black men, both adults, in 1940s workwear-inspired clothing
 
 ## Generation note
 
-The dancer on the right has the left leg raised; the dancer on the left has the right leg raised. Do not give both dancers the same raised leg.
+The dancers have their opposite legs raised. That is as if they would be mirrored. The right dancer has its left leg up, and the left dancer, the woman, has her right leg up. So from her perspective, it's the right leg. From his perspective, it's the left leg that is raised. And it's more like a kick, because the charlston kick.
 
 ## Working notes
 

@@ -3,6 +3,7 @@
 ## Artwork status
 
 - [x] Card artwork installed
+- [ ] Image approved
 - [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: No full-resolution current PNG was available; `card.jpg` is the production source.
