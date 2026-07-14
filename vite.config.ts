@@ -8,7 +8,7 @@ export default defineConfig({
     imagetools(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["assets/icon.svg", "assets/apple-touch-icon.png", "assets/social-preview.jpg"],
+      includeAssets: ["brand/icon.svg", "brand/apple-touch-icon.png", "brand/social-preview.jpg"],
       manifest: {
         name: "Swing Thing — Lindy Hop Combo Prep",
         short_name: "Swing Thing",
@@ -18,7 +18,7 @@ export default defineConfig({
         display: "standalone",
         background_color: "#081d2d",
         theme_color: "#081d2d",
-        icons: [{ src: "assets/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" }]
+        icons: [{ src: "brand/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" }]
       },
       workbox: {
         navigateFallback: "index.html",

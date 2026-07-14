@@ -84,7 +84,7 @@ h1 em, h2 em { color: var(--coral); font-weight: 400; }
 
 .welcome { position: relative; min-height: calc(100dvh - 70px); display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
 .welcome::after { content: ""; position: absolute; inset: auto -120px -260px; height: 520px; border: 1px solid rgba(243, 181, 98, .16); border-radius: 50%; pointer-events: none; }
-.welcome-art { position: absolute; width: 285px; height: 285px; right: -82px; top: 4%; background: url("assets/welcome-art.webp") center 28% / cover no-repeat; border-radius: 50%; opacity: .34; filter: saturate(.85); mask-image: radial-gradient(circle, #000 40%, transparent 71%); -webkit-mask-image: radial-gradient(circle, #000 40%, transparent 71%); }
+.welcome-art { position: absolute; width: 285px; height: 285px; right: -82px; top: 4%; background: url("../assets/decorative/welcome-art.webp") center 28% / cover no-repeat; border-radius: 50%; opacity: .34; filter: saturate(.85); mask-image: radial-gradient(circle, #000 40%, transparent 71%); -webkit-mask-image: radial-gradient(circle, #000 40%, transparent 71%); }
 .orbit { position: absolute; border: 1px solid rgba(243, 181, 98, .5); border-radius: 50%; inset: 21px; }
 .orbit-two { inset: -7px; border-color: rgba(184, 213, 106, .22); }
 .welcome h1 { font-size: clamp(62px, 18vw, 88px); line-height: .82; position: relative; z-index: 1; }
@@ -200,7 +200,7 @@ h1 em, h2 em { color: var(--coral); font-weight: 400; }
 .stamp-up { left: 50%; top: auto; bottom: 44px; color: var(--gold); transform: translateX(-50%) rotate(-3deg); white-space: nowrap; }
 
 .results-view { padding-bottom: calc(40px + var(--safe-bottom)); }
-.results-hero { min-height: 560px; margin: 0 clamp(-24px, -5.5vw, -18px); padding: 68px 24px 30px; position: relative; overflow: hidden; background: linear-gradient(to bottom, rgba(8,29,45,.08), var(--ink) 94%), url("assets/results-hero.webp"); background-size: auto, cover; background-position: center, center 25%; }
+.results-hero { min-height: 560px; margin: 0 clamp(-24px, -5.5vw, -18px); padding: 68px 24px 30px; position: relative; overflow: hidden; background: linear-gradient(to bottom, rgba(8,29,45,.08), var(--ink) 94%), url("../assets/decorative/results-hero.webp"); background-size: auto, cover; background-position: center, center 25%; }
 .results-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,29,45,.35), transparent 70%); pointer-events: none; }
 .results-hero > * { position: relative; z-index: 1; }
 .results-hero h1 { font-size: 69px; line-height: .84; }
