@@ -5,13 +5,18 @@ import { adjacentBrowseIndex, figuresForBrowsing } from "./browse-deck";
 const figure = (id: string): Move => ({ id } as Move);
 
 describe("browse deck", () => {
-  it("contains comfortable and try-tonight figures, but not passed or undecided figures", () => {
+  it("contains every figure except those explicitly removed for tonight", () => {
     const figures = [figure("comfortable"), figure("adventure"), figure("later"), figure("unseen")];
     expect(figuresForBrowsing(figures, {
       comfortable: "keep",
       adventure: "star",
       later: "pass"
-    }).map(({ id }) => id)).toEqual(["comfortable", "adventure"]);
+    }).map(({ id }) => id)).toEqual(["comfortable", "adventure", "unseen"]);
+  });
+
+  it("starts with the complete style deck when no decisions have been made", () => {
+    const figures = [figure("swingout"), figure("circle"), figure("tuck-turn")];
+    expect(figuresForBrowsing(figures, {})).toEqual(figures);
   });
 
   it("wraps navigation at both ends of the deck", () => {

@@ -3,7 +3,7 @@ import type { Choice, Move } from "../domain/move";
 export const figuresForBrowsing = (
   moves: readonly Move[],
   choices: Readonly<Record<string, Choice>>
-): Move[] => moves.filter(({ id }) => choices[id] === "keep" || choices[id] === "star");
+): Move[] => moves.filter(({ id }) => choices[id] !== "pass");
 
 export const adjacentBrowseIndex = (
   index: number,
