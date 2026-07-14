@@ -77,6 +77,7 @@ button:disabled { opacity: .45; cursor: wait; }
 .figure-card.running { border-color: var(--amber); box-shadow: 0 0 0 1px var(--amber); }
 .figure-card.failed { border-color: var(--red); }
 .figure-card.approved { border-color: #397560; background: linear-gradient(135deg, #0d2a2c, var(--panel)); }
+.figure-card.has-new-candidates { border-color: #65d6ff; box-shadow: 0 0 0 1px #65d6ff, 0 0 1.25rem #65d6ff24; }
 .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; padding: 1rem; }
 .select-title { display: flex; gap: .7rem; align-items: flex-start; }
 .select-title input { width: auto; margin-top: .3rem; accent-color: var(--amber); }
@@ -86,6 +87,7 @@ button:disabled { opacity: .45; cursor: wait; }
 .tag { border: 1px solid var(--line); border-radius: 999px; padding: .2rem .45rem; color: var(--muted); font-size: .68rem; }
 .tag.good { color: var(--mint); border-color: #397560; }
 .tag.approved { color: #07151f; border-color: var(--mint); background: var(--mint); }
+.tag.new { color: #05131b; border-color: #65d6ff; background: #65d6ff; font-weight: 900; }
 .tag.warn { color: var(--amber); border-color: #7b6033; }
 .tag.bad { color: var(--red); border-color: #7b3f3a; }
 .comparison { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); }

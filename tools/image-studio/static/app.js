@@ -1,8 +1,36 @@
+const NEW_CANDIDATES_STORAGE_KEY = "dance-card-image-studio:new-candidates";
+
+const readNewCandidates = () => {
+  try {
+    const entries = Object.entries(JSON.parse(sessionStorage.getItem(NEW_CANDIDATES_STORAGE_KEY) || "{}"));
+    return new Map(entries.filter(([, count]) => Number.isInteger(count) && count > 0));
+  } catch {
+    return new Map();
+  }
+};
+
 const state = {
   figures: [],
   selected: new Set(),
   jobs: new Map(),
+  newCandidates: readNewCandidates(),
   runActive: false
+};
+
+const persistNewCandidates = () => {
+  try {
+    sessionStorage.setItem(
+      NEW_CANDIDATES_STORAGE_KEY,
+      JSON.stringify(Object.fromEntries(state.newCandidates))
+    );
+  } catch {
+    // The in-memory marker set still works when browser storage is unavailable.
+  }
+};
+
+const clearNewCandidates = () => {
+  state.newCandidates.clear();
+  persistNewCandidates();
 };
 
 const grid = document.querySelector("#figure-grid");
@@ -89,8 +117,10 @@ imageDialog.addEventListener("close", () => {
   imageDialogContent.alt = "";
 });
 
-const tagsFor = (figure, job) => {
-  const tags = [`<span class="tag">${escapeHtml(figure.style)}</span>`];
+const tagsFor = (figure, job, newCandidateCount) => {
+  const tags = [];
+  if (newCandidateCount) tags.push(`<span class="tag new">${newCandidateCount} new</span>`);
+  tags.push(`<span class="tag">${escapeHtml(figure.style)}</span>`);
   tags.push(figure.hasPose ? '<span class="tag good">pose ready</span>' : '<span class="tag bad">no pose</span>');
   if (!figure.hasCurrent) tags.push('<span class="tag warn">missing master</span>');
   if (figure.marked) tags.push('<span class="tag warn">rework</span>');
@@ -107,13 +137,14 @@ const render = () => {
   const marked = state.figures.filter((figure) => figure.marked).length;
   const approved = state.figures.filter((figure) => figure.imageApproved).length;
   const blocked = state.figures.filter((figure) => !figure.hasPose).length;
-  summary.textContent = `${state.figures.length} figures · ${approved} approved · ${missing} missing masters · ${marked} marked · ${blocked} missing pose references · ${state.selected.size} selected`;
+  summary.textContent = `${state.figures.length} figures · ${state.newCandidates.size} new from latest run · ${approved} approved · ${missing} missing masters · ${marked} marked · ${blocked} missing pose references · ${state.selected.size} selected`;
   runButton.disabled = state.runActive;
 
   grid.innerHTML = visible.map((figure) => {
     const latest = figure.candidates[0];
     const job = state.jobs.get(figure.id);
-    const classes = ["figure-card", figure.imageApproved ? "approved" : "", job?.state === "running" ? "running" : "", job?.state === "failed" ? "failed" : ""].filter(Boolean).join(" ");
+    const newCandidateCount = state.newCandidates.get(figure.id) || 0;
+    const classes = ["figure-card", figure.imageApproved ? "approved" : "", newCandidateCount ? "has-new-candidates" : "", job?.state === "running" ? "running" : "", job?.state === "failed" ? "failed" : ""].filter(Boolean).join(" ");
     const cardBody = figure.imageApproved ? `
       <div class="approved-summary">
         <span>This move has an image you approved.</span>
@@ -152,7 +183,7 @@ const render = () => {
           <input class="figure-select" type="checkbox" ${state.selected.has(figure.id) ? "checked" : ""}>
           <span><h2>${escapeHtml(figure.name)}</h2><span class="figure-id">${escapeHtml(figure.id)}</span></span>
         </label>
-        <div class="tags">${tagsFor(figure, job)}</div>
+        <div class="tags">${tagsFor(figure, job, newCandidateCount)}</div>
       </header>
       ${cardBody}
     </article>`;
@@ -170,6 +201,7 @@ const startRun = async (override) => {
   const ids = override?.ids || (mode === "selected" ? [...state.selected] : []);
   if (mode === "selected" && ids.length === 0) throw new Error("Select at least one figure.");
   state.jobs.clear();
+  clearNewCandidates();
   state.runActive = true;
   runStatus.className = "";
   runStatus.textContent = "Submitting generation run…";
@@ -292,11 +324,16 @@ for (const type of ["run-started", "job-started", "job-blocked", "job-completed"
   events.addEventListener(type, async (rawEvent) => {
     const update = JSON.parse(rawEvent.data);
     if (type === "run-started") {
+      clearNewCandidates();
       state.runActive = true;
       runStatus.textContent = `${update.ready} jobs ready; ${update.blocked} blocked.`;
     } else if (type.startsWith("job-") && update.id) {
       const stateName = type.replace("job-", "");
       state.jobs.set(update.id, { state: stateName, message: update.message || (stateName === "completed" ? `${update.candidates} candidate(s) ready` : "") });
+      if (type === "job-completed" && update.candidates > 0) {
+        state.newCandidates.set(update.id, update.candidates);
+        persistNewCandidates();
+      }
     } else if (type === "run-completed" || type === "run-failed") {
       state.runActive = false;
       runStatus.className = type === "run-failed" ? "error" : "";
