@@ -98,7 +98,7 @@ The application keeps its stateful control flow in `SwingThingController` and `L
 - Tap a card: switch between its illustrated front and move guide
 - Scroll vertically on the back: read the guide while horizontal swipe decisions remain available
 
-Deck focus and progress are stored locally. The application installs as an offline-capable PWA, and its share metadata includes a 1200 × 630 preview for messaging and social platforms.
+Deck focus and progress are stored locally. The application installs as an offline-capable PWA, automatically activates versioned releases, and checks for service-worker updates whenever an installed app returns to the foreground. Its share metadata includes a 1200 × 630 preview for messaging and social platforms.
 
 ## Release
 

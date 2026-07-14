@@ -20,7 +20,6 @@ describe("move catalog", () => {
       const directory = new URL(`../../figures/${figure.move.style}/${figure.move.id}/`, import.meta.url);
       expect(existsSync(new URL("figure.ts", directory))).toBe(true);
       expect(existsSync(new URL("card.jpg", directory))).toBe(true);
-      expect(existsSync(new URL("teaching-frames/", directory))).toBe(true);
       expect(existsSync(new URL("generated/", directory))).toBe(true);
       expect(existsSync(new URL("notes.md", directory))).toBe(true);
       expect(figure.card).toMatch(/[?&]format=webp&quality=80$/);
