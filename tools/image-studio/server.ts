@@ -3,6 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import { dirname, extname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { getImageEnvironment, loadEnvironment } from "./environment";
 import { generateFigure } from "./generate";
 import { figuresRoot, repositoryRoot } from "./paths";
 import { mapWithConcurrency } from "./pool";
@@ -19,8 +20,10 @@ import {
 } from "./types";
 
 const staticRoot = resolve(dirname(fileURLToPath(import.meta.url)), "static");
-const port = Number(process.env.IMAGE_STUDIO_PORT ?? 4174);
-const model = process.env.IMAGE_MODEL ?? "gpt-image-2";
+loadEnvironment();
+const environment = getImageEnvironment();
+const port = environment.studioPort;
+const model = environment.model;
 const clients = new Set<ServerResponse>();
 let runActive = false;
 
@@ -139,9 +142,10 @@ const runGeneration = async (request: RunRequest): Promise<void> => {
         const result = await generateFigure(figure, {
           model,
           quality: request.quality,
-          size: "1024x1536",
-          count: request.count
-        });
+          size: environment.imageSize,
+          count: request.count,
+          timeoutMs: environment.requestTimeoutMs
+        }, environment.apiKey);
         event("job-completed", {
           id: figure.id,
           candidates: result.candidates.length,
@@ -201,7 +205,13 @@ const serveMedia = async (response: ServerResponse, path: string | null): Promis
 const handleRequest = async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "localhost"}`);
   if (request.method === "GET" && url.pathname === "/api/config") {
-    sendJson(response, 200, { model, apiKeyConfigured: Boolean(process.env.OPENAI_API_KEY), runActive });
+    sendJson(response, 200, {
+      model,
+      imageSize: environment.imageSize,
+      imageQuality: environment.imageQuality,
+      apiKeyConfigured: Boolean(environment.apiKey),
+      runActive
+    });
     return;
   }
   if (request.method === "GET" && url.pathname === "/api/figures") {
@@ -282,7 +292,7 @@ const server = createServer((request, response) => {
 
 server.listen(port, "127.0.0.1", () => {
   console.log(`Dance Card Image Studio: http://127.0.0.1:${port}`);
-  if (!process.env.OPENAI_API_KEY) {
+  if (!environment.apiKey) {
     console.log("OPENAI_API_KEY is not set; browsing and dry planning work, generation does not.");
   }
 });

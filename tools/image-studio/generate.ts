@@ -87,7 +87,7 @@ export const generateFigure = async (
     )
   );
 
-  const client = new OpenAI({ apiKey, maxRetries: 2, timeout: 5 * 60 * 1000 });
+  const client = new OpenAI({ apiKey, maxRetries: 2, timeout: options.timeoutMs });
   const startedAt = Date.now();
   const { data: response, request_id: requestId } = await client.images
     .edit({

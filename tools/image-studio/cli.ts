@@ -1,5 +1,6 @@
 import { relative } from "node:path";
 
+import { getImageEnvironment, loadEnvironment } from "./environment";
 import { generateFigure } from "./generate";
 import { mapWithConcurrency } from "./pool";
 import { planGeneration } from "./plan";
@@ -66,6 +67,7 @@ const integerOption = (
 };
 
 const parseOptions = (args: readonly string[]): CliOptions => {
+  const environment = getImageEnvironment();
   if (args.includes("--help")) {
     console.log(HELP);
     process.exit(0);
@@ -74,7 +76,7 @@ const parseOptions = (args: readonly string[]): CliOptions => {
   if (!generationModes.includes(rawMode as GenerationMode)) {
     throw new Error(`Unknown mode: ${rawMode}`);
   }
-  const rawQuality = valueAfter(args, "--quality") ?? "medium";
+  const rawQuality = valueAfter(args, "--quality") ?? environment.imageQuality;
   if (!imageQualities.includes(rawQuality as ImageQuality)) {
     throw new Error(`Unknown quality: ${rawQuality}`);
   }
@@ -85,8 +87,8 @@ const parseOptions = (args: readonly string[]): CliOptions => {
     ...(style === undefined ? {} : { style }),
     ids: rawIds.split(",").map((id) => id.trim()).filter(Boolean),
     quality: rawQuality as ImageQuality,
-    size: valueAfter(args, "--size") ?? "1024x1536",
-    model: valueAfter(args, "--model") ?? process.env.IMAGE_MODEL ?? "gpt-image-2",
+    size: valueAfter(args, "--size") ?? environment.imageSize,
+    model: valueAfter(args, "--model") ?? environment.model,
     count: integerOption(args, "--count", 1, 1, 4),
     concurrency: integerOption(args, "--concurrency", 3, 1, 6),
     dryRun: args.includes("--dry-run"),
@@ -95,7 +97,9 @@ const parseOptions = (args: readonly string[]): CliOptions => {
 };
 
 const main = async (): Promise<void> => {
+  loadEnvironment();
   const options = parseOptions(process.argv.slice(2));
+  const environment = getImageEnvironment();
   const selection: SelectionOptions = {
     mode: options.mode,
     ...(options.style === undefined ? {} : { style: options.style }),
@@ -122,8 +126,9 @@ const main = async (): Promise<void> => {
         model: options.model,
         quality: options.quality,
         size: options.size,
-        count: options.count
-      });
+        count: options.count,
+        timeoutMs: environment.requestTimeoutMs
+      }, environment.apiKey);
       console.log(
         `Created ${result.candidates.length} candidate(s) for ${figure.id} in ${(result.durationMs / 1000).toFixed(1)}s.`
       );

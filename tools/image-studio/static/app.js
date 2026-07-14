@@ -198,6 +198,7 @@ for (const type of ["run-started", "job-started", "job-blocked", "job-completed"
 
 Promise.all([request("/api/config"), loadFigures()])
   .then(([config]) => {
+    form.elements.quality.value = config.imageQuality;
     connection.textContent = config.apiKeyConfigured ? `${config.model} ready` : "OPENAI_API_KEY missing";
     connection.className = `connection ${config.apiKeyConfigured ? "ready" : "warning"}`;
     state.runActive = config.runActive;

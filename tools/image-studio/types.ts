@@ -47,6 +47,7 @@ export interface GenerationOptions {
   readonly quality: ImageQuality;
   readonly size: string;
   readonly count: number;
+  readonly timeoutMs: number;
 }
 
 export interface TokenUsage {

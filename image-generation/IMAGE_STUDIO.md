@@ -4,13 +4,14 @@ The repository includes a local TypeScript studio and CLI for generating card-im
 
 ## Authentication
 
-Provide an OpenAI API key only to the local process. The browser never receives it.
+Copy the example configuration and add your OpenAI API key. The browser never receives it.
 
 ```sh
-export OPENAI_API_KEY="..."
+cp .env.example .env
+# Edit .env and replace sk-your-openai-api-key.
 ```
 
-`IMAGE_MODEL` optionally overrides the default `gpt-image-2`. Do not commit either value.
+Both the studio and CLI load `.env` from the repository root. Existing shell environment variables take precedence. The file also supports `IMAGE_MODEL`, `IMAGE_SIZE`, `IMAGE_QUALITY`, `REQUEST_TIMEOUT_SECONDS`, and `IMAGE_STUDIO_PORT`; see [`.env.example`](../.env.example). Never commit `.env`.
 
 ## Browser studio
 
