@@ -1,0 +1,15 @@
+import type { Choice, Move } from "../domain/move";
+
+export const figuresForBrowsing = (
+  moves: readonly Move[],
+  choices: Readonly<Record<string, Choice>>
+): Move[] => moves.filter(({ id }) => choices[id] === "keep" || choices[id] === "star");
+
+export const adjacentBrowseIndex = (
+  index: number,
+  length: number,
+  direction: "previous" | "next"
+): number => {
+  if (length <= 0) return 0;
+  return direction === "next" ? (index + 1) % length : (index - 1 + length) % length;
+};

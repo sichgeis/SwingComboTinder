@@ -15,6 +15,7 @@ import {
 } from "../domain/session";
 import type { LocalSessionStore } from "../infrastructure/local-session-store";
 import { classifyCardGesture } from "./card-gesture";
+import { adjacentBrowseIndex, figuresForBrowsing } from "./browse-deck";
 import { isIntentionalCardGesture, isIntentionalHorizontalGesture, type TouchPoint } from "./horizontal-gesture";
 import { defaultLanguage, translate, type TranslationKey } from "./translations";
 
@@ -52,6 +53,8 @@ interface PointerStart {
   lastY: number;
 }
 
+type AppMode = "build" | "browse";
+
 const requiredElement = <ElementType extends Element>(selector: string): ElementType => {
   const element = document.querySelector<ElementType>(selector);
   if (!element) throw new Error(`Required UI element is missing: ${selector}`);
@@ -62,15 +65,26 @@ export class SwingThingController {
   private session: Session;
   private language: Language;
   private pointer: PointerStart | undefined;
+  private browsePointer: PointerStart | undefined;
+  private modePointer: PointerStart | undefined;
   private touchStart: TouchPoint | undefined;
   private animating = false;
+  private browseAnimating = false;
   private cardFlipped = false;
+  private browseCardFlipped = false;
+  private suppressModeClick = false;
+  private mode: AppMode = "build";
+  private browseIndex = 0;
   private toastTimer: number | undefined;
+  private buildView: HTMLElement;
   private readonly welcomeView = requiredElement<HTMLElement>("#welcomeView");
   private readonly deckView = requiredElement<HTMLElement>("#deckView");
+  private readonly browseView = requiredElement<HTMLElement>("#browseView");
   private readonly resultsView = requiredElement<HTMLElement>("#resultsView");
   private readonly deckStage = requiredElement<HTMLElement>("#deckStage");
+  private readonly browseStage = requiredElement<HTMLElement>("#browseStage");
   private readonly activeCard = requiredElement<HTMLElement>("#activeCard");
+  private readonly browseCard = requiredElement<HTMLElement>("#browseCard");
   private readonly nextCard = requiredElement<HTMLElement>("#nextCard");
   private readonly cueDialog = requiredElement<HTMLDialogElement>("#cueDialog");
 
@@ -78,6 +92,8 @@ export class SwingThingController {
     this.session = store.load((styles) => movesForStyles(moves, styles).length);
     this.session = reconcileSession(this.session, movesForStyles(moves, this.session.styles));
     this.language = store.loadLanguage(defaultLanguage);
+    this.buildView = this.welcomeView;
+    this.browseIndex = store.loadBrowseIndex(this.browseMoves().length);
   }
 
   public start(): void {
@@ -85,6 +101,7 @@ export class SwingThingController {
     this.applyLanguage();
     this.syncFocusControls();
     this.updateResumeButton();
+    this.updateModeControls();
   }
 
   private query<ElementType extends Element>(selector: string): ElementType {
@@ -116,6 +133,10 @@ export class SwingThingController {
       const key = element.dataset.i18nHtml as TranslationKey | undefined;
       if (key) element.innerHTML = this.t(key);
     });
+    document.querySelectorAll<HTMLElement>("[data-i18n-aria]").forEach((element) => {
+      const key = element.dataset.i18nAria as TranslationKey | undefined;
+      if (key) element.setAttribute("aria-label", this.t(key));
+    });
     this.query<HTMLElement>("#languageCurrent").textContent = this.language.toUpperCase();
     this.query<HTMLElement>("#languageOther").textContent = this.language === "en" ? "DE" : "EN";
     this.query<HTMLButtonElement>("#languageButton").ariaLabel = this.t("languageAria");
@@ -124,6 +145,7 @@ export class SwingThingController {
     this.updateResumeButton();
     if (!this.deckView.hidden) this.renderDeck();
     else if (!this.resultsView.hidden) this.showResults();
+    if (this.mode === "browse") this.renderBrowse();
     if (this.cueDialog.open) this.openCue();
   }
 
@@ -135,6 +157,10 @@ export class SwingThingController {
 
   private activeMoves(): Move[] {
     return movesForStyles(moves, this.session.styles);
+  }
+
+  private browseMoves(): Move[] {
+    return figuresForBrowsing(this.activeMoves(), this.session.choices);
   }
 
   private selectedFocusStyles(): MoveStyle[] {
@@ -172,11 +198,43 @@ export class SwingThingController {
 
   private saveSession(): void {
     if (!this.store.save(this.session)) this.showToast(this.t("saveFailed"));
+    this.updateModeControls();
   }
 
   private showView(view: HTMLElement): void {
-    for (const section of [this.welcomeView, this.deckView, this.resultsView]) section.hidden = section !== view;
-    document.body.classList.toggle("deck-active", view === this.deckView);
+    this.buildView = view;
+    if (this.mode === "build") {
+      for (const section of [this.welcomeView, this.deckView, this.resultsView]) section.hidden = section !== view;
+    }
+    document.body.classList.toggle("deck-active", this.mode === "build" && view === this.deckView);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  private updateModeControls(): void {
+    const browseCount = this.browseMoves().length;
+    const buildButton = this.query<HTMLButtonElement>("#buildModeButton");
+    const browseButton = this.query<HTMLButtonElement>("#browseModeButton");
+    buildButton.classList.toggle("is-active", this.mode === "build");
+    browseButton.classList.toggle("is-active", this.mode === "browse");
+    buildButton.setAttribute("aria-pressed", String(this.mode === "build"));
+    browseButton.setAttribute("aria-pressed", String(this.mode === "browse"));
+    const count = this.query<HTMLElement>("#browseModeCount");
+    count.textContent = String(browseCount);
+    count.hidden = browseCount === 0;
+  }
+
+  private showMode(mode: AppMode): void {
+    if (this.mode === mode) return;
+    this.mode = mode;
+    this.cueDialog.close();
+    this.browseView.hidden = mode !== "browse";
+    for (const section of [this.welcomeView, this.deckView, this.resultsView]) {
+      section.hidden = mode !== "build" || section !== this.buildView;
+    }
+    document.body.classList.toggle("browse-active", mode === "browse");
+    document.body.classList.toggle("deck-active", mode === "build" && this.buildView === this.deckView);
+    this.updateModeControls();
+    if (mode === "browse") this.renderBrowse();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -212,7 +270,7 @@ export class SwingThingController {
     ];
   }
 
-  private cardMarkup(move: Move | undefined, index: number, inert = false): string {
+  private cardMarkup(move: Move | undefined, index: number, inert = false, deckChoice?: Choice): string {
     if (!move) return "";
     const guide = guideFor(move, this.language);
     const figure = figureFor(move.id);
@@ -225,7 +283,7 @@ export class SwingThingController {
           <div class="card-art" style="--card-art: url('${image}')"></div>
           <div class="card-grain"></div>
           <div class="card-content">
-            <div class="card-top"><span class="family-pill">${this.meta(move.family)}</span><span class="familiarity-pill">${this.meta(move.familiarity)}</span></div>
+            <div class="card-top"><span class="family-pill">${this.meta(move.family)}</span><span class="familiarity-pill">${deckChoice ? this.t(deckChoice === "star" ? "tryTonight" : "gotIt") : this.meta(move.familiarity)}</span></div>
             <div class="card-bottom">
               <span class="move-number">MOVE ${String(index + 1).padStart(2, "0")}</span>
               <h2>${move.name}</h2>${this.language === "en" ? `<p class="alias">${move.alias}</p>` : ""}<p class="move-description">${guide.description}</p>
@@ -311,6 +369,62 @@ export class SwingThingController {
     if (!this.cardFlipped) back?.querySelector<HTMLElement>("[data-card-scroll]")?.scrollTo({ top: 0 });
   }
 
+  private renderBrowse(entryDirection?: "left" | "right"): void {
+    const deck = this.browseMoves();
+    const empty = this.query<HTMLElement>("#browseEmpty");
+    const content = this.query<HTMLElement>("#browseDeck");
+    empty.hidden = deck.length > 0;
+    content.hidden = deck.length === 0;
+    if (deck.length === 0) {
+      this.browseIndex = 0;
+      this.store.saveBrowseIndex(0);
+      this.browseAnimating = false;
+      return;
+    }
+
+    this.browseIndex = Math.min(this.browseIndex, deck.length - 1);
+    const move = deck[this.browseIndex];
+    if (!move) return;
+    this.browseCardFlipped = false;
+    this.browseCard.innerHTML = this.cardMarkup(move, this.browseIndex, false, this.session.choices[move.id]);
+    this.browseCard.setAttribute("aria-label", `${move.name}. ${this.t("tapForGuide")}`);
+    this.browseCard.setAttribute("aria-pressed", "false");
+    this.browseCard.style.transform = "";
+    this.browseCard.style.opacity = "";
+    this.browseCard.className = `move-card browse-card${entryDirection ? ` entering-${entryDirection}` : ""}`;
+    this.query<HTMLElement>("#browseCardCount").textContent = `${String(this.browseIndex + 1).padStart(2, "0")} / ${deck.length}`;
+    this.query<HTMLElement>("#browseProgressBar").style.width = `${((this.browseIndex + 1) / deck.length) * 100}%`;
+    this.store.saveBrowseIndex(this.browseIndex);
+    this.browseAnimating = false;
+  }
+
+  private toggleBrowseCard(): void {
+    if (this.browseAnimating) return;
+    const move = this.browseMoves()[this.browseIndex];
+    if (!move) return;
+    this.browseCardFlipped = !this.browseCardFlipped;
+    this.browseCard.classList.toggle("is-flipped", this.browseCardFlipped);
+    this.browseCard.setAttribute("aria-pressed", String(this.browseCardFlipped));
+    this.browseCard.setAttribute("aria-label", `${move.name}. ${this.t(this.browseCardFlipped ? "tapForFront" : "tapForGuide")}`);
+    const front = this.browseCard.querySelector<HTMLElement>("[data-card-face=\"front\"]");
+    const back = this.browseCard.querySelector<HTMLElement>("[data-card-face=\"back\"]");
+    front?.setAttribute("aria-hidden", String(this.browseCardFlipped));
+    back?.setAttribute("aria-hidden", String(!this.browseCardFlipped));
+    if (!this.browseCardFlipped) back?.querySelector<HTMLElement>("[data-card-scroll]")?.scrollTo({ top: 0 });
+  }
+
+  private browse(direction: "previous" | "next"): void {
+    const deck = this.browseMoves();
+    if (this.browseAnimating || deck.length < 2) return;
+    this.browseAnimating = true;
+    const leavingDirection = direction === "next" ? "left" : "right";
+    this.browseCard.classList.add(`leaving-${leavingDirection}`);
+    window.setTimeout(() => {
+      this.browseIndex = adjacentBrowseIndex(this.browseIndex, deck.length, direction);
+      this.renderBrowse(direction === "next" ? "right" : "left");
+    }, 210);
+  }
+
   private resetStamps(): void {
     for (const selector of ["#stampLeft", "#stampRight", "#stampUp"]) this.query<HTMLElement>(selector).style.opacity = "0";
   }
@@ -352,6 +466,30 @@ export class SwingThingController {
     // viewport. Preserve a clearly completed swipe, but never turn a cancel
     // into a tap.
     this.finishPointerAt(this.pointer.lastX, this.pointer.lastY, false);
+  }
+
+  private finishBrowsePointer(event: PointerEvent): void {
+    if (!this.browsePointer || this.browsePointer.id !== event.pointerId) return;
+    const dx = event.clientX - this.browsePointer.x;
+    const dy = event.clientY - this.browsePointer.y;
+    this.browsePointer = undefined;
+    this.browseCard.classList.remove("dragging");
+    if (Math.abs(dx) > 52 && Math.abs(dx) > Math.abs(dy)) this.browse(dx < 0 ? "next" : "previous");
+    else if (Math.max(Math.abs(dx), Math.abs(dy)) < 9) this.toggleBrowseCard();
+    else this.browseCard.style.transform = "";
+  }
+
+  private finishModePointer(event: PointerEvent): void {
+    if (!this.modePointer || this.modePointer.id !== event.pointerId) return;
+    const dx = event.clientX - this.modePointer.x;
+    const dy = event.clientY - this.modePointer.y;
+    this.modePointer = undefined;
+    if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy)) {
+      event.preventDefault();
+      this.suppressModeClick = true;
+      this.showMode(dx < 0 ? "browse" : "build");
+      window.setTimeout(() => { this.suppressModeClick = false; }, 0);
+    }
   }
 
   private openCue(): void {
@@ -471,6 +609,17 @@ export class SwingThingController {
   }
 
   private bindEvents(): void {
+    this.query("#buildModeButton").addEventListener("click", () => {
+      if (!this.suppressModeClick) this.showMode("build");
+    });
+    this.query("#browseModeButton").addEventListener("click", () => {
+      if (!this.suppressModeClick) this.showMode("browse");
+    });
+    this.query("#browseSetButton").addEventListener("click", () => this.showMode("browse"));
+    this.query("#emptyBuildButton").addEventListener("click", () => {
+      this.showView(this.welcomeView);
+      this.showMode("build");
+    });
     this.query("#startButton").addEventListener("click", () => this.startDeck(true));
     this.query("#resumeButton").addEventListener("click", () => this.startDeck(false));
     this.query("#closeDialog").addEventListener("click", () => this.cueDialog.close());
@@ -478,7 +627,7 @@ export class SwingThingController {
     this.query("#shareButton").addEventListener("click", () => void this.shareSet());
     this.query("#replayButton").addEventListener("click", () => this.resetToWelcome());
     this.query("#brandButton").addEventListener("click", () => {
-      this.syncFocusControls(); this.updateResumeButton(); this.showView(this.welcomeView);
+      this.syncFocusControls(); this.updateResumeButton(); this.showView(this.welcomeView); this.showMode("build");
     });
     this.query("#resetButton").addEventListener("click", () => this.resetToWelcome(this.t("deckReset")));
     this.query("#languageButton").addEventListener("click", () => this.toggleLanguage());
@@ -491,6 +640,21 @@ export class SwingThingController {
       requestAnimationFrame(() => button.classList.add("spinning"));
     });
     document.querySelectorAll("[data-focus-style]").forEach((input) => input.addEventListener("change", () => this.renderFocusSelection()));
+
+    const modeSwitch = this.query<HTMLElement>("#modeSwitch");
+    modeSwitch.addEventListener("pointerdown", (event) => {
+      this.modePointer = { id: event.pointerId, x: event.clientX, y: event.clientY, lastX: event.clientX, lastY: event.clientY };
+    });
+    modeSwitch.addEventListener("pointerup", (event) => this.finishModePointer(event));
+    modeSwitch.addEventListener("pointercancel", () => { this.modePointer = undefined; });
+
+    const main = this.query<HTMLElement>("main");
+    main.addEventListener("pointerdown", (event) => {
+      if (!(event.target instanceof Element) || event.target.closest("button, a, input, label, .deck-stage, .browse-stage")) return;
+      this.modePointer = { id: event.pointerId, x: event.clientX, y: event.clientY, lastX: event.clientX, lastY: event.clientY };
+    });
+    main.addEventListener("pointerup", (event) => this.finishModePointer(event));
+    main.addEventListener("pointercancel", () => { this.modePointer = undefined; });
 
     this.deckStage.addEventListener("pointerdown", (event) => {
       if (!(event.target instanceof Element) || !event.target.closest("#activeCard")) return;
@@ -525,8 +689,39 @@ export class SwingThingController {
     this.activeCard.addEventListener("lostpointercapture", (event) => this.cancelPointer(event));
     window.addEventListener("pointerup", (event) => this.finishPointer(event));
     window.addEventListener("pointercancel", (event) => this.cancelPointer(event));
+
+    this.query("#browsePrevious").addEventListener("click", () => this.browse("previous"));
+    this.query("#browseNext").addEventListener("click", () => this.browse("next"));
+    this.browseStage.addEventListener("pointerdown", (event) => {
+      if (!(event.target instanceof Element) || !event.target.closest("#browseCard")) return;
+      if (this.browseAnimating || event.target.closest("a, button")) return;
+      this.browsePointer = { id: event.pointerId, x: event.clientX, y: event.clientY, lastX: event.clientX, lastY: event.clientY };
+      if (!this.browseCardFlipped) {
+        try { this.browseCard.setPointerCapture(event.pointerId); } catch { /* Window handlers are the fallback. */ }
+      }
+    });
+    this.browseStage.addEventListener("pointermove", (event) => {
+      if (this.browsePointer?.id !== event.pointerId) return;
+      const dx = event.clientX - this.browsePointer.x;
+      const dy = event.clientY - this.browsePointer.y;
+      if (this.browseCardFlipped && Math.abs(dy) >= Math.abs(dx)) return;
+      if (Math.abs(dx) > 8) this.browseCard.classList.add("dragging");
+      this.browseCard.style.transform = `translateX(${dx}px) rotate(${dx * .025}deg)`;
+    });
+    this.browseStage.addEventListener("pointerup", (event) => this.finishBrowsePointer(event));
+    this.browseStage.addEventListener("pointercancel", (event) => this.finishBrowsePointer(event));
+    window.addEventListener("pointerup", (event) => this.finishBrowsePointer(event));
+    window.addEventListener("pointercancel", (event) => this.finishBrowsePointer(event));
+
     document.addEventListener("keydown", (event) => {
-      if (this.deckView.hidden || this.cueDialog.open) return;
+      if (this.cueDialog.open) return;
+      if (this.mode === "browse") {
+        if (event.key === "ArrowLeft") this.browse("previous");
+        else if (event.key === "ArrowRight") this.browse("next");
+        else if (event.key === " " || event.key === "Enter") { event.preventDefault(); this.toggleBrowseCard(); }
+        return;
+      }
+      if (this.deckView.hidden) return;
       if (event.key === "ArrowLeft") this.decide("pass");
       else if (event.key === "ArrowRight") this.decide("keep");
       else if (event.key === "ArrowUp") this.decide("star");

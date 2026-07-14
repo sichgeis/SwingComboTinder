@@ -3,6 +3,7 @@ import { createSession, type Decision, type Session } from "../domain/session";
 
 export const SESSION_STORAGE_KEY = "swing-thing-session-v2";
 export const LANGUAGE_STORAGE_KEY = "swing-thing-language";
+export const BROWSE_INDEX_STORAGE_KEY = "swing-thing-browse-index";
 
 interface StorageLike {
   getItem(key: string): string | null;
@@ -86,6 +87,26 @@ export class LocalSessionStore {
     if (!this.storage) return false;
     try {
       this.storage.setItem(LANGUAGE_STORAGE_KEY, language);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  public loadBrowseIndex(maximum: number): number {
+    if (!this.storage) return 0;
+    try {
+      const value = Number(this.storage.getItem(BROWSE_INDEX_STORAGE_KEY));
+      return Number.isInteger(value) ? Math.min(Math.max(value, 0), Math.max(maximum - 1, 0)) : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  public saveBrowseIndex(index: number): boolean {
+    if (!this.storage) return false;
+    try {
+      this.storage.setItem(BROWSE_INDEX_STORAGE_KEY, String(index));
       return true;
     } catch {
       return false;

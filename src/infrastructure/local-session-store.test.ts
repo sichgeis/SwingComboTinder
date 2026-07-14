@@ -52,4 +52,13 @@ describe("LocalSessionStore", () => {
     storage.setRaw("swing-thing-language", "fr");
     expect(store.loadLanguage("de")).toBe("de");
   });
+
+  it("persists and clamps the last browse position", () => {
+    const storage = new MemoryStorage();
+    const store = new LocalSessionStore(storage);
+    expect(store.loadBrowseIndex(8)).toBe(0);
+    expect(store.saveBrowseIndex(5)).toBe(true);
+    expect(store.loadBrowseIndex(8)).toBe(5);
+    expect(store.loadBrowseIndex(3)).toBe(2);
+  });
 });

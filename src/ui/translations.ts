@@ -3,6 +3,17 @@ import type { Language } from "../domain/move";
 export const defaultLanguage: Language = "de";
 
 const english = {
+  buildMode: "BUILD",
+  browseMode: "BROWSE",
+  browseEyebrow: "YOUR DECK FOR TONIGHT",
+  browsePrompt: "Swipe through your figures. Tap for details.",
+  browseEmptyTitle: "Your deck is still empty.",
+  browseEmptyCopy: "Choose a few figures first, then they will be ready here for a quick look on the dance floor.",
+  emptyBuildCta: "BUILD MY DECK",
+  browseMyDeck: "BROWSE MY DECK",
+  browseSwipeHint: "SWIPE TO BROWSE",
+  previousFigure: "Previous figure",
+  nextFigure: "Next figure",
   resetAria: "Reset the deck",
   languageAria: "Switch language",
   missionEyebrow: "TONIGHT'S LITTLE MISSION",
@@ -68,6 +79,17 @@ export type TranslationKey = keyof typeof english;
 export const isTranslationKey = (value: string): value is TranslationKey => value in english;
 
 const german: Record<TranslationKey, string> = {
+  buildMode: "DECK BAUEN",
+  browseMode: "DURCHBLÄTTERN",
+  browseEyebrow: "DEIN DECK FÜR HEUTE",
+  browsePrompt: "Wische durch deine Figuren. Tippe für Details.",
+  browseEmptyTitle: "Dein Deck ist noch leer.",
+  browseEmptyCopy: "Wähle zuerst ein paar Figuren. Dann sind sie hier für einen schnellen Blick auf der Tanzfläche bereit.",
+  emptyBuildCta: "MEIN DECK BAUEN",
+  browseMyDeck: "MEIN DECK DURCHBLÄTTERN",
+  browseSwipeHint: "WISCHEN ZUM BLÄTTERN",
+  previousFigure: "Vorherige Figur",
+  nextFigure: "Nächste Figur",
   resetAria: "Kartendeck zurücksetzen",
   languageAria: "Sprache wechseln",
   missionEyebrow: "DEINE KLEINE MISSION FÜR HEUTE",

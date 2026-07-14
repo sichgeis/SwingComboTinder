@@ -39,6 +39,13 @@
   </head>
   <body>
     <div class="app-shell">
+      <nav class="mode-switch" id="modeSwitch" aria-label="App mode">
+        <span class="mode-switch-indicator" aria-hidden="true"></span>
+        <button class="mode-option is-active" id="buildModeButton" type="button" aria-pressed="true" data-i18n="buildMode">DECK BAUEN</button>
+        <button class="mode-option" id="browseModeButton" type="button" aria-pressed="false">
+          <span data-i18n="browseMode">DURCHBLÄTTERN</span><span class="mode-count" id="browseModeCount" hidden>0</span>
+        </button>
+      </nav>
       <header class="topbar">
         <button class="brand" id="brandButton" aria-label="Go to welcome screen">
           <span class="brand-mark" aria-hidden="true">S</span>
@@ -118,6 +125,35 @@
 
         </section>
 
+        <section class="browse-view" id="browseView" hidden aria-labelledby="browseHeading">
+          <div class="browse-empty" id="browseEmpty">
+            <span class="empty-card-stack" aria-hidden="true"><i></i><i></i><i></i></span>
+            <p class="eyebrow" data-i18n="browseEyebrow">YOUR DECK FOR TONIGHT</p>
+            <h1 data-i18n="browseEmptyTitle">Your deck is still empty.</h1>
+            <p data-i18n="browseEmptyCopy">Choose a few figures first, then they will be ready here for a quick look on the dance floor.</p>
+            <button class="primary-button" id="emptyBuildButton" data-i18n="emptyBuildCta">BUILD MY DECK</button>
+          </div>
+
+          <div class="browse-deck" id="browseDeck" hidden>
+            <div class="deck-heading browse-heading">
+              <div>
+                <p class="eyebrow" id="browseHeading" data-i18n="browseEyebrow">YOUR DECK FOR TONIGHT</p>
+                <p class="deck-prompt" data-i18n="browsePrompt">Swipe through your figures. Tap for details.</p>
+              </div>
+              <span class="count" id="browseCardCount" aria-live="polite">01 / 01</span>
+            </div>
+            <div class="progress-track browse-progress" aria-hidden="true"><span id="browseProgressBar"></span></div>
+            <div class="browse-stage" id="browseStage">
+              <article class="move-card browse-card" id="browseCard" tabindex="0" aria-live="polite"></article>
+            </div>
+            <div class="browse-controls">
+              <button id="browsePrevious" type="button" data-i18n-aria="previousFigure" aria-label="Previous figure">&#8592;</button>
+              <span data-i18n="browseSwipeHint">SWIPE TO BROWSE</span>
+              <button id="browseNext" type="button" data-i18n-aria="nextFigure" aria-label="Next figure">&#8594;</button>
+            </div>
+          </div>
+        </section>
+
         <section class="results-view" id="resultsView" hidden aria-labelledby="resultsTitle">
           <div class="results-hero">
             <p class="eyebrow"><span data-i18n="resultEyebrow">YOUR POCKET SET</span> · <span id="resultsFocus">LINDY HOP</span></p>
@@ -148,6 +184,7 @@
           </div>
 
           <div class="result-actions">
+            <button class="primary-button" id="browseSetButton" data-i18n="browseMyDeck">BROWSE MY DECK</button>
             <button class="primary-button" id="shareButton" data-i18n="share">SHARE MY SET</button>
             <button class="secondary-button" id="replayButton" data-i18n="replay">BUILD ANOTHER DECK</button>
           </div>
