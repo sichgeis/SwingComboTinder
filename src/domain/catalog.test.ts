@@ -23,7 +23,7 @@ describe("move catalog", () => {
       expect(existsSync(new URL("teaching-frames/", directory))).toBe(true);
       expect(existsSync(new URL("generated/", directory))).toBe(true);
       expect(existsSync(new URL("notes.md", directory))).toBe(true);
-      expect(figure.card).toMatch(/\.jpg$/);
+      expect(figure.card).toMatch(/[?&]format=webp&quality=80$/);
     }
   });
 

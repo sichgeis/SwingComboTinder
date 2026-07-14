@@ -1,4 +1,4 @@
-import card from "./card.jpg?url";
+import card from "./generated/current.png?w=600&h=900&format=webp&quality=80";
 import { defineFigure } from "../../define-figure";
 
 export default defineFigure({

@@ -1,9 +1,11 @@
 import { defineConfig } from "vite";
+import { imagetools } from "vite-imagetools";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   base: "/SwingComboTinder/",
   plugins: [
+    imagetools(),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["assets/icon.svg", "assets/apple-touch-icon.png", "assets/social-preview.jpg"],
@@ -21,7 +23,7 @@ export default defineConfig({
       workbox: {
         navigateFallback: "index.html",
         cleanupOutdatedCaches: true,
-        globPatterns: ["**/*.{js,css,html,png,svg,jpg,webmanifest}"],
+        globPatterns: ["**/*.{js,css,html,png,svg,jpg,webp,webmanifest}"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\//,

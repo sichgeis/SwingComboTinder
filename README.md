@@ -35,7 +35,7 @@ npm run preview # serve the production build locally
 - `src/ui/` contains the browser controller that renders and coordinates the current interface.
 - `src/main.ts` is the small composition root for storage, UI, and PWA registration.
 
-Vite eagerly discovers each `figure.ts`, sorts definitions by their explicit `order`, and emits only imported `card.jpg` files as hashed production assets. `teaching-frames/`, `generated/`, and `notes.md` remain source-only.
+Vite eagerly discovers each `figure.ts`, sorts definitions by their explicit `order`, and converts each figure's best available source image into a hashed 600 × 900 WebP at quality 80. `teaching-frames/`, full-resolution generated sources, and `notes.md` remain source-only.
 
 The design deliberately uses two stateful classes—`SwingThingController` and `LocalSessionStore`—while keeping business rules as immutable functions. This keeps the control flow visible without introducing a framework or a layer for every operation.
 
