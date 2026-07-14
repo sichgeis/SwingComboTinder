@@ -4,7 +4,7 @@
 
 - [x] Card artwork installed
 - [x] Image approved
-- [x] Needs rework
+- [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
 - Migrated status: Generated from `side-pass.png`; fictional-character variation available as `19_side-pass-v2-fictional-characters.png` (not installed)
