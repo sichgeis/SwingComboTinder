@@ -1,0 +1,80 @@
+import card from "./card.jpg?url";
+import { defineFigure } from "../../define-figure";
+
+export default defineFigure({
+  card,
+  "order": 29,
+  "move": {
+    "id": "side-charleston",
+    "name": "Side-by-Side Charleston",
+    "alias": "Kick together, stay compact",
+    "style": "charleston",
+    "family": "Charleston",
+    "count": "8 count",
+    "motion": "Linear",
+    "end": "Side-by-side",
+    "familiarity": "Comfort move",
+    "flows": "hand-to-hand · Charleston tuck turn · Tandem Charleston"
+  },
+  "guides": {
+    "en": {
+      "description": "Share Charleston's odd-beat accents in a compact side-by-side frame with safe, grounded kicks.",
+      "steps": "A common pattern rocks back, steps, kicks forward, steps, kicks back, and steps through eight counts. Keep every supporting-foot change clear and make the kicks smaller than practice-room size. Repeat only while pulse and floor space remain comfortable.",
+      "body": "Stay low and buoyant through the standing leg, with knees soft and the free leg swinging from the hip. Partners face the same direction on parallel tracks. Avoid leaning back to make kicks look larger.",
+      "lead": "Establish the side-by-side orientation and shared pulse before increasing the kick texture. Direction changes come from torso rotation and travel through the closed-side frame. The lead does not move the follow's leg; each dancer owns their kicks.",
+      "connection": "Use a supportive near-side frame through the lead's right arm/back contact and the follow's left-side response. The frame is toned but elastic, mostly neutral rather than stretched. Hips may be near, but neither dancer presses or hangs on the other.",
+      "cue": "Small kicks, strong pulse, separate balance, shared direction."
+    },
+    "de": {
+      "description": "Side-by-Side Charleston bedeutet: dieselbe Richtung, derselbe Puls, zwei getrennte Kick-Spuren.",
+      "steps": "Ein vertrauter Eight-Count ist Rock Step, Step, Kick vor, Step, Kick zurück und Step. Wichtiger als die exakte Größe ist, dass jeder Wechsel unter dem Körper landet und der nächste Kick vorbereitet ist.",
+      "body": "Der Bounce bleibt im Standbein. Das freie Bein schwingt locker aus der Hüfte, ohne dass sich der Oberkörper nach hinten wirft. Beide Kicks bleiben schmal genug, dass sich die Spuren nie kreuzen.",
+      "lead": "Der Lead teilt Puls, Richtung und mögliche Übergänge über den eigenen Körper und die nahe Seiten- oder Rückenverbindung. Ein Bein wird niemals über den Arm geführt.",
+      "connection": "Der Frame ist kompakt und ruhig. Über die nahe Seite ist der Puls spürbar, während Hände und Schultern so entspannt bleiben, dass die Beine frei schwingen können.",
+      "cue": "Zwei Kick-Spuren, ein gemeinsamer Bounce.",
+      "headings": {
+        "steps": "Was passiert?",
+        "body": "Woran du es merkst",
+        "lead": "Als Lead",
+        "connection": "Rhythmus und Spielraum",
+        "follow": "Als Follow",
+        "practice": "Frage zum Üben"
+      },
+      "follow": "Teile Bounce und Richtung, aber trage dein Gewicht selbst und halte deine Kick-Spur frei. Passe die Größe an Raum und Partner an.",
+      "practice": "Bleibt der gemeinsame Puls sichtbar, wenn ihr eure Kicks bewusst unterschiedlich groß oder unterschiedlich gestylt tanzt?"
+    }
+  },
+  "youtube": {
+    "teachingSources": [
+      {
+        "videoId": "O-X0VjLufDo",
+        "timestampSeconds": 32,
+        "frame": "teaching-frames/selected.png",
+        "notes": "Source listed for the selected teaching frame."
+      },
+      {
+        "videoId": "EsxtGBMQGq4",
+        "title": "Swing Dancing from Hellzapoppin' (1941) — Whitey's Lindy Hoppers",
+        "channel": "Frankie Manning Foundation archive",
+        "notes": "Artwork reference selection: historic Black Lindy Hop footage."
+      },
+      {
+        "videoId": "O-X0VjLufDo",
+        "notes": "Reference catalog candidate (Charleston fundamentals reference). Key frame: Show classic side-by-side position with matching opposite kicks and the leader’s arm around follower’s back."
+      }
+    ],
+    "cardLinks": [
+      {
+        "videoId": "Z8Z6cWgqOq4",
+        "title": "Charleston Basic – Lindy From the Ground Up",
+        "kind": "tutorial"
+      },
+      {
+        "videoId": "tQyv3GWOdnY",
+        "title": "Kick Through, Charleston Turn & Basic Charleston",
+        "kind": "tutorial"
+      }
+    ]
+  }
+
+});

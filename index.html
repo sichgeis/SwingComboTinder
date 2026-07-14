@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#081d2d" />
+    <meta name="application-name" content="Swing Thing" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Swing Thing" />
+    <meta name="description" content="Build a focused Lindy Hop, Charleston, or Collegiate Shag deck for tonight." />
+    <meta name="robots" content="index, follow" />
+
+    <link rel="canonical" href="https://sichgeis.github.io/SwingComboTinder/" />
+    <link rel="image_src" href="https://sichgeis.github.io/SwingComboTinder/assets/social-preview.jpg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Swing Thing" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content="Swing Thing — Build your swing deck" />
+    <meta property="og:description" content="Choose Lindy Hop, Charleston, or Collegiate Shag and build a focused pocket set for tonight's social dance floor." />
+    <meta property="og:url" content="https://sichgeis.github.io/SwingComboTinder/" />
+    <meta property="og:image" content="https://sichgeis.github.io/SwingComboTinder/assets/social-preview.jpg" />
+    <meta property="og:image:secure_url" content="https://sichgeis.github.io/SwingComboTinder/assets/social-preview.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A joyful swing-dancing couple under a warm spotlight in a vintage jazz club illustration." />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Swing Thing — Build your swing deck" />
+    <meta name="twitter:description" content="Choose Lindy Hop, Charleston, or Collegiate Shag and build a focused pocket set for tonight's social dance floor." />
+    <meta name="twitter:image" content="https://sichgeis.github.io/SwingComboTinder/assets/social-preview.jpg" />
+    <meta name="twitter:image:alt" content="A joyful swing-dancing couple under a warm spotlight in a vintage jazz club illustration." />
+
+    <link rel="icon" href="%BASE_URL%assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="%BASE_URL%assets/apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Swing Thing — Build your swing deck</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <button class="brand" id="brandButton" aria-label="Go to welcome screen">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span>SWING THING</span>
+        </button>
+        <div class="topbar-actions">
+          <button class="language-button" id="languageButton" aria-label="Switch language"><span id="languageCurrent">EN</span><span aria-hidden="true">/</span><span id="languageOther">DE</span></button>
+          <button class="icon-button" id="resetButton" aria-label="Reset the deck" title="Reset deck">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.6 8.5A8 8 0 1 1 4 14m.6-5.5V4m0 4.5H9" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="welcome" id="welcomeView" aria-labelledby="welcomeTitle">
+          <div class="welcome-art" aria-hidden="true">
+            <span class="orbit orbit-one"></span>
+            <span class="orbit orbit-two"></span>
+          </div>
+          <p class="eyebrow" data-i18n="missionEyebrow">TONIGHT'S LITTLE MISSION</p>
+          <h1 id="welcomeTitle" data-i18n-html="welcomeTitle">Find your<br /><em>flow.</em></h1>
+          <p class="welcome-copy" data-i18n="welcomeCopy">Build tonight's Swing vocabulary. Choose your dance styles, keep what feels good, and leave with a focused pocket set for the floor.</p>
+          <fieldset class="focus-picker">
+            <legend data-i18n="deckLegend">WHAT BELONGS IN TONIGHT'S DECK?</legend>
+            <div class="focus-options">
+              <label class="focus-option">
+                <input type="checkbox" value="lindy" data-focus-style checked />
+                <span class="focus-check" aria-hidden="true"></span>
+                <span><strong>Lindy Hop</strong><small data-i18n="lindyHint">Circles, turns & stretch</small></span>
+                <b data-style-count="lindy">28</b>
+              </label>
+              <label class="focus-option">
+                <input type="checkbox" value="charleston" data-focus-style />
+                <span class="focus-check" aria-hidden="true"></span>
+                <span><strong>Charleston</strong><small data-i18n="charlestonHint">Kicks, tandem & pulse</small></span>
+                <b data-style-count="charleston">6</b>
+              </label>
+              <label class="focus-option">
+                <input type="checkbox" value="shag" data-focus-style />
+                <span class="focus-check" aria-hidden="true"></span>
+                <span><strong>Collegiate Shag</strong><small data-i18n="shagHint">Fast feet & compact frame</small></span>
+                <b data-style-count="shag">8</b>
+              </label>
+            </div>
+            <p id="focusHint" aria-live="polite">28 figures selected. You can combine styles or keep tonight focused.</p>
+          </fieldset>
+          <div class="mission-row" aria-label="Deck facts">
+            <span><strong id="selectedMoveCount">28</strong><small data-i18n="figures">figures</small></span>
+            <span><strong>3</strong><small data-i18n="choices">choices</small></span>
+            <span><strong>1</strong><small data-i18n="pocketSet">pocket set</small></span>
+          </div>
+          <button class="primary-button" id="startButton">
+            <span data-i18n="buildDeck">BUILD MY DECK</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
+          </button>
+          <button class="resume-button" id="resumeButton" hidden>Resume where I left off</button>
+          <p class="tiny-note" data-i18n="tinyNote">No wrong moves. No sign-in. No judgment.</p>
+        </section>
+
+        <section class="deck-view" id="deckView" hidden aria-labelledby="deckHeading">
+          <div class="deck-heading">
+            <div>
+              <p class="eyebrow" id="deckHeading"><span data-i18n="deckEyebrow">YOUR SWING VOCABULARY</span><span id="deckFocus" hidden>LINDY</span></p>
+              <p class="deck-prompt" data-i18n="deckPrompt">Does this belong in tonight's dance?</p>
+            </div>
+            <span class="count" id="cardCount" aria-live="polite">01 / 27</span>
+          </div>
+          <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+
+          <div class="deck-stage" id="deckStage">
+            <article class="move-card next-card" id="nextCard" aria-hidden="true" inert></article>
+            <article class="move-card active-card" id="activeCard" tabindex="0" aria-live="polite"></article>
+            <div class="decision-stamp stamp-left" id="stampLeft" data-i18n="notTonight">NOT TONIGHT</div>
+            <div class="decision-stamp stamp-right" id="stampRight" data-i18n="gotIt">GOT IT</div>
+            <div class="decision-stamp stamp-up" id="stampUp" data-i18n="tryTonight">TRY TONIGHT</div>
+          </div>
+
+        </section>
+
+        <section class="results-view" id="resultsView" hidden aria-labelledby="resultsTitle">
+          <div class="results-hero">
+            <p class="eyebrow"><span data-i18n="resultEyebrow">YOUR POCKET SET</span> · <span id="resultsFocus">LINDY HOP</span></p>
+            <h1 id="resultsTitle" data-i18n-html="resultTitle">You found<br />your <em>flow.</em></h1>
+            <p id="resultsIntro"></p>
+            <div class="score-ring" aria-label="Tonight confidence score">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="score-bg" cx="60" cy="60" r="52" />
+                <circle class="score-fill" id="scoreCircle" cx="60" cy="60" r="52" />
+              </svg>
+              <div><strong id="scoreValue">0</strong><span data-i18n="movesReady">moves ready</span></div>
+            </div>
+          </div>
+
+          <div class="result-summary" id="resultSummary"></div>
+
+          <div class="section-heading">
+            <div><p class="eyebrow" data-i18n="setList">TONIGHT'S SET LIST</p><h2 data-i18n-html="comboHeading">Three combos.<br />Plenty of room to play.</h2></div>
+            <button class="shuffle-button" id="shuffleButton" aria-label="Shuffle combo suggestions">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h3c4 0 6 10 10 10h3m-3-3 3 3-3 3M4 17h3c1.5 0 2.7-1.4 3.8-3M14 7c1-1.2 2-2 3-2h3m-3-3 3 3-3 3" /></svg>
+            </button>
+          </div>
+          <div class="combo-list" id="comboList"></div>
+
+          <div class="floor-note">
+            <span class="note-icon" aria-hidden="true">♪</span>
+            <div><strong data-i18n="resetHeading">Your reset button</strong><p data-i18n="resetCopy">If a move gets fuzzy: breathe, find the pulse, and choose one familiar pathway. Connection beats complexity every time.</p></div>
+          </div>
+
+          <div class="result-actions">
+            <button class="primary-button" id="shareButton" data-i18n="share">SHARE MY SET</button>
+            <button class="secondary-button" id="replayButton" data-i18n="replay">BUILD ANOTHER DECK</button>
+          </div>
+          <p class="install-note" data-i18n="install">On iPhone: Share → Add to Home Screen. The deck works offline after your first visit.</p>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="cue-dialog" id="cueDialog">
+      <button class="dialog-close" id="closeDialog" aria-label="Close">×</button>
+      <p class="eyebrow" id="cueStyle">MOVE GUIDE</p>
+      <h2 id="cueTitle"></h2>
+      <div class="guide-section">
+        <h3 id="cueStepsHeading" data-i18n="rhythmHeading">Rhythm & footwork</h3>
+        <p id="cueSteps"></p>
+      </div>
+      <div class="guide-section">
+        <h3 id="cueBodyHeading" data-i18n="bodyHeading">Body & pathway</h3>
+        <p id="cueBody"></p>
+      </div>
+      <div class="guide-section">
+        <h3 id="cueLeadHeading" data-i18n="leadHeading">Lead & hands</h3>
+        <p id="cueLead"></p>
+      </div>
+      <div class="guide-section" id="cueFollowSection" hidden>
+        <h3 id="cueFollowHeading">Als Follow</h3>
+        <p id="cueFollow"></p>
+      </div>
+      <div class="guide-section">
+        <h3 id="cueConnectionHeading" data-i18n="connectionHeading">Frame, tension & release</h3>
+        <p id="cueConnection"></p>
+      </div>
+      <div class="guide-section" id="cuePracticeSection" hidden>
+        <h3 id="cuePracticeHeading">Frage zum Üben</h3>
+        <p id="cuePractice"></p>
+      </div>
+      <div class="memory-cue"><span data-i18n="remember">REMEMBER</span><strong id="cueMemory"></strong></div>
+      <div class="flows-into"><span data-i18n="flowsInto">FLOWS INTO</span><strong id="cueFlow"></strong></div>
+      <section class="guide-videos" id="cueVideos" hidden>
+        <h3 data-i18n="videosHeading">Learn with Laura Glaess</h3>
+        <div class="guide-video-list" id="cueVideoList"></div>
+      </section>
+      <p class="guide-note" data-i18n="guideNote">A memory aid, not a substitute for feedback from a teacher or partner. Adapt range, rhythm, and connection to the person in front of you.</p>
+      <button class="primary-button" id="gotItButton" data-i18n="gotIt">GOT IT</button>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

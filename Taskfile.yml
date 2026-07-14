@@ -1,0 +1,7 @@
+version: "3"
+
+tasks:
+  catalog:
+    desc: Open the numbered YouTube screenshot list
+    cmds:
+      - open research/reference-catalog/youtube-screenshot-list.html
