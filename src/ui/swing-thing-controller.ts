@@ -362,6 +362,7 @@ export class SwingThingController {
   }
 
   private renderBrowse(entryDirection?: "left" | "right"): void {
+    const preserveDetailView = entryDirection !== undefined && this.browseCardFlipped;
     const deck = this.browseMoves();
     const empty = this.query<HTMLElement>("#browseEmpty");
     const content = this.query<HTMLElement>("#browseDeck");
@@ -377,13 +378,12 @@ export class SwingThingController {
     this.browseIndex = Math.min(this.browseIndex, deck.length - 1);
     const move = deck[this.browseIndex];
     if (!move) return;
-    this.browseCardFlipped = false;
+    this.browseCardFlipped = preserveDetailView;
     this.browseCard.innerHTML = this.cardMarkup(move, this.browseIndex, false, this.session.choices[move.id]);
-    this.browseCard.setAttribute("aria-label", `${move.name}. ${this.t("tapForGuide")}`);
-    this.browseCard.setAttribute("aria-pressed", "false");
     this.browseCard.style.transform = "";
     this.browseCard.style.opacity = "";
-    this.browseCard.className = `move-card browse-card${entryDirection ? ` entering-${entryDirection}` : ""}`;
+    this.browseCard.className = `move-card browse-card${this.browseCardFlipped ? " is-flipped" : ""}${entryDirection ? ` entering-${entryDirection}` : ""}`;
+    this.applyBrowseCardFace(move);
     this.query<HTMLElement>("#browseCardCount").textContent = `${String(this.browseIndex + 1).padStart(2, "0")} / ${deck.length}`;
     this.query<HTMLElement>("#browseProgressBar").style.width = `${((this.browseIndex + 1) / deck.length) * 100}%`;
     this.store.saveBrowseIndex(this.browseIndex);
@@ -395,6 +395,10 @@ export class SwingThingController {
     const move = this.browseMoves()[this.browseIndex];
     if (!move) return;
     this.browseCardFlipped = !this.browseCardFlipped;
+    this.applyBrowseCardFace(move);
+  }
+
+  private applyBrowseCardFace(move: Move): void {
     this.browseCard.classList.toggle("is-flipped", this.browseCardFlipped);
     this.browseCard.setAttribute("aria-pressed", String(this.browseCardFlipped));
     this.browseCard.setAttribute("aria-label", `${move.name}. ${this.t(this.browseCardFlipped ? "tapForFront" : "tapForGuide")}`);
