@@ -2,6 +2,8 @@
 
 Use this document as the implementation contract for generating dance-card artwork. The reusable creative prompt lives in [`PROMPT.md`](PROMPT.md).
 
+The implemented local UI and batch commands are documented in [`IMAGE_STUDIO.md`](IMAGE_STUDIO.md).
+
 ## Request layout
 
 Use the Image API edit endpoint with four ordered inputs:

@@ -1,0 +1,102 @@
+import { access, readdir, readFile, stat } from "node:fs/promises";
+import { relative, resolve } from "node:path";
+
+import { figuresRoot, repositoryRoot } from "./paths";
+import type { CandidateImage, FigureRecord } from "./types";
+
+const exists = async (path: string): Promise<boolean> => {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const readSection = (markdown: string, heading: string): string => {
+  const lines = markdown.split(/\r?\n/);
+  const start = lines.findIndex((line) => line.trim() === `## ${heading}`);
+  if (start < 0) return "";
+  const content: string[] = [];
+  for (const line of lines.slice(start + 1)) {
+    if (line.startsWith("## ")) break;
+    content.push(line);
+  }
+  return content.join("\n").trim();
+};
+
+const discoverCandidates = async (directory: string): Promise<readonly CandidateImage[]> => {
+  const candidatesRoot = resolve(directory, "generated/candidates");
+  if (!(await exists(candidatesRoot))) return [];
+
+  const runDirectories = await readdir(candidatesRoot, { withFileTypes: true });
+  const candidates: CandidateImage[] = [];
+  for (const runDirectory of runDirectories) {
+    if (!runDirectory.isDirectory()) continue;
+    const runPath = resolve(candidatesRoot, runDirectory.name);
+    for (const entry of await readdir(runPath, { withFileTypes: true })) {
+      if (!entry.isFile() || !/^candidate-\d+\.png$/.test(entry.name)) continue;
+      const absolutePath = resolve(runPath, entry.name);
+      const details = await stat(absolutePath);
+      candidates.push({
+        absolutePath,
+        relativePath: relative(repositoryRoot, absolutePath).split("\\").join("/"),
+        createdAt: details.mtime.toISOString(),
+        runId: runDirectory.name
+      });
+    }
+  }
+  return candidates.sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+};
+
+export const discoverFigures = async (): Promise<readonly FigureRecord[]> => {
+  const styles = await readdir(figuresRoot, { withFileTypes: true });
+  const figures: FigureRecord[] = [];
+
+  for (const styleEntry of styles) {
+    if (!styleEntry.isDirectory()) continue;
+    const style = styleEntry.name;
+    const styleDirectory = resolve(figuresRoot, style);
+    const moves = await readdir(styleDirectory, { withFileTypes: true });
+    for (const moveEntry of moves) {
+      if (!moveEntry.isDirectory()) continue;
+      const directory = resolve(styleDirectory, moveEntry.name);
+      const notesPath = resolve(directory, "notes.md");
+      const definitionPath = resolve(directory, "figure.ts");
+      if (!(await exists(notesPath)) || !(await exists(definitionPath))) continue;
+
+      const markdown = await readFile(notesPath, "utf8");
+      const name = /^#\s+(.+)$/m.exec(markdown)?.[1]?.trim() ?? moveEntry.name;
+      const posePath = resolve(directory, "teaching-frames/selected.png");
+      const currentPath = resolve(directory, "generated/current.png");
+      const fallbackPath = resolve(directory, "card.jpg");
+      figures.push({
+        id: `${style}/${moveEntry.name}`,
+        style,
+        slug: moveEntry.name,
+        name,
+        directory,
+        notesPath,
+        definitionPath,
+        posePath,
+        currentPath,
+        fallbackPath,
+        hasPose: await exists(posePath),
+        hasCurrent: await exists(currentPath),
+        hasFallback: await exists(fallbackPath),
+        marked: /^- \[[xX]\] Needs rework\s*$/m.test(markdown),
+        poseDirection: readSection(markdown, "Pose direction"),
+        characterDirection: readSection(markdown, "Character direction"),
+        candidates: await discoverCandidates(directory)
+      });
+    }
+  }
+
+  return figures.sort((left, right) => left.id.localeCompare(right.id));
+};
+
+export const findFigure = async (id: string): Promise<FigureRecord> => {
+  const figure = (await discoverFigures()).find((item) => item.id === id);
+  if (!figure) throw new Error(`Unknown figure: ${id}`);
+  return figure;
+};

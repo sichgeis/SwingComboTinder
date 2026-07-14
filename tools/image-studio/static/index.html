@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dance Card Image Studio</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">Swing Thing · local production tool</p>
+        <h1>Dance Card Image Studio</h1>
+        <p class="lede">Generate pose-locked card candidates, compare them with the teaching frame and live artwork, then explicitly promote the winner.</p>
+      </div>
+      <div id="connection" class="connection">Connecting…</div>
+    </header>
+
+    <main>
+      <form id="run-form" class="toolbar">
+        <label>Mode
+          <select name="mode">
+            <option value="selected">Selected figures</option>
+            <option value="missing">Missing masters</option>
+            <option value="marked">Marked for rework</option>
+            <option value="all">All figures</option>
+          </select>
+        </label>
+        <label>Style
+          <select name="style">
+            <option value="">All styles</option>
+            <option value="lindy">Lindy</option>
+            <option value="charleston">Charleston</option>
+            <option value="shag">Shag</option>
+          </select>
+        </label>
+        <label>Quality
+          <select name="quality">
+            <option value="low">Low draft</option>
+            <option value="medium" selected>Medium production</option>
+            <option value="high">High final</option>
+          </select>
+        </label>
+        <label>Candidates
+          <input name="count" type="number" min="1" max="4" value="1">
+        </label>
+        <label>Parallel jobs
+          <input name="concurrency" type="number" min="1" max="6" value="3">
+        </label>
+        <button id="run-button" type="submit">Generate</button>
+      </form>
+
+      <section class="summary" aria-live="polite">
+        <p id="summary">Loading figures…</p>
+        <p id="run-status"></p>
+      </section>
+
+      <section id="figure-grid" class="figure-grid" aria-live="polite"></section>
+    </main>
+
+    <dialog id="prompt-dialog">
+      <form method="dialog" class="dialog-header">
+        <h2>Effective prompt</h2>
+        <button aria-label="Close">Close</button>
+      </form>
+      <pre id="prompt-content"></pre>
+    </dialog>
+
+    <template id="empty-image">
+      <div class="empty-image">Not available</div>
+    </template>
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
