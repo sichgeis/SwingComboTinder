@@ -2,6 +2,15 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Implemented product baseline
+
+- Status: Done
+- Goal: Preserve a concise, evidence-based record of the product capabilities delivered before the specification workflow was introduced.
+- Scope: Deck building, figure content and assets, the local image studio, PWA delivery, and deck browsing through commit `d905877`.
+- Acceptance: The delivered capability groups and their Git evidence are recorded in [`specs/implemented-baseline.md`](specs/implemented-baseline.md) without replacing current source code, tests, or specialized documentation as the authority.
+- Validation: Historical commits were audited and the resulting baseline was checked against the current README, figure documentation, source, and tests.
+- Next action: None; update current product documentation and feature specifications as behavior changes.
+
 ## Card Studio full content editing
 
 - Status: Proposed

@@ -8,6 +8,8 @@ Use a dedicated `specs/<feature>.md` when work changes a substantial user flow, 
 
 Do not create a specification merely to add ceremony. A proposed feature may remain in `FEATURES.md` while options are still being explored.
 
+When introducing this workflow to an existing project, historical work may be consolidated into one Done baseline specification. Record observed outcomes and commit evidence; do not invent requirements, decisions, or approval history after the fact.
+
 ## Lifecycle
 
 - **Proposed:** Discovery or options exist, but implementation is not authorized.
