@@ -1,5 +1,9 @@
 export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSaved }) => {
   const LAST_FIGURE_KEY = "swing-thing-studio:last-content-figure";
+  const LIBRARY_WIDTH_KEY = "swing-thing-studio:library-width";
+  const DEFAULT_LIBRARY_WIDTH = 320;
+  const MIN_LIBRARY_WIDTH = 240;
+  const MAX_LIBRARY_WIDTH = 480;
   const contentState = {
     activeContentId: null,
     content: null,
@@ -18,6 +22,8 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   };
 
   const contentWorkspace = document.querySelector("#content-workspace");
+  const figureLibrary = document.querySelector(".figure-library");
+  const libraryResizer = document.querySelector("#library-resizer");
   const contentSearch = document.querySelector("#content-search");
   const contentStyle = document.querySelector("#content-style");
   const contentStatus = document.querySelector("#content-status");
@@ -38,6 +44,63 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const previewStatus = document.querySelector("#preview-status");
   const cardPreview = document.querySelector("#card-preview");
   const mobileFigurePicker = document.querySelector("#mobile-figure-picker");
+  const storedLibraryWidth = Number(localStorage.getItem(LIBRARY_WIDTH_KEY));
+  let preferredLibraryWidth = Number.isFinite(storedLibraryWidth) && storedLibraryWidth > 0 ? storedLibraryWidth : DEFAULT_LIBRARY_WIDTH;
+
+  const availableLibraryWidth = () => Math.max(
+    MIN_LIBRARY_WIDTH,
+    Math.min(MAX_LIBRARY_WIDTH, Math.floor(contentWorkspace.clientWidth * .4))
+  );
+
+  const applyLibraryWidth = (width, remember = false) => {
+    const maximum = availableLibraryWidth();
+    const applied = Math.max(MIN_LIBRARY_WIDTH, Math.min(maximum, Math.round(width)));
+    contentWorkspace.style.setProperty("--library-width", `${applied}px`);
+    libraryResizer.setAttribute("aria-valuemax", String(maximum));
+    libraryResizer.setAttribute("aria-valuenow", String(applied));
+    if (remember) {
+      preferredLibraryWidth = applied;
+      localStorage.setItem(LIBRARY_WIDTH_KEY, String(applied));
+    }
+  };
+
+  applyLibraryWidth(preferredLibraryWidth);
+
+  libraryResizer.addEventListener("pointerdown", (event) => {
+    if (matchMedia("(max-width: 900px)").matches) return;
+    event.preventDefault();
+    libraryResizer.setPointerCapture(event.pointerId);
+    document.body.classList.add("resizing-library");
+  });
+  libraryResizer.addEventListener("pointermove", (event) => {
+    if (!libraryResizer.hasPointerCapture(event.pointerId)) return;
+    applyLibraryWidth(event.clientX - figureLibrary.getBoundingClientRect().left);
+  });
+  const finishLibraryResize = (event) => {
+    if (!libraryResizer.hasPointerCapture(event.pointerId)) return;
+    libraryResizer.releasePointerCapture(event.pointerId);
+    document.body.classList.remove("resizing-library");
+    applyLibraryWidth(Number(libraryResizer.getAttribute("aria-valuenow")), true);
+  };
+  libraryResizer.addEventListener("pointerup", finishLibraryResize);
+  libraryResizer.addEventListener("pointercancel", finishLibraryResize);
+  libraryResizer.addEventListener("dblclick", () => {
+    preferredLibraryWidth = DEFAULT_LIBRARY_WIDTH;
+    localStorage.removeItem(LIBRARY_WIDTH_KEY);
+    applyLibraryWidth(preferredLibraryWidth);
+  });
+  libraryResizer.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const current = Number(libraryResizer.getAttribute("aria-valuenow"));
+    const next = event.key === "Home"
+      ? MIN_LIBRARY_WIDTH
+      : event.key === "End"
+        ? availableLibraryWidth()
+        : current + (event.key === "ArrowLeft" ? -16 : 16);
+    applyLibraryWidth(next, true);
+  });
+  window.addEventListener("resize", () => applyLibraryWidth(preferredLibraryWidth));
   const previewStylesPromise = fetch("/app-card.css").then(async (response) => {
     if (!response.ok) throw new Error("The app card stylesheet could not be loaded.");
     return (await response.text()).replace(/^@import[^\n]*\n/, "");
