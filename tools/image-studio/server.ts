@@ -82,28 +82,31 @@ const event = (type: string, payload: Record<string, unknown> = {}): void => {
 const mediaUrl = (path: string): string =>
   `/media?path=${encodeURIComponent(relative(repositoryRoot, path).split("\\").join("/"))}`;
 
+const contentSummaryFor = async (figure: Awaited<ReturnType<typeof findFigure>>): Promise<Record<string, unknown>> => {
+  try {
+    const { content } = await readFigureContentFile(figure.definitionPath, figure.slug);
+    return {
+      name: content.basics.name,
+      alias: content.basics.alias,
+      contentValid: true,
+      germanComplete: true,
+      resourceCount: content.cardResources.length
+    };
+  } catch (error) {
+    return {
+      name: figure.name,
+      alias: "",
+      contentValid: false,
+      germanComplete: false,
+      resourceCount: 0,
+      contentError: error instanceof Error ? error.message : String(error)
+    };
+  }
+};
+
 const serializeFigures = async (): Promise<unknown> =>
   Promise.all((await discoverFigures()).map(async (figure) => {
-    let contentSummary: Record<string, unknown>;
-    try {
-      const { content } = await readFigureContentFile(figure.definitionPath, figure.slug);
-      contentSummary = {
-        name: content.basics.name,
-        alias: content.basics.alias,
-        contentValid: true,
-        germanComplete: true,
-        resourceCount: content.cardResources.length
-      };
-    } catch (error) {
-      contentSummary = {
-        name: figure.name,
-        alias: "",
-        contentValid: false,
-        germanComplete: false,
-        resourceCount: 0,
-        contentError: error instanceof Error ? error.message : String(error)
-      };
-    }
+    const contentSummary = await contentSummaryFor(figure);
     return {
       id: figure.id,
       style: figure.style,
@@ -286,6 +289,57 @@ const serveMedia = async (response: ServerResponse, path: string | null): Promis
 const figureImageUrl = (figure: Awaited<ReturnType<typeof findFigure>>): string =>
   figure.hasCurrent ? mediaUrl(figure.currentPath) : figure.hasFallback ? mediaUrl(figure.fallbackPath) : "";
 
+const serveFigureContent = async (response: ServerResponse, id: string | null): Promise<void> => {
+  if (!id) throw new Error("Missing figure ID.");
+  const figure = await findFigure(id);
+  const loaded = await readFigureContentFile(figure.definitionPath, figure.slug);
+  sendJson(response, 200, { ...loaded, imageUrl: figureImageUrl(figure) });
+};
+
+const saveFigureContent = async (
+  request: IncomingMessage,
+  response: ServerResponse,
+  requestLogger: Logger
+): Promise<void> => {
+  const body = await readJson(request);
+  if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
+  const values = body as Record<string, unknown>;
+  if (typeof values.id !== "string" || typeof values.revision !== "string") {
+    throw new Error("Saving content requires figure id and source revision.");
+  }
+  const figure = await findFigure(values.id);
+  const current = await readFigureContentFile(figure.definitionPath, figure.slug);
+  const saved = await saveFigureContentFile(
+    figure.definitionPath,
+    current.content.identity,
+    values.revision,
+    values.content
+  );
+  requestLogger.info("figure-content-saved", { figureId: values.id, revision: saved.revision });
+  event("figure-updated", { id: values.id });
+  sendJson(response, 200, { ...saved, imageUrl: figureImageUrl(figure) });
+};
+
+const serveFigurePreview = async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+  const body = await readJson(request);
+  if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
+  const values = body as Record<string, unknown>;
+  if (typeof values.id !== "string" || (values.language !== "en" && values.language !== "de")) {
+    throw new Error("Preview requires figure id and language.");
+  }
+  const figure = await findFigure(values.id);
+  const content = validateFigureContent(values.content);
+  const imageUrl = figureImageUrl(figure);
+  sendJson(response, 200, {
+    markup: renderCardMarkup({
+      figure: figureDefinitionFromContent(content, imageUrl),
+      language: values.language,
+      index: Math.max(0, content.identity.order - 1),
+      imageUrl
+    })
+  });
+};
+
 const handleRequest = async (
   request: IncomingMessage,
   response: ServerResponse,
@@ -307,51 +361,15 @@ const handleRequest = async (
     return;
   }
   if (request.method === "GET" && url.pathname === "/api/figure-content") {
-    const id = url.searchParams.get("id");
-    if (!id) throw new Error("Missing figure ID.");
-    const figure = await findFigure(id);
-    const loaded = await readFigureContentFile(figure.definitionPath, figure.slug);
-    sendJson(response, 200, { ...loaded, imageUrl: figureImageUrl(figure) });
+    await serveFigureContent(response, url.searchParams.get("id"));
     return;
   }
   if (request.method === "PUT" && url.pathname === "/api/figure-content") {
-    const body = await readJson(request);
-    if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
-    const values = body as Record<string, unknown>;
-    if (typeof values.id !== "string" || typeof values.revision !== "string") {
-      throw new Error("Saving content requires figure id and source revision.");
-    }
-    const figure = await findFigure(values.id);
-    const current = await readFigureContentFile(figure.definitionPath, figure.slug);
-    const saved = await saveFigureContentFile(
-      figure.definitionPath,
-      current.content.identity,
-      values.revision,
-      values.content
-    );
-    requestLogger.info("figure-content-saved", { figureId: values.id, revision: saved.revision });
-    event("figure-updated", { id: values.id });
-    sendJson(response, 200, { ...saved, imageUrl: figureImageUrl(figure) });
+    await saveFigureContent(request, response, requestLogger);
     return;
   }
   if (request.method === "POST" && url.pathname === "/api/preview") {
-    const body = await readJson(request);
-    if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
-    const values = body as Record<string, unknown>;
-    if (typeof values.id !== "string" || (values.language !== "en" && values.language !== "de")) {
-      throw new Error("Preview requires figure id and language.");
-    }
-    const figure = await findFigure(values.id);
-    const content = validateFigureContent(values.content);
-    const definition = figureDefinitionFromContent(content, figureImageUrl(figure));
-    sendJson(response, 200, {
-      markup: renderCardMarkup({
-        figure: definition,
-        language: values.language,
-        index: Math.max(0, content.identity.order - 1),
-        imageUrl: figureImageUrl(figure)
-      })
-    });
+    await serveFigurePreview(request, response);
     return;
   }
   if (request.method === "GET" && url.pathname === "/api/prompt") {
@@ -462,7 +480,7 @@ const handleRequest = async (
     response.end(await readFile(appStylesPath));
     return;
   }
-  if (request.method === "GET" && ["/", "/app.js", "/styles.css"].includes(url.pathname)) {
+  if (request.method === "GET" && ["/", "/app.js", "/content-workspace.js", "/styles.css"].includes(url.pathname)) {
     await serveStatic(response, url.pathname);
     return;
   }

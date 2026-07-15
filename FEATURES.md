@@ -18,7 +18,7 @@ This file is the compact current-work surface for Swing Thing. Detailed accepted
 - Scope: Figure library, structured Basics/English/German/Resources editing, shared front/back preview, generic web resources, atomic `figure.ts` persistence, and preservation of the existing Image Queue.
 - Non-goals: Do not add review states, maintenance queues, bulk editing, AI writing, content-file migration, or a broader image-workflow redesign.
 - Specification: [`specs/content-studio-editorial-core.md`](specs/content-studio-editorial-core.md)
-- Progress: All four approved increments were implemented on 2026-07-15: safe content persistence, structured bilingual editing, shared preview and generic resources, responsive workspace navigation, and preserved Image Queue behavior.
+- Progress: All four approved increments were implemented on 2026-07-15. A subsequent behavior-preserving Goldene-Mitte refactor separated the Content workspace controller, content model, source persistence, and named server actions while preserving the workflow and Image Queue.
 - Validation: `npm run check` passes with 21 test files and 56 tests. Browser validation covered all-figure loading, unsaved live preview, web-resource rendering, German/English front/back controls, mobile Editor/Preview switching, and the 42-card Image Queue without saving test drafts.
 - Next action: None; use the completed editorial core for real content maintenance and evaluate the separate Option B draft from that experience.
 

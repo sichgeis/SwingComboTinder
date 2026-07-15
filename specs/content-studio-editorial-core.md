@@ -172,6 +172,8 @@ A failed or conflicted save leaves the original file unchanged. The generated so
 - Keep the editor/API centered on a storage-independent DTO so a later storage migration does not require redesigning the UI.
 - Use the installed TypeScript tooling for controlled parsing and validation; do not evaluate arbitrary source text.
 - Keep content persistence and image operations separate so a failure in one cannot corrupt the other.
+- Keep content validation and DTO-to-domain mapping independent from TypeScript-source parsing and filesystem persistence.
+- Keep Content workspace state and DOM ownership inside its own client module; the studio entry point orchestrates workspaces and shared figure refreshes.
 - Do not introduce a frontend framework solely for this feature.
 - Keep the studio bound to the local development environment and do not expose filesystem mutation remotely.
 
@@ -204,6 +206,7 @@ A failed or conflicted save leaves the original file unchanged. The generated so
 - 2026-07-15: Extracted the production card presentation, added generic language-aware web resources, and used the shared renderer for live unsaved previews.
 - 2026-07-15: Reworked the local tool into Content and Image Queue workspaces with searchable figure navigation, structured Basics/English/German/Resources editing, responsive Editor/Preview switching, and unsaved-change protection.
 - 2026-07-15: Updated repository documentation and completed automated and browser validation.
+- 2026-07-15: Refactored the completed studio without behavior changes: isolated Content workspace state, separated content-model validation from source persistence, and reduced server routing to named content actions.
 
 ## Validation evidence
 
