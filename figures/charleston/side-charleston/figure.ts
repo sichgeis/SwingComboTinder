@@ -21,21 +21,13 @@ export default defineFigure({
   "guides": {
     "en": {
       "description": "Share Charleston's odd-beat accents in a compact side-by-side frame with safe, grounded kicks.",
-      "steps": "A common pattern rocks back, steps, kicks forward, steps, kicks back, and steps through eight counts. Keep every supporting-foot change clear and make the kicks smaller than practice-room size. Repeat only while pulse and floor space remain comfortable.",
-      "body": "Stay low and buoyant through the standing leg, with knees soft and the free leg swinging from the hip. Partners face the same direction on parallel tracks. Avoid leaning back to make kicks look larger.",
-      "lead": "Establish the side-by-side orientation and shared pulse before increasing the kick texture. Direction changes come from torso rotation and travel through the closed-side frame. The lead does not move the follow's leg; each dancer owns their kicks.",
-      "connection": "Use a supportive near-side frame through the lead's right arm/back contact and the follow's left-side response. The frame is toned but elastic, mostly neutral rather than stretched. Hips may be near, but neither dancer presses or hangs on the other.",
-      "cue": "Small kicks, strong pulse, separate balance, shared direction."
+      "body": "## Rhythm & footwork\n\nA common pattern rocks back, steps, kicks forward, steps, kicks back, and steps through eight counts. Keep every supporting-foot change clear and make the kicks smaller than practice-room size. Repeat only while pulse and floor space remain comfortable.\n\n## Body & pathway\n\nStay low and buoyant through the standing leg, with knees soft and the free leg swinging from the hip. Partners face the same direction on parallel tracks. Avoid leaning back to make kicks look larger.\n\n## Lead & hands\n\nEstablish the side-by-side orientation and shared pulse before increasing the kick texture. Direction changes come from torso rotation and travel through the closed-side frame. The lead does not move the follow's leg; each dancer owns their kicks.\n\n## Frame, tension & release\n\nUse a supportive near-side frame through the lead's right arm/back contact and the follow's left-side response. The frame is toned but elastic, mostly neutral rather than stretched. Hips may be near, but neither dancer presses or hangs on the other.",
+      "remember": "Small kicks, strong pulse, separate balance, shared direction."
     },
     "de": {
       "description": "Side-by-Side Charleston bedeutet: dieselbe Richtung, derselbe Puls, zwei getrennte Kick-Spuren.",
-      "steps": "Ein vertrauter Eight-Count ist Rock Step, Step, Kick vor, Step, Kick zurück und Step. Wichtiger als die exakte Größe ist, dass jeder Wechsel unter dem Körper landet und der nächste Kick vorbereitet ist.",
-      "body": "Der Bounce bleibt im Standbein. Das freie Bein schwingt locker aus der Hüfte, ohne dass sich der Oberkörper nach hinten wirft. Beide Kicks bleiben schmal genug, dass sich die Spuren nie kreuzen.",
-      "lead": "Der Lead teilt Puls, Richtung und mögliche Übergänge über den eigenen Körper und die nahe Seiten- oder Rückenverbindung. Ein Bein wird niemals über den Arm geführt.",
-      "connection": "Der Frame ist kompakt und ruhig. Über die nahe Seite ist der Puls spürbar, während Hände und Schultern so entspannt bleiben, dass die Beine frei schwingen können.",
-      "cue": "Zwei Kick-Spuren, ein gemeinsamer Bounce.",
-      "follow": "Teile Bounce und Richtung, aber trage dein Gewicht selbst und halte deine Kick-Spur frei. Passe die Größe an Raum und Partner an.",
-      "practice": "Bleibt der gemeinsame Puls sichtbar, wenn ihr eure Kicks bewusst unterschiedlich groß oder unterschiedlich gestylt tanzt?"
+      "body": "## Was passiert?\n\nEin vertrauter Eight-Count ist Rock Step, Step, Kick vor, Step, Kick zurück und Step. Wichtiger als die exakte Größe ist, dass jeder Wechsel unter dem Körper landet und der nächste Kick vorbereitet ist.\n\n## Woran du es merkst\n\nDer Bounce bleibt im Standbein. Das freie Bein schwingt locker aus der Hüfte, ohne dass sich der Oberkörper nach hinten wirft. Beide Kicks bleiben schmal genug, dass sich die Spuren nie kreuzen.\n\n## Als Lead\n\nDer Lead teilt Puls, Richtung und mögliche Übergänge über den eigenen Körper und die nahe Seiten- oder Rückenverbindung. Ein Bein wird niemals über den Arm geführt.\n\n## Als Follow\n\nTeile Bounce und Richtung, aber trage dein Gewicht selbst und halte deine Kick-Spur frei. Passe die Größe an Raum und Partner an.\n\n## Rhythmus und Spielraum\n\nDer Frame ist kompakt und ruhig. Über die nahe Seite ist der Puls spürbar, während Hände und Schultern so entspannt bleiben, dass die Beine frei schwingen können.\n\n## Frage zum Üben\n\nBleibt der gemeinsame Puls sichtbar, wenn ihr eure Kicks bewusst unterschiedlich groß oder unterschiedlich gestylt tanzt?",
+      "remember": "Zwei Kick-Spuren, ein gemeinsamer Bounce."
     }
   },
   "resources": [

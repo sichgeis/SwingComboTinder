@@ -1,7 +1,7 @@
 # Flexible bilingual card guides
 
-- Status: Proposed
-- Maturity: Draft; implementation is not authorized.
+- Status: Done
+- Approved: 2026-07-15
 - Goal: Give each localized card guide a flexible ordered body without losing the stable card title, short description, or closing memory cue.
 
 ## Context
@@ -84,7 +84,7 @@ Validation reports line-oriented body problems against the localized body field 
 All 42 figures migrate mechanically without editorial rewrites:
 
 - English body order: Rhythm & footwork, Body & pathway, Lead & hands, Frame/tension/release.
-- German body order: Rhythmus & Schritte, Körper & Weg, Als Lead, Als Follow, Verbindung, Frage zum Üben.
+- German body order: Was passiert?, Woran du es merkst, Als Lead, Als Follow, Rhythmus und Spielraum, Frage zum Üben.
 - Existing `description` remains `description`.
 - Existing `cue` becomes `remember`.
 - Existing section prose is copied verbatim beneath the corresponding currently rendered localized heading.
@@ -128,12 +128,24 @@ The migration must be audited for every removed field so no prose is lost and th
 2. Update shared card presentation and the full-guide dialog to render arbitrary parsed sections, with focused rendering and safety tests.
 3. Align Content Studio editing, validation, preview, persistence, documentation, and canonical validation.
 
-## Open decisions before approval
+## Decisions
 
-- Confirm that plain paragraphs are sufficient initially, with no bullet-list syntax or inline emphasis.
-- Confirm that the figure title remains the shared canonical `move.name`; only description, body, and remember are localized.
-- Confirm the stored field names `description`, `body`, and `remember`.
+- Plain paragraphs are sufficient initially; bullet-list syntax and inline emphasis are excluded.
+- The figure title remains the shared canonical `move.name`; only description, body, and remember are localized.
+- The stored field names are `description`, `body`, and `remember` after reconsidering alternatives such as `content`, `sections`, and `cue`.
+
+## Progress
+
+- 2026-07-15: The user approved the proposed syntax, shared title, and field names.
+- 2026-07-15: Added the shared parser, migrated all 42 English and German guides, and aligned the domain and Content Studio models.
+- 2026-07-15: Updated the shared card renderer, full-guide dialog, Studio editor, validation, and focused tests for arbitrary localized sections and multiple paragraphs.
+
+## Validation
+
+- `npm run check` passes linting, strict type checks, 21 test files with 59 tests, and the production PWA build.
+- A field-by-field migration audit compared all 84 localized guides with the pre-migration fields and verified descriptions, section prose, ordering, and memory cues without loss.
+- Local browser validation used real catalog and preview APIs to verify the German phone card back plus the expanded German Content Studio guide editor and matching live back preview. It did not save content or send image-generation requests.
 
 ## Next action
 
-Review the proposed syntax and open decisions. Explicit approval, with any requested revisions, changes this feature to Approved and authorizes implementation within the agreed scope.
+None. Use the flexible section syntax for future guide-specific editorial work.

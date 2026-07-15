@@ -58,7 +58,8 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       ? `<textarea ${attributes} rows="${options.rows || 4}">${escapeHtml(value ?? "")}</textarea>`
       : `<input ${attributes} value="${escapeHtml(value ?? "")}">`;
     const count = options.textarea ? `<small class="field-count">${String(value ?? "").length} characters</small>` : "";
-    return `<label class="content-field ${options.full ? "full" : ""}" data-field-path="${escapeHtml(path)}"><span>${escapeHtml(label)}</span>${control}<span class="field-footer"><small class="field-error"></small>${count}</span></label>`;
+    const hint = options.hint ? `<small class="field-hint">${escapeHtml(options.hint)}</small>` : "";
+    return `<label class="content-field ${options.full ? "full" : ""}" data-field-path="${escapeHtml(path)}"><span>${escapeHtml(label)}</span>${hint}${control}<span class="field-footer"><small class="field-error"></small>${count}</span></label>`;
   };
 
   const selectField = (label, path, value, choices, options = {}) => `<label class="content-field ${options.full ? "full" : ""}" data-field-path="${escapeHtml(path)}"><span>${escapeHtml(label)}</span><select data-content-path="${escapeHtml(path)}">${choices.map(({ value: optionValue, label: optionLabel }) => `<option value="${escapeHtml(optionValue)}" ${value === optionValue ? "selected" : ""}>${escapeHtml(optionLabel)}</option>`).join("")}</select><small class="field-error"></small></label>`;
@@ -139,17 +140,21 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       selectField("Motion", "basics.motion", basics.motion, metadataChoices(contentState.metadataOptions.motionKinds)),
       endingEditor()
     ].join("");
-    const englishFields = ["description", "steps", "body", "lead", "connection", "cue"]
-      .map((key) => contentField(key[0].toUpperCase() + key.slice(1), `guides.en.${key}`, guides.en[key], { textarea: true, full: true }))
-      .join("");
-    const germanFields = ["description", "steps", "body", "lead", "follow", "connection", "cue", "practice"]
-      .map((key) => contentField(key[0].toUpperCase() + key.slice(1), `guides.de.${key}`, guides.de[key], { textarea: true, full: true }))
-      .join("");
+    const guideFields = (language, guide) => [
+      contentField("Description", `guides.${language}.description`, guide.description, { textarea: true, full: true }),
+      contentField("Guide body", `guides.${language}.body`, guide.body, {
+        textarea: true,
+        full: true,
+        rows: 14,
+        hint: "Start every section with ## Heading. Separate plain-text paragraphs with a blank line."
+      }),
+      contentField("Remember", `guides.${language}.remember`, guide.remember, { textarea: true, full: true })
+    ].join("");
     contentFields.innerHTML = [
       technicalIdentity,
       section("Basics", basicsFields, "Figure facts"),
-      section("English", englishFields, "6 fields"),
-      section("German", germanFields, "8 fields"),
+      section("English", guideFields("en", guides.en), "3 fields"),
+      section("German", guideFields("de", guides.de), "3 fields"),
       section("Resources", cardResourcesEditor(), `${contentState.content.cardResources.length} link${contentState.content.cardResources.length === 1 ? "" : "s"}`)
     ].join("");
     applyContentIssues(contentState.contentIssues);

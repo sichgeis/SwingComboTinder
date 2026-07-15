@@ -28,11 +28,8 @@ export type MoveEnding =
 
 export interface MoveGuide {
   readonly description: string;
-  readonly steps: string;
   readonly body: string;
-  readonly lead: string;
-  readonly connection: string;
-  readonly cue: string;
+  readonly remember: string;
 }
 
 export interface Move {
@@ -44,11 +41,6 @@ export interface Move {
   readonly motion: MotionKind;
   readonly end: MoveEnding;
 }
-
-export type GermanMoveGuide = MoveGuide & {
-  readonly follow: string;
-  readonly practice: string;
-};
 
 export const isMoveStyle = (value: unknown): value is MoveStyle =>
   typeof value === "string" && moveStyles.some((style) => style === value);

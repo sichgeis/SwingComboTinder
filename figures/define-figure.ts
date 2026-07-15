@@ -1,4 +1,4 @@
-import type { GermanMoveGuide, Language, Move, MoveGuide } from "../src/domain/move";
+import type { Language, Move, MoveGuide } from "../src/domain/move";
 
 export const videoKinds = ["tutorial", "technique", "variation", "history"] as const;
 export type VideoKind = (typeof videoKinds)[number];
@@ -28,7 +28,7 @@ export interface FigureDefinition {
   readonly move: Move;
   readonly guides: {
     readonly en: MoveGuide;
-    readonly de: GermanMoveGuide;
+    readonly de: MoveGuide;
   };
   readonly resources: readonly CardResource[];
 }

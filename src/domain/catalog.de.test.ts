@@ -1,14 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { figures } from "../../figures/catalog";
 import { moves } from "./catalog";
+import { parseGuideBody } from "./guide-body";
 
 describe("German move guides", () => {
   it("provides complete teaching copy for every move", () => {
     expect(figures.map(({ move }) => move.id).sort()).toEqual(moves.map(({ id }) => id).sort());
     for (const { guides: { de: guide } } of figures) {
-      const copy = [guide.description, guide.steps, guide.body, guide.lead, guide.follow, guide.connection, guide.practice, guide.cue];
+      const copy = [guide.description, guide.body, guide.remember];
       expect(copy.every((text) => text.trim().length >= 30)).toBe(true);
-      expect(guide.practice.trim().endsWith("?")).toBe(true);
+      const parsed = parseGuideBody(guide.body);
+      expect(parsed.issues).toEqual([]);
+      expect(parsed.sections).toHaveLength(6);
+      expect(parsed.sections.at(-1)?.paragraphs.at(-1)?.endsWith("?")).toBe(true);
     }
   });
 });

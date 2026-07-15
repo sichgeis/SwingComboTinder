@@ -55,6 +55,16 @@ describe("figure content persistence", () => {
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, end: { kind: "positions", positions: [] } } })).toThrow(ContentValidationError);
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, end: { kind: "positions", positions: ["open", "open"] } } })).toThrow(ContentValidationError);
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, end: { kind: "positions", positions: ["somewhere"] } } })).toThrow(ContentValidationError);
+    try {
+      serializeFigureContent({ ...content, guides: { ...content.guides, en: { ...content.guides.en, body: "Copy before a heading" } } });
+      throw new Error("Expected invalid guide body to fail.");
+    } catch (error) {
+      expect(error).toBeInstanceOf(ContentValidationError);
+      expect((error as ContentValidationError).issues).toContainEqual({
+        path: "guides.en.body",
+        message: "Line 1: Guide body must begin with a ## section heading."
+      });
+    }
   });
 
   it("normalizes ending positions into canonical order", async () => {

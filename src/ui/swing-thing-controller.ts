@@ -1,6 +1,7 @@
 import { figureFor } from "../../figures/catalog";
 import { youtubeUrl } from "../../figures/define-figure";
 import { moves } from "../domain/catalog";
+import { parseGuideBody } from "../domain/guide-body";
 import type { BuildChoice, Language, Move, MoveStyle } from "../domain/move";
 import {
   createSession,
@@ -13,7 +14,7 @@ import {
 import type { LocalSessionStore } from "../infrastructure/local-session-store";
 import { classifyCardGesture } from "./card-gesture";
 import { adjacentBrowseIndex, figuresForBrowsing } from "./browse-deck";
-import { escapeHtml, familyLabel, renderCardMarkup, styleMeta, videoKindLabel, webResourceKindLabel } from "./card-presentation";
+import { escapeHtml, familyLabel, renderCardMarkup, renderGuideSections, styleMeta, videoKindLabel, webResourceKindLabel } from "./card-presentation";
 import { isIntentionalCardGesture, isIntentionalHorizontalGesture, type TouchPoint } from "./horizontal-gesture";
 import { defaultLanguage, translate, type TranslationKey } from "./translations";
 
@@ -407,26 +408,9 @@ export class SwingThingController {
     const guide = figure.guides[this.language];
     this.query<HTMLElement>("#cueTitle").textContent = move.name;
     this.query<HTMLElement>("#cueStyle").textContent = `${styleMeta[move.style].label} · ${familyLabel(this.language, move.family)}`;
-    this.query<HTMLElement>("#cueStepsHeading").textContent = this.t("rhythmHeading");
-    this.query<HTMLElement>("#cueBodyHeading").textContent = this.t("bodyHeading");
-    this.query<HTMLElement>("#cueLeadHeading").textContent = this.t("leadHeading");
-    this.query<HTMLElement>("#cueConnectionHeading").textContent = this.t("connectionHeading");
-    this.query<HTMLElement>("#cueSteps").textContent = guide.steps;
-    this.query<HTMLElement>("#cueBody").textContent = guide.body;
-    this.query<HTMLElement>("#cueLead").textContent = guide.lead;
-    this.query<HTMLElement>("#cueConnection").textContent = guide.connection;
-    const translatedGuide = this.language === "de" ? figure.guides.de : undefined;
-    const followSection = this.query<HTMLElement>("#cueFollowSection");
-    const practiceSection = this.query<HTMLElement>("#cuePracticeSection");
-    followSection.hidden = !translatedGuide;
-    practiceSection.hidden = !translatedGuide;
-    if (translatedGuide) {
-      this.query<HTMLElement>("#cueFollowHeading").textContent = this.t("followHeading");
-      this.query<HTMLElement>("#cuePracticeHeading").textContent = this.t("practiceHeading");
-      this.query<HTMLElement>("#cueFollow").textContent = translatedGuide.follow;
-      this.query<HTMLElement>("#cuePractice").textContent = translatedGuide.practice;
-    }
-    this.query<HTMLElement>("#cueMemory").textContent = guide.cue;
+    this.query<HTMLElement>("#cueDescription").textContent = guide.description;
+    this.query<HTMLElement>("#cueSections").innerHTML = renderGuideSections(parseGuideBody(guide.body).sections, "guide-section");
+    this.query<HTMLElement>("#cueMemory").textContent = guide.remember;
     const resources = figure.resources.filter((resource) => resource.type === "youtube" || !resource.language || resource.language === this.language);
     const videoSection = this.query<HTMLElement>("#cueVideos");
     videoSection.hidden = resources.length === 0;

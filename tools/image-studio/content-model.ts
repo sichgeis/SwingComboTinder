@@ -13,6 +13,7 @@ import {
   type Language,
   type MoveStyle
 } from "../../src/domain/move";
+import { parseGuideBody } from "../../src/domain/guide-body";
 import { videoKinds, webResourceKinds, type FigureDefinition, type WebResourceKind } from "../../figures/define-figure";
 
 export const resourceLanguages = languages;
@@ -50,16 +51,8 @@ export interface FigureBasicsDto {
 
 export interface GuideDto {
   readonly description: string;
-  readonly steps: string;
   readonly body: string;
-  readonly lead: string;
-  readonly connection: string;
-  readonly cue: string;
-}
-
-export interface GermanGuideDto extends GuideDto {
-  readonly follow: string;
-  readonly practice: string;
+  readonly remember: string;
 }
 
 export interface YoutubeResourceDto {
@@ -84,7 +77,7 @@ export interface FigureContentDto {
   readonly basics: FigureBasicsDto;
   readonly guides: {
     readonly en: GuideDto;
-    readonly de: GermanGuideDto;
+    readonly de: GuideDto;
   };
   readonly cardResources: readonly CardResourceDto[];
 }
@@ -158,28 +151,14 @@ const parseEnding = (value: unknown, issues: ContentValidationIssue[]): MoveEndi
 
 const parseGuide = (value: unknown, path: string, issues: ContentValidationIssue[]): GuideDto => {
   const source = record(value, path, issues);
-  return {
-    description: textValue(source.description, `${path}.description`, issues),
-    steps: textValue(source.steps, `${path}.steps`, issues),
-    body: textValue(source.body, `${path}.body`, issues),
-    lead: textValue(source.lead, `${path}.lead`, issues),
-    connection: textValue(source.connection, `${path}.connection`, issues),
-    cue: textValue(source.cue, `${path}.cue`, issues)
-  };
-};
-
-const parseGermanGuide = (value: unknown, issues: ContentValidationIssue[]): GermanGuideDto => {
-  const path = "guides.de";
-  const source = record(value, path, issues);
-  const guide = parseGuide(source, path, issues);
-  const practice = textValue(source.practice, `${path}.practice`, issues);
-  if (practice.trim() && !practice.trim().endsWith("?")) {
-    issues.push({ path: `${path}.practice`, message: "The practice prompt must end with a question mark." });
+  const body = textValue(source.body, `${path}.body`, issues);
+  for (const issue of parseGuideBody(body).issues) {
+    issues.push({ path: `${path}.body`, message: `Line ${issue.line}: ${issue.message}` });
   }
   return {
-    ...guide,
-    follow: textValue(source.follow, `${path}.follow`, issues),
-    practice
+    description: textValue(source.description, `${path}.description`, issues),
+    body,
+    remember: textValue(source.remember, `${path}.remember`, issues)
   };
 };
 
@@ -264,7 +243,7 @@ export const validateFigureContent = (value: unknown): FigureContentDto => {
     },
     guides: {
       en: parseGuide(guides.en, "guides.en", issues),
-      de: parseGermanGuide(guides.de, issues)
+      de: parseGuide(guides.de, "guides.de", issues)
     },
     cardResources: parseCardResources(source.cardResources, issues)
   };

@@ -4,13 +4,15 @@ This file is the compact current-work surface for Swing Thing. Detailed accepted
 
 ## Flexible bilingual card guides
 
-- Status: Proposed
-- Maturity: Draft; implementation is not authorized.
+- Status: Done
+- Approved: 2026-07-15
 - Goal: Let each English and German card guide use its own ordered set of titled teaching sections while keeping the figure name, short description, and closing memory cue as explicit fields.
 - Scope: Replace the fixed steps/body/lead/follow/connection/practice guide slots with one constrained Markdown-like body per language; parse, validate, edit, preview, and render the same format in the app and Content Studio; migrate all 42 guides without changing their prose or visible section order.
 - Non-goals: Do not add general-purpose Markdown, embedded HTML, links or media in guide copy, rich-text editing, localized figure names, or changes to factual metadata and resources.
 - Specification: [`specs/flexible-bilingual-card-guides.md`](specs/flexible-bilingual-card-guides.md)
-- Next action: Review and approve or revise the proposed guide model and authoring syntax.
+- Progress: Approved the shared canonical title plus localized description/body/remember model and the constrained `##` heading with plain-paragraph syntax. Migrated all 42 bilingual guides losslessly and aligned the domain model, shared renderer, full-guide dialog, Content Studio, tests, and durable documentation.
+- Validation: `npm run check` passes with 21 test files and 59 tests plus the production PWA build. A field-by-field audit verified all 84 localized guides against their pre-migration fields without prose loss. Browser validation covered the German phone card back and the expanded German Studio editor with its real shared live preview, without saving content or sending image requests.
+- Next action: None; use the flexible body syntax for figure-specific editorial structures.
 
 ## Studio editorial cockpit
 

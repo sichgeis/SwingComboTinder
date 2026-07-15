@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { figures } from "../../figures/catalog";
 import { moves } from "./catalog";
+import { parseGuideBody } from "./guide-body";
 import { countPatterns, endPositions, motionKinds, moveFamilies } from "./move";
 
 describe("move catalog", () => {
@@ -36,8 +37,11 @@ describe("move catalog", () => {
     for (const { move, guides: { en: guide } } of figures) {
       expect([move.id, move.name, move.family, move.motion, move.count]
         .every((value) => value.trim().length > 0)).toBe(true);
-      expect([guide.description, guide.steps, guide.body, guide.lead, guide.connection, guide.cue]
+      expect([guide.description, guide.body, guide.remember]
         .every((value) => value.trim().length >= 20)).toBe(true);
+      const parsed = parseGuideBody(guide.body);
+      expect(parsed.issues).toEqual([]);
+      expect(parsed.sections).toHaveLength(4);
     }
   });
 

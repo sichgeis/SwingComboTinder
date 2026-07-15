@@ -9,6 +9,13 @@ describe("card presentation", () => {
     const figure = {
       ...original,
       move: { ...original.move, name: "Inside <Turn>" },
+      guides: {
+        ...original.guides,
+        de: {
+          ...original.guides.de,
+          body: "## Sicher <lesen>\n\nEin Absatz mit <script> und & Zeichen.\n\nNoch ein Absatz."
+        }
+      },
       resources: [
         { type: "web" as const, url: "https://example.com/en", title: "English reference", kind: "reference" as const, language: "en" as const },
         { type: "youtube" as const, videoId: "LX3WPFUpSEc", title: "Video tutorial", kind: "tutorial" as const },
@@ -17,6 +24,10 @@ describe("card presentation", () => {
     };
     const markup = renderCardMarkup({ figure, language: "de", index: 0 });
     expect(markup).toContain("Inside &lt;Turn&gt;");
+    expect(markup).toContain("Sicher &lt;lesen&gt;");
+    expect(markup).toContain("&lt;script&gt; und &amp; Zeichen");
+    expect(markup).not.toContain("<script>");
+    expect(markup).toContain("Noch ein Absatz.");
     expect(markup).toContain("Deutsche Quelle");
     expect(markup).not.toContain("English reference");
     expect(markup.indexOf("Video tutorial")).toBeLessThan(markup.indexOf("Deutsche Quelle"));
