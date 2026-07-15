@@ -42,6 +42,9 @@ const runStatus = document.querySelector("#run-status");
 const connection = document.querySelector("#connection");
 const form = document.querySelector("#run-form");
 const runButton = document.querySelector("#run-button");
+const generationPlan = document.querySelector("#generation-plan");
+const selectVisibleButton = document.querySelector("#select-visible");
+const clearSelectionButton = document.querySelector("#clear-selection");
 const promptDialog = document.querySelector("#prompt-dialog");
 const promptContent = document.querySelector("#prompt-content");
 const imageDialog = document.querySelector("#image-dialog");
@@ -56,6 +59,11 @@ const escapeHtml = (value) => String(value)
   .replaceAll("<", "&lt;")
   .replaceAll(">", "&gt;")
   .replaceAll('"', "&quot;");
+
+const setConnection = (message, stateName = "") => {
+  connection.className = `connection ${stateName}`;
+  connection.innerHTML = `<span class="status-dot" aria-hidden="true"></span><span>${escapeHtml(message)}</span>`;
+};
 
 const request = async (url, options) => {
   const response = await fetch(url, options);
@@ -159,22 +167,63 @@ const tagsFor = (figure, job, newCandidateCount) => {
   return tags.join("");
 };
 
-const render = () => {
+const queueFigures = () => {
   const style = form.elements.style.value;
-  const visible = style ? state.figures.filter((figure) => figure.style === style) : state.figures;
+  const view = form.elements.view.value;
+  return state.figures.filter((figure) => {
+    const hasNew = state.newCandidates.has(figure.id);
+    const needsAttention = hasNew || figure.marked || !figure.hasCurrent || !figure.hasPose || !figure.imageApproved;
+    const matchesView = view === "all"
+      || (view === "attention" && needsAttention)
+      || (view === "new" && hasNew)
+      || (view === "rework" && figure.marked)
+      || (view === "missing-master" && !figure.hasCurrent)
+      || (view === "missing-pose" && !figure.hasPose)
+      || (view === "approved" && figure.imageApproved);
+    return (!style || figure.style === style) && matchesView;
+  });
+};
+
+const generationTargets = () => {
+  const data = new FormData(form);
+  const style = data.get("style");
+  const styled = style ? state.figures.filter((figure) => figure.style === style) : state.figures;
+  const mode = data.get("mode");
+  if (mode === "selected") return styled.filter(({ id }) => state.selected.has(id) && state.figures.find((figure) => figure.id === id)?.hasPose);
+  if (mode === "missing") return styled.filter((figure) => !figure.hasCurrent && figure.hasPose);
+  if (mode === "marked") return styled.filter((figure) => figure.marked && figure.hasPose);
+  return styled.filter((figure) => figure.hasPose);
+};
+
+const render = () => {
+  const visible = queueFigures();
   const missing = state.figures.filter((figure) => !figure.hasCurrent).length;
   const marked = state.figures.filter((figure) => figure.marked).length;
   const approved = state.figures.filter((figure) => figure.imageApproved).length;
   const blocked = state.figures.filter((figure) => !figure.hasPose).length;
-  summary.textContent = `${state.figures.length} figures · ${state.newCandidates.size} new from latest run · ${approved} approved · ${missing} missing masters · ${marked} marked · ${blocked} missing pose references · ${state.selected.size} selected`;
-  runButton.disabled = state.runActive;
+  summary.innerHTML = [
+    [visible.length, "shown"],
+    [state.newCandidates.size, "new"],
+    [marked, "rework"],
+    [missing, "missing masters"],
+    [blocked, "missing poses"],
+    [approved, "approved"]
+  ].map(([value, label]) => `<span class="metric"><strong>${value}</strong><small>${label}</small></span>`).join("");
+  const targets = generationTargets();
+  const candidates = Number(form.elements.count.value);
+  generationPlan.textContent = targets.length === 0
+    ? form.elements.mode.value === "selected" ? "Select figures to build a run" : "No eligible figures in this run"
+    : `${targets.length} figure${targets.length === 1 ? "" : "s"} × ${candidates} candidate${candidates === 1 ? "" : "s"} = ${targets.length * candidates} image request${targets.length * candidates === 1 ? "" : "s"}`;
+  runButton.disabled = state.runActive || targets.length === 0;
+  selectVisibleButton.disabled = visible.length === 0;
+  clearSelectionButton.disabled = state.selected.size === 0;
 
   grid.innerHTML = visible.map((figure) => {
     const latest = figure.candidates[0];
     const job = state.jobs.get(figure.id);
     const newCandidateCount = state.newCandidates.get(figure.id) || 0;
     const classes = ["figure-card", figure.imageApproved ? "approved" : "", newCandidateCount ? "has-new-candidates" : "", job?.state === "running" ? "running" : "", job?.state === "failed" ? "failed" : ""].filter(Boolean).join(" ");
-    const cardBody = figure.imageApproved ? `
+    const cardBody = figure.imageApproved && !figure.marked && newCandidateCount === 0 ? `
       <div class="approved-summary">
         <span>This move has an image you approved.</span>
         <button type="button" class="secondary" data-action="image-approval">Reopen</button>
@@ -216,7 +265,7 @@ const render = () => {
       </header>
       ${cardBody}
     </article>`;
-  }).join("");
+  }).join("") || '<div class="queue-empty"><strong>Nothing needs attention here.</strong><p>Choose another view or style to inspect more figures.</p></div>';
 };
 
 const loadFigures = async () => {
@@ -267,7 +316,19 @@ form.addEventListener("submit", async (event) => {
   catch (error) { runStatus.className = "error"; runStatus.textContent = error.message; }
 });
 
-form.elements.style.addEventListener("change", render);
+for (const control of [form.elements.view, form.elements.mode, form.elements.style, form.elements.count]) {
+  control.addEventListener("change", render);
+  control.addEventListener("input", render);
+}
+
+selectVisibleButton.addEventListener("click", () => {
+  for (const figure of queueFigures()) state.selected.add(figure.id);
+  render();
+});
+clearSelectionButton.addEventListener("click", () => {
+  state.selected.clear();
+  render();
+});
 
 grid.addEventListener("change", (event) => {
   const checkbox = event.target.closest(".figure-select");
@@ -351,8 +412,8 @@ grid.addEventListener("click", async (event) => {
 });
 
 const events = new EventSource("/api/events");
-events.addEventListener("open", () => { connection.textContent = "Live updates connected"; connection.className = "connection ready"; });
-events.addEventListener("error", () => { connection.textContent = "Reconnecting live updates…"; connection.className = "connection warning"; });
+events.addEventListener("open", () => setConnection("Live updates connected", "ready"));
+events.addEventListener("error", () => setConnection("Reconnecting live updates…", "warning"));
 
 for (const type of ["run-started", "job-started", "job-blocked", "job-completed", "job-failed", "run-completed", "run-failed", "figure-updated"]) {
   events.addEventListener(type, async (rawEvent) => {
@@ -383,9 +444,13 @@ for (const type of ["run-started", "job-started", "job-blocked", "job-completed"
 Promise.all([request("/api/config"), loadFigures()])
   .then(([config]) => {
     form.elements.quality.value = config.imageQuality;
-    connection.textContent = config.proxyConfigured ? `${config.model} via LiteLLM` : "LiteLLM configuration missing";
-    connection.className = `connection ${config.proxyConfigured ? "ready" : "warning"}`;
+    setConnection(config.proxyConfigured ? `${config.model} via LiteLLM` : "LiteLLM configuration missing", config.proxyConfigured ? "ready" : "warning");
     state.runActive = config.runActive;
     render();
   })
-  .catch((error) => { runStatus.className = "error"; runStatus.textContent = error.message; });
+  .catch((error) => {
+    runStatus.className = "error";
+    runStatus.textContent = error.message;
+    contentEditor.showLoadError(error.message);
+    grid.innerHTML = '<div class="queue-empty error"><strong>Studio data could not be loaded.</strong><p>Restart the local Studio after source updates, then reload this page.</p></div>';
+  });

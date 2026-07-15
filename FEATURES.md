@@ -2,6 +2,18 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Studio editorial cockpit
+
+- Status: Done
+- Approved: 2026-07-15
+- Goal: Make Content and Image Queue a compact, attention-first editorial cockpit while retaining the Studio's art-deco identity and safe local workflows.
+- Scope: Compact shell, derived Content filters, clear loading/error/draft states, collapsible technical identity, revert/save/save-next actions, improved mobile selection, attention-first Image Queue filters, compact metrics, bulk visible selection, and a generation request plan.
+- Non-goals: Do not change the figure model, add durable copy-review state or AI writing, trigger paid generation during validation, add dependencies, or replace the Studio architecture.
+- Specification: [`specs/studio-editorial-cockpit.md`](specs/studio-editorial-cockpit.md)
+- Progress: Implemented the compact shell, derived Content and Image Queue filters, clearer loading/draft/validation states, collapsible identity, revert/save/save-next, mobile picker, attention metrics, visible bulk selection, request planning, and a self-contained live app-card preview.
+- Validation: `npm run check` passes with 20 test files and 56 tests. A temporary Studio loaded the real 42-figure catalog without browser errors; desktop Content/Image Queue and 390 × 844 Content flows were verified and captured without saving content or sending paid image requests.
+- Next action: None; use the cockpit for real editorial work and reassess only from observed friction.
+
 ## Figure model and Studio alignment
 
 - Status: Done
@@ -38,11 +50,11 @@ This file is the compact current-work surface for Swing Thing. Detailed accepted
 
 - Status: Proposed
 - Maturity: Draft; implementation is not authorized.
-- Goal: Potentially extend the editorial core into a catalog-wide maintenance and review workflow after Option A has been explored in practice.
-- Scope: Draft ideas include review states, maintenance filters, change summaries, selected-figure artwork controls, and “Save and next.”
+- Goal: Potentially add durable catalog-wide copy review state only if real cockpit usage demonstrates that derived attention facts are insufficient.
+- Scope: The completed editorial cockpit now owns maintenance filters and Save + next. Remaining draft ideas are durable review state, change summaries, and selected-figure artwork controls.
 - Dependency: Reassess after the approved editorial core is implemented; its usability and architecture may change or eliminate these requirements.
 - Specification: [`specs/content-studio-maintenance-workspace.md`](specs/content-studio-maintenance-workspace.md)
-- Next action: None until the editorial core produces implementation and usage feedback.
+- Next action: None until cockpit usage produces evidence for durable review state.
 
 ## Figure model and flow cleanup
 

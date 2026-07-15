@@ -1,5 +1,7 @@
 # Content Studio maintenance workspace
 
+> Partially superseded on 2026-07-15 by the approved [`studio-editorial-cockpit.md`](studio-editorial-cockpit.md), which adopts derived attention filters, save-and-next, and selected-figure queue controls without adding durable copy-review state. The remaining ideas stay unapproved.
+
 - Status: Proposed
 - Maturity: Draft; implementation is not authorized.
 - Goal: Preserve the current idea for extending the editorial core into a catalog-wide maintenance and review workflow without committing to it before Option A produces practical feedback.

@@ -1,4 +1,5 @@
 export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSaved }) => {
+  const LAST_FIGURE_KEY = "swing-thing-studio:last-content-figure";
   const contentState = {
     activeContentId: null,
     content: null,
@@ -9,14 +10,17 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     previewLanguage: "de",
     previewFace: "front",
     previewMarkup: "",
+    previewStyles: "",
     previewRequest: 0,
     previewTimer: null,
-    openSections: new Set(["Basics"])
+    openSections: new Set(["Basics"]),
+    restoreAttempted: false
   };
 
   const contentWorkspace = document.querySelector("#content-workspace");
   const contentSearch = document.querySelector("#content-search");
   const contentStyle = document.querySelector("#content-style");
+  const contentStatus = document.querySelector("#content-status");
   const contentList = document.querySelector("#content-list");
   const contentCount = document.querySelector("#content-count");
   const contentEmpty = document.querySelector("#content-empty");
@@ -25,12 +29,19 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const contentTitle = document.querySelector("#content-title");
   const contentDirty = document.querySelector("#content-dirty");
   const contentSave = document.querySelector("#content-save");
+  const contentSaveNext = document.querySelector("#content-save-next");
+  const contentRevert = document.querySelector("#content-revert");
   const contentMessage = document.querySelector("#content-message");
   const contentFields = document.querySelector("#content-fields");
   const previewPanel = document.querySelector("#preview-panel");
   const previewPaneButton = document.querySelector("#preview-pane-button");
   const previewStatus = document.querySelector("#preview-status");
   const cardPreview = document.querySelector("#card-preview");
+  const mobileFigurePicker = document.querySelector("#mobile-figure-picker");
+  const previewStylesPromise = fetch("/app-card.css").then(async (response) => {
+    if (!response.ok) throw new Error("The app card stylesheet could not be loaded.");
+    return (await response.text()).replace(/^@import[^\n]*\n/, "");
+  });
 
   const contentIsDirty = () => Boolean(contentState.content) && JSON.stringify(contentState.content) !== contentState.originalContent;
 
@@ -46,7 +57,8 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     const control = tag === "textarea"
       ? `<textarea ${attributes} rows="${options.rows || 4}">${escapeHtml(value ?? "")}</textarea>`
       : `<input ${attributes} value="${escapeHtml(value ?? "")}">`;
-    return `<label class="content-field ${options.full ? "full" : ""}" data-field-path="${escapeHtml(path)}"><span>${escapeHtml(label)}</span>${control}<small class="field-error"></small></label>`;
+    const count = options.textarea ? `<small class="field-count">${String(value ?? "").length} characters</small>` : "";
+    return `<label class="content-field ${options.full ? "full" : ""}" data-field-path="${escapeHtml(path)}"><span>${escapeHtml(label)}</span>${control}<span class="field-footer"><small class="field-error"></small>${count}</span></label>`;
   };
 
   const selectField = (label, path, value, choices, options = {}) => `<label class="content-field ${options.full ? "full" : ""}" data-field-path="${escapeHtml(path)}"><span>${escapeHtml(label)}</span><select data-content-path="${escapeHtml(path)}">${choices.map(({ value: optionValue, label: optionLabel }) => `<option value="${escapeHtml(optionValue)}" ${value === optionValue ? "selected" : ""}>${escapeHtml(optionLabel)}</option>`).join("")}</select><small class="field-error"></small></label>`;
@@ -83,7 +95,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     return `${kind}${positions}`;
   };
 
-  const section = (title, body) => `<details class="content-section" ${contentState.openSections.has(title) ? "open" : ""}><summary>${escapeHtml(title)}</summary><div class="content-section-body">${body}</div></details>`;
+  const section = (title, body, meta = "") => `<details class="content-section" ${contentState.openSections.has(title) ? "open" : ""}><summary><span>${escapeHtml(title)}</span>${meta ? `<small>${escapeHtml(meta)}</small>` : ""}</summary><div class="content-section-body">${body}</div></details>`;
 
   const resourceActions = (collection, index, length) => `<div class="resource-actions">
     <button type="button" data-content-action="move-resource" data-collection="${collection}" data-index="${index}" data-direction="-1" ${index === 0 ? "disabled" : ""}>↑ Up</button>
@@ -114,11 +126,13 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const renderContentFields = () => {
     if (!contentState.content || !contentState.metadataOptions) return;
     const { identity, basics, guides } = contentState.content;
-    const basicsFields = [
+    const technicalIdentity = `<details class="technical-identity"><summary>Technical identity <small>Read-only</small></summary><div class="technical-grid">${[
       contentField("Stable ID", "identity.id", identity.id, { readonly: true }),
       contentField("Dance style", "identity.style", identity.style, { readonly: true }),
       contentField("Directory slug", "identity.slug", identity.slug, { readonly: true }),
-      contentField("Global order", "identity.order", identity.order, { readonly: true, type: "number" }),
+      contentField("Global order", "identity.order", identity.order, { readonly: true, type: "number" })
+    ].join("")}</div></details>`;
+    const basicsFields = [
       contentField("Canonical name", "basics.name", basics.name),
       selectField("Family", "basics.family", basics.family, metadataChoices(contentState.metadataOptions.families)),
       selectField("Count", "basics.count", basics.count, metadataChoices(contentState.metadataOptions.countPatterns)),
@@ -132,16 +146,17 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       .map((key) => contentField(key[0].toUpperCase() + key.slice(1), `guides.de.${key}`, guides.de[key], { textarea: true, full: true }))
       .join("");
     contentFields.innerHTML = [
-      section("Basics", basicsFields),
-      section("English", englishFields),
-      section("German", germanFields),
-      section("Resources", cardResourcesEditor())
+      technicalIdentity,
+      section("Basics", basicsFields, "Figure facts"),
+      section("English", englishFields, "6 fields"),
+      section("German", germanFields, "8 fields"),
+      section("Resources", cardResourcesEditor(), `${contentState.content.cardResources.length} link${contentState.content.cardResources.length === 1 ? "" : "s"}`)
     ].join("");
     applyContentIssues(contentState.contentIssues);
   };
 
   const rememberOpenSections = () => {
-    contentState.openSections = new Set([...contentFields.querySelectorAll("details.content-section[open] summary")].map((summary) => summary.textContent));
+    contentState.openSections = new Set([...contentFields.querySelectorAll("details.content-section[open] summary")].map((summary) => summary.querySelector("span")?.textContent));
   };
 
   const applyContentIssues = (issues = []) => {
@@ -156,6 +171,9 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       field.classList.add("has-error");
       field.querySelector(".field-error").textContent = issue.message;
     }
+    const dirty = contentIsDirty();
+    contentSave.disabled = !dirty || issues.length > 0;
+    contentSaveNext.disabled = !dirty || issues.length > 0;
   };
 
   const updateContentHeader = () => {
@@ -163,27 +181,50 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     const dirty = contentIsDirty();
     contentTitle.textContent = contentState.content.basics.name || "Untitled figure";
     contentIdentity.textContent = `${contentState.content.identity.style} · ${contentState.content.identity.id}`;
-    contentDirty.textContent = dirty ? "Unsaved changes" : "Saved source";
+    const issueCount = contentState.contentIssues.length;
+    contentDirty.textContent = issueCount > 0
+      ? `${issueCount} validation issue${issueCount === 1 ? "" : "s"}`
+      : dirty ? "Unsaved draft" : "Saved source";
     contentDirty.classList.toggle("dirty", dirty);
-    contentSave.disabled = !dirty;
+    contentDirty.classList.toggle("invalid", issueCount > 0);
+    contentSave.disabled = !dirty || issueCount > 0;
+    contentSaveNext.disabled = !dirty || issueCount > 0;
+    contentRevert.disabled = !dirty;
     renderContentList();
   };
 
-  const renderContentList = () => {
+  const visibleFigures = () => {
     const query = contentSearch.value.trim().toLowerCase();
     const style = contentStyle.value;
-    const visible = getFigures().filter((figure) => {
+    const status = contentStatus.value;
+    return getFigures().filter((figure) => {
       const haystack = `${figure.name} ${figure.id}`.toLowerCase();
-      return (!style || figure.style === style) && (!query || haystack.includes(query));
+      const dirty = figure.id === contentState.activeContentId && contentIsDirty();
+      const matchesStatus = status === "all"
+        || (status === "attention" && (!figure.contentValid || figure.resourceCount === 0 || figure.currentIsFallback || dirty))
+        || (status === "no-resources" && figure.resourceCount === 0)
+        || (status === "fallback" && figure.currentIsFallback)
+        || (status === "invalid" && !figure.contentValid);
+      return (!style || figure.style === style) && (!query || haystack.includes(query)) && matchesStatus;
     });
+  };
+
+  const renderContentList = () => {
+    const visible = visibleFigures();
     contentCount.textContent = String(visible.length);
+    contentList.classList.remove("is-loading");
     contentList.innerHTML = visible.map((figure) => {
       const dirty = figure.id === contentState.activeContentId && contentIsDirty();
       return `<button type="button" class="content-list-item ${figure.id === contentState.activeContentId ? "active" : ""}" data-content-id="${escapeHtml(figure.id)}">
         <span class="content-list-title"><strong>${escapeHtml(figure.name)}</strong><span>${escapeHtml(figure.style)}</span></span>
-        <span class="content-list-meta"><span class="${figure.contentValid ? "valid" : "invalid"}">${figure.contentValid ? "valid" : "invalid"}</span><span>DE ${figure.germanComplete ? "✓" : "—"}</span><span>${figure.resourceCount} resource${figure.resourceCount === 1 ? "" : "s"}</span><span>${figure.currentIsFallback ? "fallback art" : "master art"}</span>${dirty ? '<span class="invalid">unsaved</span>' : ""}</span>
+        <span class="content-list-meta">${!figure.contentValid ? '<span class="badge bad">Invalid</span>' : ""}${!figure.germanComplete ? '<span class="badge warn">German incomplete</span>' : ""}${figure.resourceCount === 0 ? '<span class="badge muted">No resources</span>' : `<span class="badge good">${figure.resourceCount} link${figure.resourceCount === 1 ? "" : "s"}</span>`}${figure.currentIsFallback ? '<span class="badge warn">Fallback art</span>' : ""}${dirty ? '<span class="badge draft">Draft</span>' : ""}</span>
       </button>`;
     }).join("") || '<p class="resource-empty">No figures match these filters.</p>';
+    if (!contentState.restoreAttempted && getFigures().length > 0) {
+      contentState.restoreAttempted = true;
+      const remembered = sessionStorage.getItem(LAST_FIGURE_KEY);
+      if (remembered && getFigures().some(({ id }) => id === remembered)) void loadFigureContent(remembered);
+    }
   };
 
   const setPathValue = (root, path, value) => {
@@ -199,7 +240,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const previewDocument = () => {
     if (!contentState.previewMarkup) return;
     const flipped = contentState.previewFace === "back" ? "is-flipped" : "";
-    cardPreview.srcdoc = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/app-card.css"><style>html,body{width:100%;height:100%;overflow:hidden}.studio-preview-card{position:relative;inset:auto;width:100%;height:100%;border-radius:22px}.studio-preview-card .card-content{padding:20px}.studio-preview-card h2{font-size:42px}</style></head><body><article class="move-card studio-preview-card ${flipped}">${contentState.previewMarkup}</article></body></html>`;
+    cardPreview.srcdoc = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${contentState.previewStyles}\nhtml,body{width:100%;height:100%;overflow:hidden}.studio-preview-card{position:relative;inset:auto;width:100%;height:100%;border-radius:22px;color:var(--paper)}.studio-preview-card .card-content{padding:20px}.studio-preview-card h2{font-size:42px}</style></head><body><article class="move-card studio-preview-card ${flipped}">${contentState.previewMarkup}</article></body></html>`;
   };
 
   const updatePreviewControls = () => {
@@ -218,13 +259,17 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
         body: JSON.stringify({ id: contentState.activeContentId, language: contentState.previewLanguage, content: contentState.content })
       });
       if (requestNumber !== contentState.previewRequest) return;
+      contentState.previewStyles ||= await previewStylesPromise;
+      if (requestNumber !== contentState.previewRequest) return;
       contentState.previewMarkup = result.markup;
       applyContentIssues([]);
+      updateContentHeader();
       previewStatus.textContent = "Live";
       previewDocument();
     } catch (error) {
       if (requestNumber !== contentState.previewRequest) return;
       applyContentIssues(error.issues || []);
+      updateContentHeader();
       previewStatus.textContent = error.issues?.length ? `${error.issues.length} issue${error.issues.length === 1 ? "" : "s"}` : "Preview unavailable";
     }
   };
@@ -242,6 +287,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     try {
       const loaded = await request(`/api/figure-content?id=${encodeURIComponent(id)}`);
       contentState.activeContentId = id;
+      sessionStorage.setItem(LAST_FIGURE_KEY, id);
       contentState.content = loaded.content;
       contentState.metadataOptions = loaded.metadataOptions;
       contentState.originalContent = JSON.stringify(loaded.content);
@@ -253,6 +299,9 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       contentForm.hidden = false;
       previewPanel.hidden = false;
       previewPaneButton.disabled = false;
+      mobileFigurePicker.disabled = false;
+      mobileFigurePicker.textContent = loaded.content.basics.name;
+      contentWorkspace.classList.add("has-selection");
       contentMessage.textContent = "";
       renderContentFields();
       updateContentHeader();
@@ -265,9 +314,14 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
 
   contentSearch.addEventListener("input", renderContentList);
   contentStyle.addEventListener("change", renderContentList);
+  contentStatus.addEventListener("change", renderContentList);
   contentList.addEventListener("click", (event) => {
     const button = event.target.closest("[data-content-id]");
     if (button) void loadFigureContent(button.dataset.contentId);
+  });
+  mobileFigurePicker.addEventListener("click", () => {
+    contentWorkspace.classList.remove("has-selection");
+    document.querySelector(".figure-library")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   const updateContentControl = (control) => {
@@ -301,7 +355,11 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
 
   contentForm.addEventListener("input", (event) => {
     const control = event.target.closest("[data-content-path]");
-    if (control && control.tagName !== "SELECT") updateContentControl(control);
+    if (control && control.tagName !== "SELECT") {
+      updateContentControl(control);
+      const count = control.closest(".content-field")?.querySelector(".field-count");
+      if (count) count.textContent = `${control.value.length} characters`;
+    }
   });
   contentForm.addEventListener("change", (event) => {
     const control = event.target.closest("select[data-content-path]");
@@ -323,7 +381,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   contentFields.addEventListener("toggle", (event) => {
     const details = event.target.closest("details.content-section");
     if (!details) return;
-    const title = details.querySelector("summary")?.textContent;
+    const title = details.querySelector("summary span")?.textContent;
     if (!title) return;
     details.open ? contentState.openSections.add(title) : contentState.openSections.delete(title);
   }, true);
@@ -353,10 +411,26 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     schedulePreview();
   });
 
+  contentRevert.addEventListener("click", () => {
+    if (!contentState.content || !contentIsDirty() || !confirm("Revert every unsaved change to this figure?")) return;
+    contentState.content = JSON.parse(contentState.originalContent);
+    contentState.contentIssues = [];
+    contentMessage.className = "content-message";
+    contentMessage.textContent = "Draft reverted.";
+    renderContentFields();
+    updateContentHeader();
+    void requestPreview();
+  });
+
   contentForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!contentState.content || !contentState.activeContentId || !contentIsDirty()) return;
+    const advance = event.submitter?.dataset.saveNext === "true";
+    const visible = visibleFigures();
+    const currentIndex = visible.findIndex(({ id }) => id === contentState.activeContentId);
+    const nextId = currentIndex >= 0 ? visible[currentIndex + 1]?.id : undefined;
     contentSave.disabled = true;
+    contentSaveNext.disabled = true;
     contentMessage.className = "content-message";
     contentMessage.textContent = "Validating and saving…";
     try {
@@ -375,6 +449,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       updateContentHeader();
       await onSaved();
       await requestPreview();
+      if (advance && nextId) await loadFigureContent(nextId);
     } catch (error) {
       contentMessage.className = "content-message error";
       contentMessage.textContent = error.status === 409 ? `${error.message} Your draft is still here.` : error.message;
@@ -416,8 +491,13 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     event.returnValue = "";
   });
 
-    return {
-      hasUnsavedChanges: contentIsDirty,
-      renderFigureList: renderContentList
-    };
+  return {
+    hasUnsavedChanges: contentIsDirty,
+    renderFigureList: renderContentList,
+    showLoadError: (message) => {
+      contentCount.textContent = "!";
+      contentList.classList.remove("is-loading");
+      contentList.innerHTML = `<div class="library-error"><strong>Catalog unavailable</strong><p>${escapeHtml(message)}</p><small>If the Studio was already open during a code update, restart <code>task images:studio</code>.</small></div>`;
+    }
   };
+};
