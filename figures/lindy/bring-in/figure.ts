@@ -11,7 +11,12 @@ export default defineFigure({
     "family": "transition",
     "count": "six",
     "motion": "linear",
-    "end": "Closed"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "closed"
+      ]
+    }
   },
   "guides": {
     "en": {

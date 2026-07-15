@@ -11,7 +11,12 @@ export default defineFigure({
     "family": "rhythm",
     "count": "six",
     "motion": "linear",
-    "end": "Open"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "open"
+      ]
+    }
   },
   "guides": {
     "en": {

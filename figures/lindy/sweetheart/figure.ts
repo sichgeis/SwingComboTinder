@@ -11,7 +11,12 @@ export default defineFigure({
     "family": "position",
     "count": "six-or-eight",
     "motion": "linear",
-    "end": "Wrapped"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "wrapped"
+      ]
+    }
   },
   "guides": {
     "en": {

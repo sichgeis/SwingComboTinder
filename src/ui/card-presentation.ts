@@ -2,8 +2,10 @@ import { youtubeUrl, type FigureDefinition, type VideoKind, type WebResourceKind
 import type {
   BuildChoice,
   CountPattern,
+  EndPosition,
   Language,
   MotionKind,
+  MoveEnding,
   MoveFamily,
   MoveStyle,
   MoveTranslation
@@ -48,17 +50,20 @@ const motionLabels: Record<MotionKind, Record<Language, string>> = {
   travel: { en: "Travel", de: "Reise" }
 };
 
-const germanEndingLabels: Readonly<Record<string, string>> = {
-  Open: "Open", Closed: "Closed", "Closed / Open": "Closed / Open", "Side-by-side": "Side-by-Side",
-  Any: "Beliebig",
-  "Closed / Side-by-side": "Closed / Side-by-Side", "Open / Closed": "Open / Closed", "Open / Side-by-side": "Open / Side-by-Side",
-  "Tandem / Open": "Tandem / Open", Wrapped: "Gewickelt", Tandem: "Tandem"
+const endPositionLabels: Record<EndPosition, Record<Language, string>> = {
+  open: { en: "Open", de: "Open" },
+  closed: { en: "Closed", de: "Closed" },
+  "side-by-side": { en: "Side-by-side", de: "Side-by-Side" },
+  wrapped: { en: "Wrapped", de: "Gewickelt" },
+  tandem: { en: "Tandem", de: "Tandem" }
 };
 
 export const familyLabel = (language: Language, value: MoveFamily): string => familyLabels[value][language];
 export const countPatternLabel = (language: Language, value: CountPattern): string => countLabels[value][language];
 export const motionKindLabel = (language: Language, value: MotionKind): string => motionLabels[value][language];
-const legacyEndingLabel = (language: Language, value: string): string => language === "de" ? (germanEndingLabels[value] ?? value) : value;
+export const endingLabel = (language: Language, ending: MoveEnding): string => ending.kind === "any"
+  ? language === "de" ? "Beliebig" : "Any"
+  : ending.positions.map((position) => endPositionLabels[position][language]).join(" / ");
 
 export const videoKindLabel = (language: Language, kind: VideoKind): string => {
   const keys: Record<VideoKind, TranslationKey> = {
@@ -132,7 +137,7 @@ export const renderCardMarkup = ({
           <div class="card-bottom">
             <span class="move-number">MOVE ${number}</span>
             <h2>${escapeHtml(move.name)}</h2><p class="move-description">${escapeHtml(guide.description)}</p>
-            <div class="move-meta"><span>${escapeHtml(styleMeta[move.style].short)}</span><span>${escapeHtml(countPatternLabel(language, move.count))}</span><span>${escapeHtml(motionKindLabel(language, move.motion))}</span><span>${t("ends")} ${escapeHtml(legacyEndingLabel(language, move.end))}</span></div>
+            <div class="move-meta"><span>${escapeHtml(styleMeta[move.style].short)}</span><span>${escapeHtml(countPatternLabel(language, move.count))}</span><span>${escapeHtml(motionKindLabel(language, move.motion))}</span><span>${t("ends")} ${escapeHtml(endingLabel(language, move.end))}</span></div>
           </div>
         </div>
       </section>

@@ -46,12 +46,12 @@ This file is the compact current-work surface for Swing Thing. Detailed accepted
 
 ## Typed figure metadata
 
-- Status: In progress
+- Status: Done
 - Approved: 2026-07-15
 - Goal: Replace the remaining known-value figure metadata strings with semantic, runtime-validated types without changing visible card meaning.
 - Scope: Introduce shared enum-like unions and Content Studio dropdowns for family, count, and motion; replace slash-delimited ending strings with a structured `any` or position-list model; migrate all 42 figures and preserve localized labels.
 - Non-goals: Do not redesign the existing family taxonomy, change figure classifications, add recommendation behavior, or restructure free-text guide and resource content.
 - Specification: [`specs/typed-figure-metadata.md`](specs/typed-figure-metadata.md)
-- Progress: Family, count, and motion now use semantic enum-like codes across the domain, all 42 figures, runtime validation, localized card presentation, and Content Studio dropdowns.
-- Validation: Increment-one type checks, linting, 20 test files with 53 tests, and a complete 42-figure enum audit pass.
-- Next action: Replace free-text endings with structured ending positions.
+- Progress: Family, count, and motion now use semantic enum-like codes across the domain, all 42 figures, runtime validation, localized card presentation, and Content Studio dropdowns. Endings now use `any` or canonical validated position lists, with explicit Studio controls and both prior open/closed spellings normalized to one representation.
+- Validation: `npm run check` passes with 20 test files and 56 tests plus the production PWA build. Catalog audits cover all 42 enum migrations and structured endings; persistence tests cover unknown values, empty and duplicate endings, and canonical ordering. A temporary live Content Studio instance returned the authoritative options and the normalized Promenade ending through its real content API.
+- Next action: None; reassess taxonomy meaning separately if the product needs richer classification.

@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { figures } from "../../figures/catalog";
 import { moves } from "./catalog";
+import { countPatterns, endPositions, motionKinds, moveFamilies } from "./move";
 
 describe("move catalog", () => {
   it("preserves the complete unique catalog", () => {
@@ -33,10 +34,22 @@ describe("move catalog", () => {
 
   it("provides complete metadata and English teaching copy", () => {
     for (const { move, guides: { en: guide } } of figures) {
-      expect([move.id, move.name, move.family, move.motion, move.end, move.count]
+      expect([move.id, move.name, move.family, move.motion, move.count]
         .every((value) => value.trim().length > 0)).toBe(true);
       expect([guide.description, guide.steps, guide.body, guide.lead, guide.connection, guide.cue]
         .every((value) => value.trim().length >= 20)).toBe(true);
+    }
+  });
+
+  it("uses constrained metadata and canonical ending positions", () => {
+    for (const { move } of figures) {
+      expect(moveFamilies).toContain(move.family);
+      expect(countPatterns).toContain(move.count);
+      expect(motionKinds).toContain(move.motion);
+      if (move.end.kind === "any") continue;
+      expect(move.end.positions.length).toBeGreaterThan(0);
+      expect(new Set(move.end.positions).size).toBe(move.end.positions.length);
+      expect(move.end.positions).toEqual(endPositions.filter((position) => move.end.kind === "positions" && move.end.positions.includes(position)));
     }
   });
 });

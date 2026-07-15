@@ -57,13 +57,31 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     "six-or-eight": "6 or 8 count",
     "six-or-twelve": "6 or 12 count",
     "eight-or-sixteen": "8 or 16 count",
-    musical: "As musical"
+    musical: "As musical",
+    open: "Open",
+    closed: "Closed",
+    "side-by-side": "Side-by-side",
+    wrapped: "Wrapped",
+    tandem: "Tandem"
   };
 
   const metadataChoices = (values) => values.map((value) => ({
     value,
     label: metadataChoiceLabels[value] || value.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ")
   }));
+
+  const endingEditor = () => {
+    const ending = contentState.content.basics.end;
+    const kind = selectField("Ending", "basics.end.kind", ending.kind, [
+      { value: "positions", label: "Specific positions" },
+      { value: "any", label: "Any position" }
+    ]);
+    if (ending.kind === "any") return kind;
+    const positions = `<div class="content-field full" data-field-path="basics.end.positions"><span>Ending positions</span><div class="ending-options">
+      ${contentState.metadataOptions.endPositions.map((position) => `<label><input type="checkbox" data-ending-position value="${escapeHtml(position)}" ${ending.positions.includes(position) ? "checked" : ""}>${escapeHtml(metadataChoiceLabels[position])}</label>`).join("")}
+    </div><small class="field-error"></small></div>`;
+    return `${kind}${positions}`;
+  };
 
   const section = (title, body) => `<details class="content-section" ${contentState.openSections.has(title) ? "open" : ""}><summary>${escapeHtml(title)}</summary><div class="content-section-body">${body}</div></details>`;
 
@@ -101,7 +119,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       selectField("Family", "basics.family", basics.family, metadataChoices(contentState.metadataOptions.families)),
       selectField("Count", "basics.count", basics.count, metadataChoices(contentState.metadataOptions.countPatterns)),
       selectField("Motion", "basics.motion", basics.motion, metadataChoices(contentState.metadataOptions.motionKinds)),
-      contentField("Ending position", "basics.end", basics.end)
+      endingEditor()
     ].join("");
     const englishFields = ["description", "steps", "body", "lead", "connection", "cue"]
       .map((key) => contentField(key[0].toUpperCase() + key.slice(1), `guides.en.${key}`, guides.en[key], { textarea: true, full: true }))
@@ -254,8 +272,15 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const updateContentControl = (control) => {
     if (!contentState.content || !control.dataset.contentPath || control.readOnly) return;
     const path = control.dataset.contentPath;
+    const endingKind = path === "basics.end.kind";
     const typeMatch = /^cardResources\.(\d+)\.type$/.exec(path);
-    if (typeMatch) {
+    if (endingKind) {
+      rememberOpenSections();
+      contentState.content.basics.end = control.value === "any"
+        ? { kind: "any" }
+        : { kind: "positions", positions: [contentState.metadataOptions.endPositions[0]] };
+      renderContentFields();
+    } else if (typeMatch) {
       rememberOpenSections();
       const index = Number(typeMatch[1]);
       contentState.content.cardResources[index] = control.value === "youtube"
@@ -279,7 +304,19 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   });
   contentForm.addEventListener("change", (event) => {
     const control = event.target.closest("select[data-content-path]");
-    if (control) updateContentControl(control);
+    if (control) {
+      updateContentControl(control);
+      return;
+    }
+    const position = event.target.closest("input[data-ending-position]");
+    if (!position || !contentState.content) return;
+    contentState.content.basics.end = {
+      kind: "positions",
+      positions: [...contentForm.querySelectorAll("input[data-ending-position]:checked")].map((input) => input.value)
+    };
+    contentMessage.textContent = "";
+    updateContentHeader();
+    schedulePreview();
   });
 
   contentFields.addEventListener("toggle", (event) => {

@@ -11,7 +11,13 @@ export default defineFigure({
     "family": "charleston",
     "count": "eight",
     "motion": "linear",
-    "end": "Open / Side-by-side"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "open",
+        "side-by-side"
+      ]
+    }
   },
   "guides": {
     "en": {

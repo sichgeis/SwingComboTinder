@@ -1,6 +1,6 @@
 # Typed figure metadata
 
-- Status: Approved
+- Status: Done
 - Approved: 2026-07-15
 - Goal: Constrain known figure metadata values at compile time, at Content Studio boundaries, and in the editor while preserving their current visible meaning.
 
@@ -90,7 +90,17 @@ Position collections must be non-empty, contain no duplicates, and serialize in 
 
 - 2026-07-15: User approved autonomous implementation of both increments.
 - 2026-07-15: Migrated family, count, and motion to semantic codes; added compile-time unions, runtime validation, localized labels, and server-supplied Content Studio dropdown options.
+- 2026-07-15: Replaced ending strings with `any` or canonical known-position lists; normalized both open/closed orders; added Studio ending-kind and position controls.
+
+## Validation
+
+- `npm run check` passes linting, strict type checks, 20 test files with 56 tests, and the production PWA build.
+- All 42 definitions load and round-trip through the Content Studio persistence layer.
+- Catalog tests enforce allowed family/count/motion codes plus non-empty, unique, canonical position lists.
+- Runtime persistence tests reject unknown enum values, malformed endings, empty position lists, duplicate positions, and unknown positions.
+- Presentation tests cover English/German enum labels, multi-position endings, and the `any` ending.
+- A temporary live Content Studio instance on port 4175 successfully loaded the shared enum options and Promenade as `{ kind: "positions", positions: ["open", "closed"] }` through the real content API.
 
 ## Next action
 
-Replace free-text endings with structured ending positions.
+None. Reassess taxonomy meaning separately if a concrete product workflow needs richer classification.

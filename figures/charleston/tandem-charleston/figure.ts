@@ -11,7 +11,12 @@ export default defineFigure({
     "family": "tandem",
     "count": "eight",
     "motion": "linear",
-    "end": "Tandem"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "tandem"
+      ]
+    }
   },
   "guides": {
     "en": {

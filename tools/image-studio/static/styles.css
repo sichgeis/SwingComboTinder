@@ -73,6 +73,9 @@ main { padding: 1.25rem clamp(1rem, 4vw, 4rem) 4rem; }
 .content-field { min-width: 0; display: grid; gap: .35rem; color: var(--muted); font-size: .72rem; }
 .content-field.full { grid-column: 1 / -1; }
 .content-field textarea { min-height: 6.5rem; resize: vertical; line-height: 1.45; }
+.ending-options { display: flex; flex-wrap: wrap; gap: .5rem; }
+.ending-options label { min-height: 2.4rem; padding: .5rem .7rem; display: flex; align-items: center; gap: .45rem; border: 1px solid var(--line); border-radius: .55rem; background: rgba(247, 240, 223, .035); color: var(--muted); font-size: .72rem; }
+.ending-options input { accent-color: var(--amber); }
 .content-field input[readonly] { color: #82979e; background: #09151c; }
 .content-field.has-error input, .content-field.has-error textarea, .content-field.has-error select { border-color: var(--red); }
 .field-error { min-height: .9rem; color: var(--red); font-size: .64rem; }

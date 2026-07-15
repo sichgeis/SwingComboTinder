@@ -19,6 +19,13 @@ export type CountPattern = (typeof countPatterns)[number];
 export const motionKinds = ["linear", "rotational", "circular", "vertical", "travel"] as const;
 export type MotionKind = (typeof motionKinds)[number];
 
+export const endPositions = ["open", "closed", "side-by-side", "wrapped", "tandem"] as const;
+export type EndPosition = (typeof endPositions)[number];
+
+export type MoveEnding =
+  | { readonly kind: "positions"; readonly positions: readonly EndPosition[] }
+  | { readonly kind: "any" };
+
 export interface MoveGuide {
   readonly description: string;
   readonly steps: string;
@@ -44,7 +51,7 @@ export interface Move {
   readonly family: MoveFamily;
   readonly count: CountPattern;
   readonly motion: MotionKind;
-  readonly end: string;
+  readonly end: MoveEnding;
   readonly description: string;
   readonly steps: string;
   readonly body: string;

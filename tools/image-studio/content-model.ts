@@ -1,10 +1,13 @@
 import {
   countPatterns,
+  endPositions,
   motionKinds,
   moveFamilies,
   moveStyles,
   type CountPattern,
+  type EndPosition,
   type MotionKind,
+  type MoveEnding,
   type MoveFamily,
   type MoveStyle
 } from "../../src/domain/move";
@@ -16,7 +19,8 @@ type ResourceLanguage = (typeof resourceLanguages)[number];
 export const figureMetadataOptions = {
   families: moveFamilies,
   countPatterns,
-  motionKinds
+  motionKinds,
+  endPositions
 } as const;
 
 export interface ContentValidationIssue {
@@ -37,7 +41,7 @@ export interface FigureBasicsDto {
   readonly family: MoveFamily;
   readonly count: CountPattern;
   readonly motion: MotionKind;
-  readonly end: string;
+  readonly end: MoveEnding;
 }
 
 export interface GuideDto {
@@ -134,6 +138,26 @@ const enumValue = <Value extends string>(
   const parsed = textValue(value, path, issues);
   if (!allowed.some((candidate) => candidate === parsed)) issues.push({ path, message: "Unknown value." });
   return parsed as Value;
+};
+
+const parseEnding = (value: unknown, issues: ContentValidationIssue[]): MoveEnding => {
+  const path = "basics.end";
+  const source = record(value, path, issues);
+  const kind = source.kind;
+  if (kind === "any") return { kind };
+  if (kind !== "positions") {
+    issues.push({ path: `${path}.kind`, message: "Ending kind must be any or positions." });
+    return { kind: "any" };
+  }
+  if (!Array.isArray(source.positions)) {
+    issues.push({ path: `${path}.positions`, message: "Expected a list of ending positions." });
+    return { kind, positions: [] };
+  }
+  const parsed = source.positions.map((position, index) => enumValue(position, endPositions, `${path}.positions.${index}`, issues));
+  if (parsed.length === 0) issues.push({ path: `${path}.positions`, message: "Choose at least one ending position." });
+  if (new Set(parsed).size !== parsed.length) issues.push({ path: `${path}.positions`, message: "Ending positions must be unique." });
+  const selected = new Set<EndPosition>(parsed);
+  return { kind, positions: endPositions.filter((position) => selected.has(position)) };
 };
 
 const parseGuide = (value: unknown, path: string, issues: ContentValidationIssue[]): GuideDto => {
@@ -249,7 +273,7 @@ export const validateFigureContent = (value: unknown): FigureContentDto => {
       family: enumValue(basics.family, moveFamilies, "basics.family", issues),
       count: enumValue(basics.count, countPatterns, "basics.count", issues),
       motion: enumValue(basics.motion, motionKinds, "basics.motion", issues),
-      end: textValue(basics.end, "basics.end", issues)
+      end: parseEnding(basics.end, issues)
     },
     guides: {
       en: parseGuide(guides.en, "guides.en", issues),

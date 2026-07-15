@@ -11,7 +11,9 @@ export default defineFigure({
     "family": "rhythm",
     "count": "musical",
     "motion": "linear",
-    "end": "Any"
+    "end": {
+      "kind": "any"
+    }
   },
   "guides": {
     "en": {

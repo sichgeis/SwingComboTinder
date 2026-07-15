@@ -52,6 +52,17 @@ describe("figure content persistence", () => {
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, family: "typo" } })).toThrow(ContentValidationError);
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, count: "seven" } })).toThrow(ContentValidationError);
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, motion: "sideways" } })).toThrow(ContentValidationError);
+    expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, end: { kind: "positions", positions: [] } } })).toThrow(ContentValidationError);
+    expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, end: { kind: "positions", positions: ["open", "open"] } } })).toThrow(ContentValidationError);
+    expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, end: { kind: "positions", positions: ["somewhere"] } } })).toThrow(ContentValidationError);
+  });
+
+  it("normalizes ending positions into canonical order", async () => {
+    const source = await readFile(resolve(figuresRoot, "lindy/inside-turn/figure.ts"), "utf8");
+    const content = parseFigureContent(source, "figure.ts", "inside-turn");
+    const reordered = { ...content, basics: { ...content.basics, end: { kind: "positions", positions: ["closed", "open"] } } };
+    const normalized = parseFigureContent(serializeFigureContent(reordered), "figure.ts", "inside-turn");
+    expect(normalized.basics.end).toEqual({ kind: "positions", positions: ["open", "closed"] });
   });
 
   it("detects stale writes and leaves the external source unchanged", async () => {

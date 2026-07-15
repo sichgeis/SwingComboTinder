@@ -42,4 +42,13 @@ describe("card presentation", () => {
     expect(german).toContain("6 oder 8 Counts");
     expect(german).toContain("Rotierend");
   });
+
+  it("renders structured ending positions in canonical order", () => {
+    const promenade = figureFor("promenade");
+    expect(renderCardMarkup({ figure: promenade, language: "en", index: 0 })).toContain("Ends Open / Closed");
+    expect(renderCardMarkup({ figure: promenade, language: "de", index: 0 })).toContain("Endet Open / Closed");
+    const grooveWalk = figureFor("groove-walk");
+    expect(renderCardMarkup({ figure: grooveWalk, language: "en", index: 0 })).toContain("Ends Any");
+    expect(renderCardMarkup({ figure: grooveWalk, language: "de", index: 0 })).toContain("Endet Beliebig");
+  });
 });

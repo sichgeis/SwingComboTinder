@@ -11,7 +11,13 @@ export default defineFigure({
     "family": "shag-rhythm",
     "count": "six-or-twelve",
     "motion": "travel",
-    "end": "Closed / Open"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "open",
+        "closed"
+      ]
+    }
   },
   "guides": {
     "en": {

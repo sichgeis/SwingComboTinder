@@ -11,7 +11,13 @@ export default defineFigure({
     "family": "shag-turn",
     "count": "six",
     "motion": "linear",
-    "end": "Open / Closed"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "open",
+        "closed"
+      ]
+    }
   },
   "guides": {
     "en": {

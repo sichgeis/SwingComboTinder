@@ -11,7 +11,13 @@ export default defineFigure({
     "family": "travel",
     "count": "six-or-eight",
     "motion": "linear",
-    "end": "Closed / Open"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "open",
+        "closed"
+      ]
+    }
   },
   "guides": {
     "en": {

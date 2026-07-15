@@ -11,7 +11,12 @@ export default defineFigure({
     "family": "position",
     "count": "eight",
     "motion": "rotational",
-    "end": "Open"
+    "end": {
+      "kind": "positions",
+      "positions": [
+        "open"
+      ]
+    }
   },
   "guides": {
     "en": {
