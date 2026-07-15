@@ -2,6 +2,8 @@ import type { Move, MoveGuide, MoveTranslation } from "../src/domain/move";
 
 export const videoKinds = ["tutorial", "technique", "variation", "history"] as const;
 export type VideoKind = (typeof videoKinds)[number];
+export const webResourceKinds = ["article", "reference"] as const;
+export type WebResourceKind = (typeof webResourceKinds)[number];
 
 export type FigureMove = Omit<Move, keyof MoveGuide>;
 
@@ -20,6 +22,13 @@ export interface CardVideoLink {
   readonly kind: VideoKind;
 }
 
+export interface CardWebLink {
+  readonly url: string;
+  readonly title: string;
+  readonly kind: WebResourceKind;
+  readonly language?: "en" | "de";
+}
+
 export interface FigureDefinition {
   readonly order: number;
   readonly card: string;
@@ -31,6 +40,9 @@ export interface FigureDefinition {
   readonly youtube: {
     readonly teachingSources: readonly TeachingSource[];
     readonly cardLinks: readonly CardVideoLink[];
+  };
+  readonly resources?: {
+    readonly cardLinks: readonly CardWebLink[];
   };
 }
 

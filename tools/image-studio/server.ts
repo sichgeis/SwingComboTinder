@@ -5,6 +5,14 @@ import { dirname, extname, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { getImageEnvironment, loadEnvironment } from "./environment";
+import {
+  ContentConflictError,
+  ContentValidationError,
+  figureDefinitionFromContent,
+  readFigureContentFile,
+  saveFigureContentFile,
+  validateFigureContent
+} from "./content";
 import { generateFigure } from "./generate";
 import { createLogger, type Logger } from "./logger";
 import { figuresRoot, repositoryRoot } from "./paths";
@@ -20,8 +28,10 @@ import {
   type ImageQuality,
   type SelectionOptions
 } from "./types";
+import { renderCardMarkup } from "../../src/ui/card-presentation";
 
 const staticRoot = resolve(dirname(fileURLToPath(import.meta.url)), "static");
+const appStylesPath = resolve(repositoryRoot, "src/styles/app.css");
 const logger = createLogger("image-studio");
 const environment = (() => {
   try {
@@ -73,31 +83,53 @@ const mediaUrl = (path: string): string =>
   `/media?path=${encodeURIComponent(relative(repositoryRoot, path).split("\\").join("/"))}`;
 
 const serializeFigures = async (): Promise<unknown> =>
-  (await discoverFigures()).map((figure) => ({
-    id: figure.id,
-    style: figure.style,
-    slug: figure.slug,
-    name: figure.name,
-    marked: figure.marked,
-    imageApproved: figure.imageApproved,
-    hasPose: figure.hasPose,
-    hasCurrent: figure.hasCurrent,
-    poseDirection: figure.poseDirection,
-    characterDirection: figure.characterDirection,
-    generationNote: figure.generationNote,
-    poseUrl: figure.hasPose ? mediaUrl(figure.posePath) : null,
-    currentUrl: figure.hasCurrent
-      ? mediaUrl(figure.currentPath)
-      : figure.hasFallback
-        ? mediaUrl(figure.fallbackPath)
-        : null,
-    currentIsFallback: !figure.hasCurrent && figure.hasFallback,
-    candidates: figure.candidates.map((candidate) => ({
-      path: relative(figure.directory, candidate.absolutePath).split("\\").join("/"),
-      url: mediaUrl(candidate.absolutePath),
-      createdAt: candidate.createdAt,
-      runId: candidate.runId
-    }))
+  Promise.all((await discoverFigures()).map(async (figure) => {
+    let contentSummary: Record<string, unknown>;
+    try {
+      const { content } = await readFigureContentFile(figure.definitionPath, figure.slug);
+      contentSummary = {
+        name: content.basics.name,
+        alias: content.basics.alias,
+        contentValid: true,
+        germanComplete: true,
+        resourceCount: content.cardResources.length
+      };
+    } catch (error) {
+      contentSummary = {
+        name: figure.name,
+        alias: "",
+        contentValid: false,
+        germanComplete: false,
+        resourceCount: 0,
+        contentError: error instanceof Error ? error.message : String(error)
+      };
+    }
+    return {
+      id: figure.id,
+      style: figure.style,
+      slug: figure.slug,
+      ...contentSummary,
+      marked: figure.marked,
+      imageApproved: figure.imageApproved,
+      hasPose: figure.hasPose,
+      hasCurrent: figure.hasCurrent,
+      poseDirection: figure.poseDirection,
+      characterDirection: figure.characterDirection,
+      generationNote: figure.generationNote,
+      poseUrl: figure.hasPose ? mediaUrl(figure.posePath) : null,
+      currentUrl: figure.hasCurrent
+        ? mediaUrl(figure.currentPath)
+        : figure.hasFallback
+          ? mediaUrl(figure.fallbackPath)
+          : null,
+      currentIsFallback: !figure.hasCurrent && figure.hasFallback,
+      candidates: figure.candidates.map((candidate) => ({
+        path: relative(figure.directory, candidate.absolutePath).split("\\").join("/"),
+        url: mediaUrl(candidate.absolutePath),
+        createdAt: candidate.createdAt,
+        runId: candidate.runId
+      }))
+    };
   }));
 
 const parseRunRequest = (value: unknown): RunRequest => {
@@ -251,6 +283,9 @@ const serveMedia = async (response: ServerResponse, path: string | null): Promis
   response.end(await readFile(absolutePath));
 };
 
+const figureImageUrl = (figure: Awaited<ReturnType<typeof findFigure>>): string =>
+  figure.hasCurrent ? mediaUrl(figure.currentPath) : figure.hasFallback ? mediaUrl(figure.fallbackPath) : "";
+
 const handleRequest = async (
   request: IncomingMessage,
   response: ServerResponse,
@@ -269,6 +304,54 @@ const handleRequest = async (
   }
   if (request.method === "GET" && url.pathname === "/api/figures") {
     sendJson(response, 200, await serializeFigures());
+    return;
+  }
+  if (request.method === "GET" && url.pathname === "/api/figure-content") {
+    const id = url.searchParams.get("id");
+    if (!id) throw new Error("Missing figure ID.");
+    const figure = await findFigure(id);
+    const loaded = await readFigureContentFile(figure.definitionPath, figure.slug);
+    sendJson(response, 200, { ...loaded, imageUrl: figureImageUrl(figure) });
+    return;
+  }
+  if (request.method === "PUT" && url.pathname === "/api/figure-content") {
+    const body = await readJson(request);
+    if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
+    const values = body as Record<string, unknown>;
+    if (typeof values.id !== "string" || typeof values.revision !== "string") {
+      throw new Error("Saving content requires figure id and source revision.");
+    }
+    const figure = await findFigure(values.id);
+    const current = await readFigureContentFile(figure.definitionPath, figure.slug);
+    const saved = await saveFigureContentFile(
+      figure.definitionPath,
+      current.content.identity,
+      values.revision,
+      values.content
+    );
+    requestLogger.info("figure-content-saved", { figureId: values.id, revision: saved.revision });
+    event("figure-updated", { id: values.id });
+    sendJson(response, 200, { ...saved, imageUrl: figureImageUrl(figure) });
+    return;
+  }
+  if (request.method === "POST" && url.pathname === "/api/preview") {
+    const body = await readJson(request);
+    if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
+    const values = body as Record<string, unknown>;
+    if (typeof values.id !== "string" || (values.language !== "en" && values.language !== "de")) {
+      throw new Error("Preview requires figure id and language.");
+    }
+    const figure = await findFigure(values.id);
+    const content = validateFigureContent(values.content);
+    const definition = figureDefinitionFromContent(content, figureImageUrl(figure));
+    sendJson(response, 200, {
+      markup: renderCardMarkup({
+        figure: definition,
+        language: values.language,
+        index: Math.max(0, content.identity.order - 1),
+        imageUrl: figureImageUrl(figure)
+      })
+    });
     return;
   }
   if (request.method === "GET" && url.pathname === "/api/prompt") {
@@ -374,6 +457,11 @@ const handleRequest = async (
     await serveMedia(response, url.searchParams.get("path"));
     return;
   }
+  if (request.method === "GET" && url.pathname === "/app-card.css") {
+    response.writeHead(200, { "content-type": "text/css; charset=utf-8", "cache-control": "no-store" });
+    response.end(await readFile(appStylesPath));
+    return;
+  }
   if (request.method === "GET" && ["/", "/app.js", "/styles.css"].includes(url.pathname)) {
     await serveStatic(response, url.pathname);
     return;
@@ -406,7 +494,11 @@ const server = createServer((request, response) => {
       error
     });
     if (!response.headersSent) {
-      sendJson(response, 400, { error: error instanceof Error ? error.message : String(error) });
+      const status = error instanceof ContentConflictError ? 409 : error instanceof ContentValidationError ? 422 : 400;
+      sendJson(response, status, {
+        error: error instanceof Error ? error.message : String(error),
+        ...(error instanceof ContentValidationError ? { issues: error.issues } : {})
+      });
     } else {
       response.end();
     }
@@ -431,7 +523,7 @@ server.listen(port, "127.0.0.1", () => {
     logLevel: environment.logLevel,
     proxyConfigured: Boolean(environment.litellmApiKey && environment.litellmBaseUrl)
   });
-  console.log(`Dance Card Image Studio: http://127.0.0.1:${port}`);
+  console.log(`Swing Thing Content Studio: http://127.0.0.1:${port}`);
   if (!environment.litellmApiKey || !environment.litellmBaseUrl) {
     logger.warn("proxy-not-configured", {
       proxyKeyConfigured: Boolean(environment.litellmApiKey),

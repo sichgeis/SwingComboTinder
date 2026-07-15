@@ -1,5 +1,5 @@
 import { figureFor } from "../../figures/catalog";
-import { youtubeUrl, type VideoKind } from "../../figures/define-figure";
+import { youtubeUrl } from "../../figures/define-figure";
 import { moves } from "../domain/catalog";
 import { generateCombos, type Combo } from "../domain/combos";
 import { guideFor } from "../domain/localize";
@@ -16,28 +16,9 @@ import {
 import type { LocalSessionStore } from "../infrastructure/local-session-store";
 import { classifyCardGesture } from "./card-gesture";
 import { adjacentBrowseIndex, figuresForBrowsing } from "./browse-deck";
+import { escapeHtml, localizedMeta, renderCardMarkup, styleMeta, videoKindLabel, webResourceKindLabel } from "./card-presentation";
 import { isIntentionalCardGesture, isIntentionalHorizontalGesture, type TouchPoint } from "./horizontal-gesture";
 import { defaultLanguage, translate, type TranslationKey } from "./translations";
-
-const styleMeta: Record<MoveStyle, { label: string; short: string }> = {
-  lindy: { label: "Lindy Hop", short: "Lindy" },
-  charleston: { label: "Charleston", short: "Charleston" },
-  shag: { label: "Collegiate Shag", short: "Shag" }
-};
-
-const germanMeta: Readonly<Record<string, string>> = {
-  Circular: "Kreisförmig", Linear: "Linear", Turn: "Drehung", Position: "Position", Rhythm: "Rhythmus",
-  Transition: "Übergang", Travel: "Reise", Rotational: "Rotierend", "Charleston Turn": "Charleston-Drehung",
-  Charleston: "Charleston", Tandem: "Tandem", "Shag Rhythm": "Shag-Rhythmus", "Shag Turn": "Shag-Drehung",
-  Open: "Open", Closed: "Closed", "Closed / Open": "Closed / Open", "Side-by-side": "Side-by-Side",
-  "6 count": "6 Counts", "8 count": "8 Counts", "6 or 8 count": "6 oder 8 Counts", "6 or 12 count": "6 oder 12 Counts",
-  "8 or 16 count": "8 oder 16 Counts", Any: "Beliebig", "As musical": "Musikalisch", Vertical: "Vertikal",
-  "Closed / Side-by-side": "Closed / Side-by-Side", "Open / Closed": "Open / Closed", "Open / Side-by-side": "Open / Side-by-Side",
-  "Tandem / Open": "Tandem / Open", Wrapped: "Gewickelt",
-  "Comfort move": "Sichere Figur", "Almost there": "Fast geschafft", "Tonight's goal": "Ziel für heute",
-  "Practice pick": "Übungsfigur", Curious: "Neugierig", Rusty: "Eingerostet", "Maybe I know it": "Vielleicht bekannt",
-  "New territory": "Neuland", "Stretch goal": "Herausforderung"
-};
 
 const germanComboCopy = [
   { label: "01 · WARM-UP", title: "Findet den gemeinsamen Rhythmus", note: "Beginnt mit Puls und einem einfachen Weg. Lasst den gewählten Stil ankommen, bevor eine größere Drehung dazukommt." },
@@ -113,14 +94,7 @@ export class SwingThingController {
   }
 
   private meta(value: string): string {
-    return this.language === "de" ? (germanMeta[value] ?? value) : value;
-  }
-
-  private videoKind(kind: VideoKind): string {
-    const keys: Record<VideoKind, TranslationKey> = {
-      tutorial: "videoTutorial", technique: "videoTechnique", variation: "videoVariation", history: "videoHistory"
-    };
-    return this.t(keys[kind]);
+    return localizedMeta(this.language, value);
   }
 
   private applyLanguage(): void {
@@ -241,64 +215,15 @@ export class SwingThingController {
     this.saveSession();
   }
 
-  private guideSections(move: Move): ReadonlyArray<{ readonly heading: string; readonly copy: string }> {
-    const guide = guideFor(move, this.language);
-    if (this.language === "de") {
-      const translated = guide as MoveTranslation;
-      return [
-        { heading: translated.headings.steps, copy: translated.steps },
-        { heading: translated.headings.body, copy: translated.body },
-        { heading: translated.headings.lead, copy: translated.lead },
-        { heading: translated.headings.follow, copy: translated.follow },
-        { heading: translated.headings.connection, copy: translated.connection },
-        { heading: translated.headings.practice, copy: translated.practice }
-      ];
-    }
-    return [
-      { heading: this.t("rhythmHeading"), copy: guide.steps },
-      { heading: this.t("bodyHeading"), copy: guide.body },
-      { heading: this.t("leadHeading"), copy: guide.lead },
-      { heading: this.t("connectionHeading"), copy: guide.connection }
-    ];
-  }
-
   private cardMarkup(move: Move | undefined, index: number, inert = false, deckChoice?: Choice): string {
     if (!move) return "";
-    const guide = guideFor(move, this.language);
-    const figure = figureFor(move.id);
-    const image = figure.card;
-    const sections = this.guideSections(move);
-    const videos = figure.youtube.cardLinks;
-    return `
-      <div class="card-inner">
-        <section class="card-face card-front" data-card-face="front">
-          <div class="card-art" style="--card-art: url('${image}')"></div>
-          <div class="card-grain"></div>
-          <div class="card-content">
-            <div class="card-top"><span class="family-pill">${this.meta(move.family)}</span><span class="familiarity-pill">${deckChoice ? this.t(deckChoice === "star" ? "tryTonight" : "gotIt") : this.meta(move.familiarity)}</span></div>
-            <div class="card-bottom">
-              <span class="move-number">MOVE ${String(index + 1).padStart(2, "0")}</span>
-              <h2>${move.name}</h2>${this.language === "en" ? `<p class="alias">${move.alias}</p>` : ""}<p class="move-description">${guide.description}</p>
-              <div class="move-meta"><span>${styleMeta[move.style].short}</span><span>${this.meta(move.count)}</span><span>${this.meta(move.motion)}</span><span>${this.t("ends")} ${this.meta(move.end)}</span></div>
-            </div>
-          </div>
-        </section>
-        <section class="card-face card-back" data-card-face="back" aria-hidden="true">
-          <div class="card-back-scroll" data-card-scroll>
-            <div class="card-back-heading">
-              <span class="move-number">MOVE ${String(index + 1).padStart(2, "0")} · ${styleMeta[move.style].short}</span>
-              <h2>${move.name}</h2>
-              <p class="card-back-intro">${guide.description}</p>
-            </div>
-            <div class="card-guide-sections">
-              ${sections.map(({ heading, copy }) => `<section class="card-guide-section"><h3>${heading}</h3><p>${copy}</p></section>`).join("")}
-            </div>
-            <div class="card-memory"><span>${this.t("remember")}</span><strong>${guide.cue}</strong></div>
-            ${videos.length === 0 ? "" : `<section class="card-videos"><h3>${this.t("videosHeading")}</h3>${videos.map((video) => `<a href="${youtubeUrl(video.videoId)}" target="_blank" rel="noopener noreferrer" ${inert ? "tabindex=\"-1\"" : ""}><span aria-hidden="true">▶</span><span><small>${this.videoKind(video.kind)}</small><strong>${video.title}</strong></span><b aria-hidden="true">↗</b></a>`).join("")}</section>`}
-            <p class="card-guide-note">${this.t("guideNote")}</p>
-          </div>
-        </section>
-      </div>`;
+    return renderCardMarkup({
+      figure: figureFor(move.id),
+      language: this.language,
+      index,
+      inert,
+      ...(deckChoice === undefined ? {} : { deckChoice })
+    });
   }
 
   private renderDeck(): void {
@@ -518,15 +443,22 @@ export class SwingThingController {
     }
     this.query<HTMLElement>("#cueMemory").textContent = guide.cue;
     this.query<HTMLElement>("#cueFlow").textContent = move.flows;
-    const videos = figureFor(move.id).youtube.cardLinks;
+    const figure = figureFor(move.id);
+    const videos = figure.youtube.cardLinks;
+    const resources = (figure.resources?.cardLinks ?? []).filter((resource) => !resource.language || resource.language === this.language);
     const videoSection = this.query<HTMLElement>("#cueVideos");
-    videoSection.hidden = videos.length === 0;
-    this.query<HTMLElement>("#cueVideoList").innerHTML = videos.map((video) => `
-      <a class="guide-video-link" href="${youtubeUrl(video.videoId)}" target="_blank" rel="noopener noreferrer" aria-label="${this.t("openOnYouTube")}: ${video.title}">
+    videoSection.hidden = videos.length === 0 && resources.length === 0;
+    this.query<HTMLElement>("#cueVideoList").innerHTML = `${videos.map((video) => `
+      <a class="guide-video-link" href="${escapeHtml(youtubeUrl(video.videoId))}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(this.t("openOnYouTube"))}: ${escapeHtml(video.title)}">
         <span class="video-play" aria-hidden="true">▶</span>
-        <span class="video-copy"><small>${this.videoKind(video.kind)}</small><strong>${video.title}</strong></span>
+        <span class="video-copy"><small>${escapeHtml(videoKindLabel(this.language, video.kind))}</small><strong>${escapeHtml(video.title)}</strong></span>
         <span class="video-external" aria-hidden="true">↗</span>
-      </a>`).join("");
+      </a>`).join("")}${resources.map((resource) => `
+      <a class="guide-video-link" href="${escapeHtml(resource.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(resource.title)}">
+        <span class="video-play" aria-hidden="true">↗</span>
+        <span class="video-copy"><small>${escapeHtml(webResourceKindLabel(this.language, resource.kind))}</small><strong>${escapeHtml(resource.title)}</strong></span>
+        <span class="video-external" aria-hidden="true">↗</span>
+      </a>`).join("")}`;
     if (!this.cueDialog.open) this.cueDialog.showModal();
   }
 

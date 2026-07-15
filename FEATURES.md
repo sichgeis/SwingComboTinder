@@ -13,14 +13,14 @@ This file is the compact current-work surface for Swing Thing. Detailed accepted
 
 ## Content Studio editorial core
 
-- Status: Approved
+- Status: Done
 - Goal: Turn the image-oriented studio into a master-detail editor for complete figure content with safe saving and a live app-card preview.
 - Scope: Figure library, structured Basics/English/German/Resources editing, shared front/back preview, generic web resources, atomic `figure.ts` persistence, and preservation of the existing Image Queue.
 - Non-goals: Do not add review states, maintenance queues, bulk editing, AI writing, content-file migration, or a broader image-workflow redesign.
 - Specification: [`specs/content-studio-editorial-core.md`](specs/content-studio-editorial-core.md)
-- Progress: Option A selected and approved on 2026-07-15 after review against all 42 figure packages and the current studio implementation.
-- Validation: Specification checked against `tools/image-studio/`, `figures/define-figure.ts`, `src/domain/move.ts`, and the production card renderer.
-- Next action: Implement Increment 1: the content DTO, validation, revision-safe reader/writer tests, and read-only master-detail shell.
+- Progress: All four approved increments were implemented on 2026-07-15: safe content persistence, structured bilingual editing, shared preview and generic resources, responsive workspace navigation, and preserved Image Queue behavior.
+- Validation: `npm run check` passes with 21 test files and 56 tests. Browser validation covered all-figure loading, unsaved live preview, web-resource rendering, German/English front/back controls, mobile Editor/Preview switching, and the 42-card Image Queue without saving test drafts.
+- Next action: None; use the completed editorial core for real content maintenance and evaluate the separate Option B draft from that experience.
 
 ## Content Studio maintenance workspace
 

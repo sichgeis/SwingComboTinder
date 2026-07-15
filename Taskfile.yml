@@ -70,13 +70,13 @@ tasks:
       - npm run test -- {{.CLI_ARGS}}
 
   images:studio:
-    desc: Start the local dance-card image studio
+    desc: Start the local Content Studio and Image Queue
     deps: [install]
     cmds:
       - npm run images:studio
 
   images:studio:debug:
-    desc: Start the image studio with detailed diagnostic logging
+    desc: Start the Content Studio with detailed image-request logging
     deps: [install]
     env:
       IMAGE_STUDIO_LOG_LEVEL: debug

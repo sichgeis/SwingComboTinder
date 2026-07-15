@@ -1,6 +1,6 @@
 # Content Studio editorial core
 
-- Status: Approved
+- Status: Done
 - Approved: 2026-07-15
 - Goal: Turn the local image-oriented studio into a master-detail editor where one figure can be found, edited, previewed, validated, and saved safely.
 
@@ -200,7 +200,18 @@ A failed or conflicted save leaves the original file unchanged. The generated so
 ## Progress
 
 - 2026-07-15: Option A selected and specification approved before implementation.
+- 2026-07-15: Added a storage-independent content DTO, field validation, safe TypeScript parsing and deterministic serialization, source revisions, atomic replacement, and conflict/failure tests.
+- 2026-07-15: Extracted the production card presentation, added generic language-aware web resources, and used the shared renderer for live unsaved previews.
+- 2026-07-15: Reworked the local tool into Content and Image Queue workspaces with searchable figure navigation, structured Basics/English/German/Resources editing, responsive Editor/Preview switching, and unsaved-change protection.
+- 2026-07-15: Updated repository documentation and completed automated and browser validation.
+
+## Validation evidence
+
+- Automated: `npm run check` passed linting, strict type checks, 21 test files with 56 tests, and the production PWA build.
+- Persistence: all 42 figure definitions load; deterministic round trips, valid atomic saves, invalid content, and stale-write conflicts are covered by focused tests.
+- Browser: verified the 42-figure library, live unsaved bilingual preview, front/back switching, field-level invalid-resource feedback, generic web-resource preview, mobile Editor/Preview switching, and preserved Image Queue with all 42 figures.
+- Safety: browser test drafts were removed without saving; no production figure content changed during manual validation.
 
 ## Next action
 
-Implement Increment 1 and update this specification with validation evidence and the next coherent increment.
+None. Exercise the completed workflow on real content maintenance; reassess the separate Proposed maintenance-workspace draft only after practical use.

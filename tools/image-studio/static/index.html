@@ -3,20 +3,91 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dance Card Image Studio</title>
+    <title>Swing Thing Content Studio</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <header class="masthead">
       <div>
         <p class="eyebrow">Swing Thing · local production tool</p>
-        <h1>Dance Card Image Studio</h1>
-        <p class="lede">Generate pose-locked card candidates, compare them with the teaching frame and live artwork, then explicitly promote the winner.</p>
+        <h1>Swing Thing Content Studio</h1>
+        <p class="lede">Maintain figure copy, resources, and artwork in one local production workspace.</p>
       </div>
       <div id="connection" class="connection">Connecting…</div>
     </header>
 
-    <main>
+    <nav class="workspace-tabs" aria-label="Studio workspace">
+      <button type="button" class="workspace-tab active" data-workspace="content" aria-pressed="true">Content</button>
+      <button type="button" class="workspace-tab" data-workspace="images" aria-pressed="false">Image Queue</button>
+    </nav>
+
+    <main id="content-workspace" class="content-workspace">
+      <aside class="figure-library" aria-label="Figure library">
+        <div class="library-heading">
+          <div><p class="eyebrow">Figure library</p><h2>Choose a figure</h2></div>
+          <span id="content-count" class="content-count">0</span>
+        </div>
+        <label class="library-control">Search
+          <input id="content-search" type="search" placeholder="Name, alias, or ID">
+        </label>
+        <label class="library-control">Dance style
+          <select id="content-style">
+            <option value="">All styles</option>
+            <option value="lindy">Lindy Hop</option>
+            <option value="charleston">Charleston</option>
+            <option value="shag">Collegiate Shag</option>
+          </select>
+        </label>
+        <div id="content-list" class="content-list" aria-live="polite"></div>
+      </aside>
+
+      <nav class="content-pane-tabs" aria-label="Content view">
+        <button type="button" class="active" data-content-pane="editor" aria-pressed="true">Editor</button>
+        <button id="preview-pane-button" type="button" data-content-pane="preview" aria-pressed="false" disabled>Preview</button>
+      </nav>
+
+      <section class="content-editor-panel">
+        <div id="content-empty" class="content-empty">
+          <p class="eyebrow">Editorial workspace</p>
+          <h2>Select a figure to edit its complete card content.</h2>
+          <p>Changes stay local until the complete figure validates and is saved.</p>
+        </div>
+        <form id="content-form" class="content-form" hidden novalidate>
+          <header class="editor-heading">
+            <div>
+              <p id="content-identity" class="eyebrow"></p>
+              <h2 id="content-title"></h2>
+              <p id="content-dirty" class="dirty-state">Saved source</p>
+            </div>
+            <button id="content-save" type="submit">Save figure</button>
+          </header>
+          <div id="content-message" class="content-message" aria-live="polite"></div>
+          <div id="content-fields"></div>
+        </form>
+      </section>
+
+      <aside id="preview-panel" class="preview-panel" hidden>
+        <div class="preview-heading">
+          <div><p class="eyebrow">Live app card</p><h2>Preview</h2></div>
+          <span id="preview-status">Ready</span>
+        </div>
+        <div class="preview-controls" aria-label="Preview controls">
+          <div>
+            <button type="button" class="active" data-preview-language="de">DE</button>
+            <button type="button" data-preview-language="en">EN</button>
+          </div>
+          <div>
+            <button type="button" class="active" data-preview-face="front">Front</button>
+            <button type="button" data-preview-face="back">Back</button>
+          </div>
+        </div>
+        <div class="preview-frame-shell">
+          <iframe id="card-preview" title="Live Swing Thing card preview" sandbox="allow-popups allow-popups-to-escape-sandbox"></iframe>
+        </div>
+      </aside>
+    </main>
+
+    <main id="image-workspace" hidden>
       <form id="run-form" class="toolbar">
         <label>Mode
           <select name="mode">

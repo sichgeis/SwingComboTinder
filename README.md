@@ -30,8 +30,8 @@ npm run dev
 | `task check` | Run linting, strict type checks, tests, and a production build |
 | `task build` | Create the production build in `dist/` |
 | `task preview` | Build and serve the production application locally |
-| `task images:studio` | Start the local image-generation studio |
-| `task images:studio:debug` | Start the studio with request traces and error stacks |
+| `task images:studio` | Start the local Content Studio and Image Queue |
+| `task images:studio:debug` | Start the studio with image-request traces and error stacks |
 | `task images:plan` | Preview the missing-image batch without API calls |
 | `task images:generate` | Generate the missing-image batch through LiteLLM |
 
@@ -49,7 +49,7 @@ task images:generate MODE=marked -- --debug
 
 Current feature status, validation evidence, and the next action live in [`FEATURES.md`](FEATURES.md). Substantial approved work receives a dedicated specification under [`specs/`](specs/README.md); small fixes and routine maintenance remain intentionally lightweight. Repository-wide operating and delivery rules live in [`AGENTS.md`](AGENTS.md).
 
-## Image generation
+## Content and image production
 
 Card artwork is generated locally with OpenAI GPT Image through a LiteLLM proxy. Create the ignored `.env` file, replace its placeholder values, and start the studio:
 
@@ -58,7 +58,7 @@ task env
 task images:studio
 ```
 
-The studio runs at <http://127.0.0.1:4174> by default. It previews source frames and candidates, runs independent figure requests concurrently, and only changes live artwork when a candidate is explicitly promoted.
+The studio runs at <http://127.0.0.1:4174> by default. Its Content workspace provides a searchable figure library, structured bilingual copy and resource editing, and the same front/back card presentation used by the app. It validates and saves a complete `figure.ts` atomically and detects external file changes before writing. Its Image Queue previews source frames and candidates, runs independent figure requests concurrently, and only changes live artwork when a candidate is explicitly promoted.
 
 Required settings are `LITELLM_API_KEY` and `LITELLM_BASE_URL`; `IMAGE_MODEL` names the image-capable alias configured on the proxy. See [`.env.example`](.env.example) and [`image-generation/IMAGE_STUDIO.md`](image-generation/IMAGE_STUDIO.md) for configuration, batch modes, storage, and promotion details.
 
@@ -76,7 +76,7 @@ generated/
 notes.md
 ```
 
-`figure.ts` contains the typed metadata, localized copy, video provenance, and card links. A figure can use `generated/current.png` as its full-resolution card source or fall back to `card.jpg`. Vite discovers all figure definitions automatically, orders them by their explicit `order`, and emits the selected artwork as a hashed 600 × 900 WebP at quality 80. Teaching frames remain versioned source material. Generation runs, metadata, and archived masters stay local; only a promoted `generated/current.png` is committed so clean checkouts can reproduce the production build.
+`figure.ts` contains the typed metadata, localized copy, video provenance, and app-visible YouTube or web resources. A figure can use `generated/current.png` as its full-resolution card source or fall back to `card.jpg`. Vite discovers all figure definitions automatically, orders them by their explicit `order`, and emits the selected artwork as a hashed 600 × 900 WebP at quality 80. Teaching frames remain versioned source material. Generation runs, metadata, and archived masters stay local; only a promoted `generated/current.png` is committed so clean checkouts can reproduce the production build.
 
 See [`figures/README.md`](figures/README.md) for the add and rework workflow.
 

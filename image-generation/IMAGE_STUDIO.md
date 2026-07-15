@@ -1,6 +1,6 @@
-# Dance Card Image Studio
+# Swing Thing Content Studio
 
-The repository includes a local TypeScript studio and CLI for generating card-image candidates through a LiteLLM proxy backed by OpenAI's Image API. Both interfaces share the same figure discovery, prompt assembly, request, concurrency, candidate storage, and promotion code.
+The repository includes a local Content Studio for maintaining figure copy, resources, and artwork, plus a CLI for generating card-image candidates through a LiteLLM proxy backed by OpenAI's Image API. The browser studio and CLI share the same figure discovery, prompt assembly, request, concurrency, candidate storage, and promotion code.
 
 ## Authentication
 
@@ -27,7 +27,7 @@ Supported levels are `error`, `warn`, `info`, and `debug`. Set `IMAGE_STUDIO_LOG
 
 When reporting a LiteLLM failure, include the timestamp, figure ID, HTTP status, proxy `requestId`, and the final error block. These fields make it possible to correlate a local job with proxy-side logs without sharing credentials.
 
-## Browser studio
+## Content workspace
 
 ```sh
 task env
@@ -35,7 +35,13 @@ task env
 task images:studio
 ```
 
-Open <http://127.0.0.1:4174>. The studio shows the teaching frame, live master or fallback card, and latest generated candidate together. Expand **All candidates** to compare every locally generated option, open any candidate at its original pixel dimensions, and promote the chosen one directly. Close an image preview with its button, the backdrop, or Escape. Expand **Generation note** on a figure to save a short pose correction directly into that figure's `notes.md`. The correction is appended only to that figure's effective prompt, which can be checked with **Prompt** before generation. Choose **Approve image** when a move has artwork you like: the approval is saved in `notes.md` and the completed card collapses to a compact row. Choose **Reopen** to restore its review controls. The studio can generate explicit selections, every missing master, figures whose `Needs rework` checkbox is checked, or the complete catalog. Independent figure requests run concurrently and report live status in the browser.
+Open <http://127.0.0.1:4174>. The default **Content** workspace lists every figure with factual validity, translation, resource, and artwork indicators. Select a figure to edit Basics, English, German, teaching sources, card-visible YouTube videos, and generic web resources. Unsaved values appear immediately in the shared German/English front/back card preview. Stable IDs, style, order, directory, and artwork import remain read-only.
+
+Saving validates the complete figure, confirms that referenced frames exist, detects source changes made after the editor loaded, writes and checks a temporary TypeScript file, and atomically replaces `figure.ts`. Invalid or conflicted saves leave the source untouched. Switching figures, changing workspaces, or closing the page with unsaved changes requires confirmation.
+
+## Image Queue
+
+Choose **Image Queue** to see the teaching frame, live master or fallback card, and latest generated candidate together. Expand **All candidates** to compare every locally generated option, open any candidate at its original pixel dimensions, and promote the chosen one directly. Close an image preview with its button, the backdrop, or Escape. Expand **Generation note** on a figure to save a short pose correction directly into that figure's `notes.md`. The correction is appended only to that figure's effective prompt, which can be checked with **Prompt** before generation. Choose **Approve image** when a move has artwork you like: the approval is saved in `notes.md` and the completed card collapses to a compact row. Choose **Reopen** to restore its review controls. The queue can generate explicit selections, every missing master, figures whose `Needs rework` checkbox is checked, or the complete catalog. Independent figure requests run concurrently and report live status in the browser.
 
 Starting a generation run clears the previous run's review markers. Each figure that successfully receives new candidates is highlighted with a **new** pill showing the candidate count. These markers remain after the run finishes and across studio refreshes in the same browser tab, making the latest run's review set easy to find. Failed and blocked figures are not marked; the next generation run replaces the marker set.
 
