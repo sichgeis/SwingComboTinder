@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead beginnt die Drehung mit der eigenen Körperorientierung und den eigenen Füßen. Ein konsistenter Frame macht die Richtung früh verständlich; die Arme müssen niemanden herumkurbeln.",
       "connection": "Die Verbindung bleibt kompakt und verlässlich. Es braucht kaum Stretch oder Kompression – wichtiger sind gemeinsamer Bounce, Richtung und ein ruhiges Ende.",
       "cue": "Kleine Schritte um denselben Mittelpunkt, Slow-Slow-Quick-Quick bleibt oben ruhig.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Setze den kompakten Kreis mit kleinen Schritten fort und erhalte den Shag-Puls. Lehne dich nicht in die Mitte, um schneller herumzukommen.",
       "practice": "Kann die Drehung größer oder kleiner werden, ohne dass sich Tempo und Qualität des Grundrhythmus verändern?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

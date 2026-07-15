@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Die Einladung nach außen beginnt im Körper des Leads. Brustkorb, Schritt und die sich öffnende Seite zeigen dieselbe Richtung; die Hand bleibt in einer angenehmen Linie davor.",
       "connection": "Closed ist zunächst stützend. Mit wachsendem Abstand wird die Verbindung leichter und länger, bis am Ende ein klarer, federnder Stretch spürbar ist.",
       "cue": "Nicht hinausschieben: Platz öffnen, gemeinsam gehen, in Stretch ankommen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Nimm den geöffneten Weg mit vollständigen Schritten und erhalte dein Momentum bis in den Open Stretch. Der Arm beendet die Reise nicht für dich.",
       "practice": "Entsteht der Abstand aus zwei weitergehenden Körpern oder hauptsächlich aus einem länger werdenden Arm?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

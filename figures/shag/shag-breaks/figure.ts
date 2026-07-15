@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead kündigt Zeitpunkt und ungefähre Größe über den eigenen Körper an. Der Follow kann die konkrete Form musikalisch beantworten. Hände müssen keine einzelnen Schritte diktieren.",
       "connection": "Der kompakte Frame trägt den Puls durch den Break hindurch. Kurz darf die Spannung deutlicher werden, danach löst sie sich sofort wieder in den federnden Grundrhythmus.",
       "cue": "Akzent gemeinsam treffen – Rückkehr noch klarer gemeinsam finden.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Behalte den inneren Puls auch im Break und gestalte die konkrete Antwort in deinem Körper. Priorisiere einen eindeutigen gemeinsamen Wiedereinstieg.",
       "practice": "Ist nach dem Akzent sofort hör- und fühlbar, wo Slow-Slow-Quick-Quick wieder beginnt?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

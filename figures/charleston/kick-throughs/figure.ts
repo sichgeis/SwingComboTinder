@@ -35,25 +35,16 @@ export default defineFigure({
       "lead": "Der Lead zeigt Seitenwechsel und Timing durch die eigene Rotation und den Weg des Zentrums. Die Hände begleiten diese Idee, aber sie beschleunigen kein Bein.",
       "connection": "Die Verbindung bleibt leicht und rhythmisch. Ein kleiner Stretch kann den nächsten Seitenweg ankündigen, löst sich jedoch, bevor das Bein frei durchschwingt.",
       "cue": "Kick zeigt den Weg, Step übernimmt das Gewicht, Bounce bleibt bestehen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Lass jeden Kick die nächste Richtung vorbereiten und übernimm danach das Gewicht vollständig. Halte Balance und Rhythmus unabhängig von der Handverbindung.",
       "practice": "Zeigt der Kick schon den kommenden Weg, oder wird die Richtung erst nachträglich über den Frame korrigiert?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "tQyv3GWOdnY",
-        "title": "Kick Through, Charleston Turn & Basic Charleston",
-        "kind": "tutorial"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "tQyv3GWOdnY",
+      "title": "Kick Through, Charleston Turn & Basic Charleston",
+      "kind": "tutorial"
+    }
+  ]
 });

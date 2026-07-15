@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead führt vor allem durch Platzmachen. Der eigene Schritt öffnet die Tür; die verbundene Hand bleibt auf der Bahn des Follows und begleitet, statt um den Lead herumzuziehen.",
       "connection": "Der Anfangsstretch setzt die Reise in Gang. Im Moment des Vorbeigehens ist die Hand fast neutral, danach wird die Verbindung beim erneuten Öffnen wieder länger.",
       "cue": "Platz machen, aneinander vorbeigehen, am neuen Ort wieder verbinden.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Nimm die frei gewordene Spur und gehe vollständig am Lead vorbei. Drehe erst so weit zurück, wie es für die neue Verbindung tatsächlich nötig ist.",
       "practice": "Tauscht ihr die Plätze mit zwei klaren Wegen, oder muss jemand im letzten Moment ausweichen?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

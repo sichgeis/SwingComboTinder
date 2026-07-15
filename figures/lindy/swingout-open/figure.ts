@@ -34,40 +34,34 @@ export default defineFigure({
       "lead": "Der Lead nutzt den vorhandenen Stretch, ohne daran zu reißen. Eigener Schritt und Oberkörperdrehung machen die Kreisbahn lesbar; die öffnende Seite zeigt rechtzeitig den Ausgang.",
       "connection": "Die Verbindung erzählt die ganze Figur: lang am Anfang, für einen Moment gemeinsam und tragend in der Mitte, wieder lang am Ende. Die Arme bleiben dabei federnd.",
       "cue": "Aus Stretch zusammenkommen, den Kreis teilen, wieder in Stretch öffnen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Lass dich vom anfänglichen Stretch in die Mitte tragen und reise durch sie hindurch. Erhalte deinen Weg, bis sich der Ausgang klar öffnet.",
       "practice": "Kann der Follow die Mitte durchqueren, ohne dort zu parken oder vom Arm wieder hinausgeschickt zu werden?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "VSE7SD3l3uA",
-        "title": "Swing Out – Learn to Lindy Hop from the Ground Up",
-        "kind": "tutorial"
-      },
-      {
-        "videoId": "4PdtcMjNqI0",
-        "title": "My ‘Basic’ Swing Out Variation",
-        "kind": "variation"
-      },
-      {
-        "videoId": "tUqKiuPYxYk",
-        "title": "Over-rotated Swing Outs, Switches & Savoy Twists",
-        "kind": "variation"
-      },
-      {
-        "videoId": "fHA2KdLjO08",
-        "title": "Scissor Kicks & Kick Away – Swing Out Variation",
-        "kind": "variation"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "VSE7SD3l3uA",
+      "title": "Swing Out – Learn to Lindy Hop from the Ground Up",
+      "kind": "tutorial"
+    },
+    {
+      "type": "youtube",
+      "videoId": "4PdtcMjNqI0",
+      "title": "My ‘Basic’ Swing Out Variation",
+      "kind": "variation"
+    },
+    {
+      "type": "youtube",
+      "videoId": "tUqKiuPYxYk",
+      "title": "Over-rotated Swing Outs, Switches & Savoy Twists",
+      "kind": "variation"
+    },
+    {
+      "type": "youtube",
+      "videoId": "fHA2KdLjO08",
+      "title": "Scissor Kicks & Kick Away – Swing Out Variation",
+      "kind": "variation"
+    }
+  ]
 });

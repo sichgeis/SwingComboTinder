@@ -34,25 +34,16 @@ export default defineFigure({
       "lead": "Der Lead setzt die eigene Rotation fort, formt die Seite zur Ankunft und bietet dort die Rückenverbindung an. Die Entscheidung für Closed kommt aus diesem Weg, nicht aus der Außenhand.",
       "connection": "Die Verbindung bleibt in der zweiten Hälfte tragender und wird nicht zum maximalen Stretch. Closed wächst beim Ankommen allmählich und darf danach wieder weich werden.",
       "cue": "Closed früh entscheiden und den Kreis bis auf den gemeinsamen Platz tanzen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Folge der weiterlaufenden Kreisbahn bis auf den Platz neben dem Lead. Öffne nicht automatisch in maximalen Stretch, wenn der gemeinsame Weg geschlossen bleibt.",
       "practice": "Ist Closed früh im Weg angelegt, oder muss der Follow nach einem offenen Ausgang wieder eingesammelt werden?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "VSE7SD3l3uA",
-        "title": "Swing Out – Learn to Lindy Hop from the Ground Up",
-        "kind": "tutorial"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "VSE7SD3l3uA",
+      "title": "Swing Out – Learn to Lindy Hop from the Ground Up",
+      "kind": "tutorial"
+    }
+  ]
 });

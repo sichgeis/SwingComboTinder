@@ -35,19 +35,9 @@ export default defineFigure({
       "lead": "Der Lead zeigt die Route, indem er sie selbst nimmt. Schon die Drehung des Brustkorbs und der erste Schritt machen die Richtung lesbar; die äußere Hand muss nicht lenken.",
       "connection": "Der Frame fühlt sich wie ein lockerer gemeinsamer Mantel an: nah genug, um Richtung und Puls zu teilen, weit genug für eigene Schritte und Rhythmen.",
       "cue": "Erst gemeinsam ausrichten, dann dieselbe Straße tanzen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Übernimm die gemeinsame Blickrichtung, behalte aber deine eigene Spur und deinen eigenen Groove. Warte nicht auf Führung für jeden einzelnen Schritt.",
       "practice": "Könnt ihr dieselbe Richtung teilen und dabei noch zwei klar erkennbare Tänzerinnen oder Tänzer bleiben?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

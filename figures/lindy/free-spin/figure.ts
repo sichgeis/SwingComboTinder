@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Alles Wesentliche muss vor dem Loslassen verständlich sein. Ein spätes Anschieben hilft nicht. Nach dem Release wartet der Lead und bietet eine erreichbare Hand an, ohne danach zu greifen.",
       "connection": "Free Spin heißt tatsächlich ohne Handkontakt. Die neue Verbindung beginnt leicht; erst wenn beide wieder voneinander weggehen, kann daraus Stretch werden.",
       "cue": "Vorbereiten, loslassen, landen lassen, neu anbieten.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Nimm Richtung und Energie vor dem Loslassen wahr, organisiere die Drehung danach selbst und entscheide aus deiner Balance, wann sie beendet ist.",
       "practice": "Ist vor dem Release genug Information da, dass die Drehung ohne nachträgliches Anschieben verständlich bleibt?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

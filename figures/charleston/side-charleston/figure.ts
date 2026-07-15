@@ -34,30 +34,22 @@ export default defineFigure({
       "lead": "Der Lead teilt Puls, Richtung und mögliche Übergänge über den eigenen Körper und die nahe Seiten- oder Rückenverbindung. Ein Bein wird niemals über den Arm geführt.",
       "connection": "Der Frame ist kompakt und ruhig. Über die nahe Seite ist der Puls spürbar, während Hände und Schultern so entspannt bleiben, dass die Beine frei schwingen können.",
       "cue": "Zwei Kick-Spuren, ein gemeinsamer Bounce.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Teile Bounce und Richtung, aber trage dein Gewicht selbst und halte deine Kick-Spur frei. Passe die Größe an Raum und Partner an.",
       "practice": "Bleibt der gemeinsame Puls sichtbar, wenn ihr eure Kicks bewusst unterschiedlich groß oder unterschiedlich gestylt tanzt?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "Z8Z6cWgqOq4",
-        "title": "Charleston Basic – Lindy From the Ground Up",
-        "kind": "tutorial"
-      },
-      {
-        "videoId": "tQyv3GWOdnY",
-        "title": "Kick Through, Charleston Turn & Basic Charleston",
-        "kind": "tutorial"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "Z8Z6cWgqOq4",
+      "title": "Charleston Basic – Lindy From the Ground Up",
+      "kind": "tutorial"
+    },
+    {
+      "type": "youtube",
+      "videoId": "tQyv3GWOdnY",
+      "title": "Kick Through, Charleston Turn & Basic Charleston",
+      "kind": "tutorial"
+    }
+  ]
 });

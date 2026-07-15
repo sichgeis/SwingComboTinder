@@ -35,19 +35,9 @@ export default defineFigure({
       "lead": "Die Übergabe muss früh, niedrig und nah am Körper liegen. Der Lead übernimmt die Hand ruhig und beschleunigt die Drehung niemals am gewickelten Arm.",
       "connection": "Im Übergabemoment ist die Verbindung besonders leicht. Erst beim Öffnen findet der kompakte, elastische Shag-Frame zurück. Zug hinter dem Rücken ist immer zu viel.",
       "cue": "Früh und bequem übergeben, klein weiterdrehen, im Shag-Puls herauskommen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Halte Schulter und Hand weich, während du auf kleinen Schritten durch die Übergabe weiterdrehst. Lass den Arm niemals hinter deinem Körper zurück.",
       "practice": "Kann die Handübergabe verschwinden, ohne dass Rhythmus, Schulter oder Reiserichtung davon sichtbar gestört werden?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

@@ -1,39 +1,36 @@
-import type { Move, MoveGuide, MoveTranslation } from "../src/domain/move";
+import type { GermanMoveGuide, Language, Move, MoveGuide } from "../src/domain/move";
 
 export const videoKinds = ["tutorial", "technique", "variation", "history"] as const;
 export type VideoKind = (typeof videoKinds)[number];
 export const webResourceKinds = ["article", "reference"] as const;
 export type WebResourceKind = (typeof webResourceKinds)[number];
 
-export type FigureMove = Omit<Move, keyof MoveGuide>;
-
 export interface CardVideoLink {
+  readonly type: "youtube";
   readonly videoId: string;
   readonly title: string;
   readonly kind: VideoKind;
 }
 
 export interface CardWebLink {
+  readonly type: "web";
   readonly url: string;
   readonly title: string;
   readonly kind: WebResourceKind;
-  readonly language?: "en" | "de";
+  readonly language?: Language;
 }
+
+export type CardResource = CardVideoLink | CardWebLink;
 
 export interface FigureDefinition {
   readonly order: number;
   readonly card: string;
-  readonly move: FigureMove;
+  readonly move: Move;
   readonly guides: {
     readonly en: MoveGuide;
-    readonly de: MoveTranslation;
+    readonly de: GermanMoveGuide;
   };
-  readonly youtube: {
-    readonly cardLinks: readonly CardVideoLink[];
-  };
-  readonly resources?: {
-    readonly cardLinks: readonly CardWebLink[];
-  };
+  readonly resources: readonly CardResource[];
 }
 
 export const defineFigure = <const Definition extends FigureDefinition>(definition: Definition): Definition => definition;

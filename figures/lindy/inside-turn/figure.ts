@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead zeigt zunächst, wohin die Reise geht. Danach beschreibt die Hand einen gut sichtbaren Bogen leicht vor dem Follow. Dieser Bogen begleitet den Weg und zieht nicht hinter dem Kopf vorbei.",
       "connection": "Sobald die Drehrichtung verstanden ist, darf die Hand leicht werden. Schulter und Ellbogen bleiben frei; erst nach der Landung entsteht wieder eine deutlichere offene Verbindung.",
       "cue": "Erst reisen, dann drehen – die Bahn bleibt bestehen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Reise zuerst auf der angebotenen Bahn und lass die Drehung aus den weiterlaufenden Schritten entstehen. Die Hand ist Orientierung, nicht deine Achse.",
       "practice": "Ist nach der Drehung noch dieselbe Reiserichtung erkennbar, mit der die Figur begonnen hat?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

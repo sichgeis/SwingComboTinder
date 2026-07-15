@@ -16,7 +16,7 @@ Current source code and tests remain authoritative. [`README.md`](../README.md),
 
 - The phone-first app offers Lindy Hop, partnered Charleston, and Collegiate Shag figures in German and English.
 - A selected style begins with all of its figures. Swiping removes or marks figures while preparing a deck for the evening.
-- Cards open into detailed guides with curated videos, web resources, variations, and combinations where available.
+- Cards open into detailed guides with curated videos and web resources where available.
 - Deck focus, decisions, and progress persist locally.
 
 Evidence: initial working product snapshot `47e4e2a`; current behavior is covered by the domain, UI, and persistence tests.

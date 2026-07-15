@@ -35,19 +35,9 @@ export default defineFigure({
       "lead": "Der Lead teilt Zeitpunkt, Richtung und verfügbaren Raum über den Körper. Das Bein des Follows wird nicht geführt – ein verständlicher Puls macht den gemeinsamen Akzent möglich.",
       "connection": "Der Frame bleibt kompakt, federnd und relativ neutral. Kleine Tonänderungen reichen für die Richtung; Hände und Arme müssen den Kick nicht nachzeichnen.",
       "cue": "Kick frei schwingen lassen, Quick-Quick zuverlässig unter dem Körper landen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Teile Zeitpunkt und Richtung, aber organisiere Kick und Landung selbst. Jeder Akzent soll den nächsten Gewichtswechsel bereits möglich machen.",
       "practice": "Könnt ihr die Kickgröße verändern, ohne dass Frame oder gemeinsamer Puls lauter werden müssen?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

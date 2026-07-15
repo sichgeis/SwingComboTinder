@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead nimmt die neue Seite selbst ein und lässt dem Follow eine freie Spur. Die Handverbindungen geben Orientierung, sollen aber nicht quer über Brust oder Schulter ziehen.",
       "connection": "Während des Wechsels darf der Frame kurz offener und weicher werden. Erst auf der neuen Seite sammelt er sich wieder – ohne Griff und ohne hochgezogene Ellbogen.",
       "cue": "Die Körper wechseln die Seite; die Hände folgen diesem Weg.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Nimm die neue Spur mit dem ganzen Körper und lass die Handverbindungen sich unterwegs neu ordnen. Halte die gemeinsame Vorwärtsorientierung lesbar.",
       "practice": "Wechseln eure Körper wirklich die Seite, oder wird nur die Armform von einer Seite auf die andere bewegt?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

@@ -35,19 +35,9 @@ export default defineFigure({
       "lead": "Der Lead öffnet den Zielraum zuerst mit Schritten und Körperrichtung. Die Hand folgt in einer Höhe, die zur Schulter des Follows passt, und bleibt während des ganzen Bogens in Bewegung.",
       "connection": "Über Kopf wird die Verbindung leichter, nicht stärker. Zug würde die Schulter aus der Achse nehmen. Erst in der neuen Position kehrt das klare, kompakte Gefühl von Tandem zurück.",
       "cue": "Die Füße wechseln den Platz – die Hand zeichnet nur den Weg darüber.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Reise mit den Füßen in die neue Position und lass die Hand über dir mitwandern. Bleib aufrecht, statt dich unter dem Bogen hindurchzubiegen.",
       "practice": "Erklären die Füße den Platzwechsel bereits, bevor der große Handbogen sichtbar wird?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

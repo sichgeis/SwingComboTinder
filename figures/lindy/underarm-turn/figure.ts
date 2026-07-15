@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead führt die Richtung vor der Höhe. Die Hand bleibt leicht vor dem Follow und folgt dem Drehbogen. Ein Kreis über dem Kopf ohne vorherige Bahn ist schwer zu lesen.",
       "connection": "Die Hand ist während der Drehung ein Orientierungspunkt, kein Lenkrad. Je klarer der Weg, desto weniger Druck braucht es in Fingern, Ellbogen und Schulter.",
       "cue": "Erst den Weg zeigen, dann das Dach anheben und mitwandern lassen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Folge zunächst dem Reiseweg und drehe auf vollständigen Gewichten unter der beweglichen Hand. Passe deine Rotation an den vorhandenen Raum an.",
       "practice": "Bleibt die Hand ein mitreisendes Dach, oder wird sie zu einem festen Punkt, um den sich alles drehen muss?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

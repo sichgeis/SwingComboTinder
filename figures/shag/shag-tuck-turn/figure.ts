@@ -35,19 +35,9 @@ export default defineFigure({
       "lead": "Der Lead zeigt das Einfedern mit dem eigenen Schwerpunkt und gibt danach Raum. Die Hand bleibt auf bequemer Höhe und vermittelt Richtung, ohne Schulter oder Bounce anzuheben.",
       "connection": "Die Kompression ist kurz, das Release sofort. Danach fühlt sich der Frame wieder typisch kompakt und federnd an. Ein langer Druck passt nicht zum Tempo.",
       "cue": "Klein einfedern, klein drehen, direkt wieder Slow-Slow-Quick-Quick.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Beantworte die kleine Richtungsänderung mit kompakter Rotation und bleibe über deinen Füßen. Finde ohne Zusatzschritt zurück in Slow-Slow-Quick-Quick.",
       "practice": "Ist der Tuck klein genug, dass er Energie freigibt, ohne den schnellen Shag-Puls zu unterbrechen?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

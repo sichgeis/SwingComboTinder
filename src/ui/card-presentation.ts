@@ -7,8 +7,7 @@ import type {
   MotionKind,
   MoveEnding,
   MoveFamily,
-  MoveStyle,
-  MoveTranslation
+  MoveStyle
 } from "../domain/move";
 import { translate, type TranslationKey } from "./translations";
 
@@ -102,22 +101,21 @@ export const renderCardMarkup = ({
   const move = figure.move;
   const guide = figure.guides[language];
   const t = (key: TranslationKey): string => escapeHtml(translate(language, key));
-  const translated = language === "de" ? guide as MoveTranslation : undefined;
+  const translated = language === "de" ? figure.guides.de : undefined;
   const sections = translated ? [
-    { heading: translated.headings.steps, copy: translated.steps },
-    { heading: translated.headings.body, copy: translated.body },
-    { heading: translated.headings.lead, copy: translated.lead },
-    { heading: translated.headings.follow, copy: translated.follow },
-    { heading: translated.headings.connection, copy: translated.connection },
-    { heading: translated.headings.practice, copy: translated.practice }
+    { heading: translate(language, "rhythmHeading"), copy: translated.steps },
+    { heading: translate(language, "bodyHeading"), copy: translated.body },
+    { heading: translate(language, "leadHeading"), copy: translated.lead },
+    { heading: translate(language, "followHeading"), copy: translated.follow },
+    { heading: translate(language, "connectionHeading"), copy: translated.connection },
+    { heading: translate(language, "practiceHeading"), copy: translated.practice }
   ] : [
     { heading: translate(language, "rhythmHeading"), copy: guide.steps },
     { heading: translate(language, "bodyHeading"), copy: guide.body },
     { heading: translate(language, "leadHeading"), copy: guide.lead },
     { heading: translate(language, "connectionHeading"), copy: guide.connection }
   ];
-  const videos = figure.youtube.cardLinks;
-  const webResources = (figure.resources?.cardLinks ?? []).filter((resource) => !resource.language || resource.language === language);
+  const resources = figure.resources.filter((resource) => resource.type === "youtube" || !resource.language || resource.language === language);
   const number = String(index + 1).padStart(2, "0");
   const choice = translate(language, deckChoice === "pass"
     ? "notTonight"
@@ -152,8 +150,9 @@ export const renderCardMarkup = ({
             ${sections.map(({ heading, copy }) => `<section class="card-guide-section"><h3>${escapeHtml(heading)}</h3><p>${escapeHtml(copy)}</p></section>`).join("")}
           </div>
           <div class="card-memory"><span>${t("remember")}</span><strong>${escapeHtml(guide.cue)}</strong></div>
-          ${videos.length === 0 ? "" : `<section class="card-videos"><h3>${t("videosHeading")}</h3>${videos.map((video) => `<a href="${escapeHtml(youtubeUrl(video.videoId))}" target="_blank" rel="noopener noreferrer" ${inert ? 'tabindex="-1"' : ""}><span aria-hidden="true">▶</span><span><small>${escapeHtml(videoKindLabel(language, video.kind))}</small><strong>${escapeHtml(video.title)}</strong></span><b aria-hidden="true">↗</b></a>`).join("")}</section>`}
-          ${webResources.length === 0 ? "" : `<section class="card-videos card-resources"><h3>${t("resourcesHeading")}</h3>${webResources.map((resource) => `<a href="${escapeHtml(resource.url)}" target="_blank" rel="noopener noreferrer" ${inert ? 'tabindex="-1"' : ""}><span aria-hidden="true">↗</span><span><small>${escapeHtml(webResourceKindLabel(language, resource.kind))}</small><strong>${escapeHtml(resource.title)}</strong></span><b aria-hidden="true">↗</b></a>`).join("")}</section>`}
+          ${resources.length === 0 ? "" : `<section class="card-videos${resources.some((resource) => resource.type === "web") ? " card-resources" : ""}"><h3>${t(resources.every((resource) => resource.type === "youtube") ? "videosHeading" : "resourcesHeading")}</h3>${resources.map((resource) => resource.type === "youtube"
+            ? `<a href="${escapeHtml(youtubeUrl(resource.videoId))}" target="_blank" rel="noopener noreferrer" ${inert ? 'tabindex="-1"' : ""}><span aria-hidden="true">▶</span><span><small>${escapeHtml(videoKindLabel(language, resource.kind))}</small><strong>${escapeHtml(resource.title)}</strong></span><b aria-hidden="true">↗</b></a>`
+            : `<a href="${escapeHtml(resource.url)}" target="_blank" rel="noopener noreferrer" ${inert ? 'tabindex="-1"' : ""}><span aria-hidden="true">↗</span><span><small>${escapeHtml(webResourceKindLabel(language, resource.kind))}</small><strong>${escapeHtml(resource.title)}</strong></span><b aria-hidden="true">↗</b></a>`).join("")}</section>`}
           <p class="card-guide-note">${t("guideNote")}</p>
         </div>
       </section>

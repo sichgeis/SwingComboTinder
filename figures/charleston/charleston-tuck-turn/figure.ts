@@ -35,19 +35,9 @@ export default defineFigure({
       "lead": "Der Lead teilt zuerst das Einfedern mit dem eigenen Schwerpunkt und macht danach die Drehrichtung frei. Die Hand bestätigt den Bogen, hebt den Follow aber nicht aus dem Bounce.",
       "connection": "Der Tuck-Moment ist kurz und federnd. Danach wird die Verbindung sofort leichter. Bleibt Druck in der Schulter, war die Vorbereitung zu groß oder das Release zu spät.",
       "cue": "Den Bounce behalten: kurz einfedern, frei drehen, wieder im Kick landen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Erhalte den Charleston-Puls durch Vorbereitung und Drehung. Nutze kleine vollständige Schritte und lande so, dass der nächste Kick nicht gesucht werden muss.",
       "practice": "Bleibt der Bounce während des Tucks erkennbar, oder wird Charleston für die Drehung kurz ausgeschaltet?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

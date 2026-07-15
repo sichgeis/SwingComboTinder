@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead zeigt früh, wohin der Follow kommen soll – durch die eigene Position, die offene Körperseite und den freien Raum. Die Hand bestätigt dieses Ziel lediglich.",
       "connection": "Der lange Open Stretch wird auf dem Weg neutral und bei der Ankunft stützend. Dort darf die Spannung deutlich nachlassen: Angekommen heißt nicht festgehalten.",
       "cue": "Einen Platz anbieten und gemeinsam hineinlaufen – nicht heranziehen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Nimm die Einladung aus dem Stretch an und reise bis in den angebotenen Platz. Behalte deine Balance, auch wenn die Verbindung näher und tragender wird.",
       "practice": "Wird die Nähe mit Schritten hergestellt, oder verkürzt hauptsächlich die Hand den Abstand?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

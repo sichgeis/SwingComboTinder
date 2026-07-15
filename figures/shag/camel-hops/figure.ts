@@ -35,19 +35,9 @@ export default defineFigure({
       "lead": "Der Lead zeigt zuerst die Richtung mit dem eigenen Schwerpunkt und lässt den Hop daraus entstehen. Höhe und Energie passen zur Partnerschaft; der Follow wird niemals angehoben oder hochgedrückt.",
       "connection": "Der Frame fühlt sich federnd und kontinuierlich an. Beim Landen wird er einen Moment dichter, im nächsten Hop wieder leichter. Beide tragen jederzeit das eigene Gewicht.",
       "cue": "Das Zentrum reist, die Beine federn, der Frame schwebt.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Reise aus deinem eigenen Schwerpunkt und lande jeden Hop selbst. Teile Richtung und Energie, ohne dich am Frame hochzuziehen oder hineinfallen zu lassen.",
       "practice": "Fühlt sich die Bewegung horizontal reisend und federnd an, oder wird aus dem gemeinsamen Hop ein gegenseitiges Heben?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

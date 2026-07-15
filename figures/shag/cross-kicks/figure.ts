@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead organisiert Side-by-Side-Position, Richtung und Timing, bevor die Fußidee beginnt. Danach trägt der Oberkörper den Rhythmus, während jedes Bein seine eigene Form tanzt.",
       "connection": "Die nahe Verbindung bleibt ruhig und neutral. Über sie sind Puls und Richtung spürbar; die Füße dürfen darunter komplexer werden, ohne dass Hände und Arme mitarbeiten.",
       "cue": "Kicks auf getrennten Spuren, Quick-Quick eng unter dem Schwerpunkt.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Halte die nahe gemeinsame Richtung und tanze Kicks sowie Kreuzschritte auf deiner eigenen Spur. Jede Landung bleibt deine eigene Balance.",
       "practice": "Bleiben die Oberkörper ruhig verbunden, während die Fußarbeit darunter deutlich und unabhängig arbeitet?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

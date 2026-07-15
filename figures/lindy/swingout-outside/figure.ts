@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead zeigt die Außenrichtung, bevor die Hand steigt. Danach folgt die Hand der drehenden Achse und bleibt mit dem Follow unterwegs, statt zurück zum Lead zu ziehen.",
       "connection": "Der Swingout bringt bereits genug Energie mit. Die Hand muss nur Orientierung geben. Am Ende setzt sich die Verbindung wieder als Open Stretch.",
       "cue": "Die Ausgangsbahn behalten – nur die Drehrichtung hinzufügen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Erhalte den Weg vom gemeinsamen Zentrum weg, während du nach außen drehst. Landung und Open Stretch gehören noch zum Swingout.",
       "practice": "Trägt die vorhandene Swingout-Energie die Variation, oder braucht die Hand einen zweiten Impuls?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

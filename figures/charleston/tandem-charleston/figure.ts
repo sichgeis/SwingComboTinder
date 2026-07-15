@@ -34,30 +34,22 @@ export default defineFigure({
       "lead": "Der Lead baut Tandem durch den eigenen Weg auf und zeigt Richtung über den gemeinsamen Frame. Die Hände bleiben sichtbar und bequem; Führung am Rücken bedeutet Orientierung, nicht Schieben.",
       "connection": "Die Verbindung ist nah, kompakt und pulsend. Sie übermittelt Richtung und Rhythmus, lässt aber beiden genug Freiheit für Beine, Schultern und eigene Balance.",
       "cue": "Erst sauber hintereinander ausrichten, dann gemeinsam auf getrennten Spuren kicken.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Trage dein Gewicht selbst, halte deine Kick-Spur frei und teile die Richtung über den Frame. Nähe bedeutet nicht, dich am Lead abzustützen.",
       "practice": "Könnt ihr den gemeinsamen Puls erhalten, ohne dass der hintere Körper den vorderen bewegt oder festhält?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "ops1aliBCUc",
-        "title": "Tandem Charleston – Lindy From the Ground Up",
-        "kind": "tutorial"
-      },
-      {
-        "videoId": "qBBORBZZsNQ",
-        "title": "S-turn or Chase to Tandem",
-        "kind": "tutorial"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "ops1aliBCUc",
+      "title": "Tandem Charleston – Lindy From the Ground Up",
+      "kind": "tutorial"
+    },
+    {
+      "type": "youtube",
+      "videoId": "qBBORBZZsNQ",
+      "title": "S-turn or Chase to Tandem",
+      "kind": "tutorial"
+    }
+  ]
 });

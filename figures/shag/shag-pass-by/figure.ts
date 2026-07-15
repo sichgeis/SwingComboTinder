@@ -35,19 +35,9 @@ export default defineFigure({
       "lead": "Der Lead öffnet mit dem eigenen Schritt und lässt die Hand auf der Bahn des Follows mitlaufen. Ein kleiner Turn-Bogen reicht; ein großer Armkreis wäre bei diesem Tempo zu spät.",
       "connection": "Der Startstretch wird beim Passieren fast neutral. Am Ausgang entsteht er neu. Hand und Ellbogen bleiben so beweglich, dass sie den schnellen Gewichtswechseln folgen können.",
       "cue": "Erst vorbeigehen, dann kompakt drehen – der Shag-Rhythmus läuft weiter.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Nimm die frei gewordene enge Spur und reise zuerst am Lead vorbei. Halte die anschließende Drehung klein genug für den laufenden Rhythmus.",
       "practice": "Bleibt Slow-Slow-Quick-Quick unverändert, während eure Zentren tatsächlich die Plätze tauschen?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

@@ -1,8 +1,7 @@
 import { figureFor } from "../../figures/catalog";
 import { youtubeUrl } from "../../figures/define-figure";
 import { moves } from "../domain/catalog";
-import { guideFor } from "../domain/localize";
-import type { BuildChoice, Language, Move, MoveStyle, MoveTranslation } from "../domain/move";
+import type { BuildChoice, Language, Move, MoveStyle } from "../domain/move";
 import {
   createSession,
   movesForStyles,
@@ -404,48 +403,44 @@ export class SwingThingController {
   private openCue(): void {
     const move = this.activeMoves()[this.session.index];
     if (!move) return;
-    const guide = guideFor(move, this.language);
+    const figure = figureFor(move.id);
+    const guide = figure.guides[this.language];
     this.query<HTMLElement>("#cueTitle").textContent = move.name;
     this.query<HTMLElement>("#cueStyle").textContent = `${styleMeta[move.style].label} · ${familyLabel(this.language, move.family)}`;
-    const headings = this.language === "de" ? (guide as MoveTranslation).headings : {
-      steps: this.t("rhythmHeading"), body: this.t("bodyHeading"), lead: this.t("leadHeading"), connection: this.t("connectionHeading")
-    };
-    this.query<HTMLElement>("#cueStepsHeading").textContent = headings.steps;
-    this.query<HTMLElement>("#cueBodyHeading").textContent = headings.body;
-    this.query<HTMLElement>("#cueLeadHeading").textContent = headings.lead;
-    this.query<HTMLElement>("#cueConnectionHeading").textContent = headings.connection;
+    this.query<HTMLElement>("#cueStepsHeading").textContent = this.t("rhythmHeading");
+    this.query<HTMLElement>("#cueBodyHeading").textContent = this.t("bodyHeading");
+    this.query<HTMLElement>("#cueLeadHeading").textContent = this.t("leadHeading");
+    this.query<HTMLElement>("#cueConnectionHeading").textContent = this.t("connectionHeading");
     this.query<HTMLElement>("#cueSteps").textContent = guide.steps;
     this.query<HTMLElement>("#cueBody").textContent = guide.body;
     this.query<HTMLElement>("#cueLead").textContent = guide.lead;
     this.query<HTMLElement>("#cueConnection").textContent = guide.connection;
-    const translatedGuide = this.language === "de" ? guide as MoveTranslation : undefined;
+    const translatedGuide = this.language === "de" ? figure.guides.de : undefined;
     const followSection = this.query<HTMLElement>("#cueFollowSection");
     const practiceSection = this.query<HTMLElement>("#cuePracticeSection");
     followSection.hidden = !translatedGuide;
     practiceSection.hidden = !translatedGuide;
     if (translatedGuide) {
-      this.query<HTMLElement>("#cueFollowHeading").textContent = translatedGuide.headings.follow ?? "Als Follow";
-      this.query<HTMLElement>("#cuePracticeHeading").textContent = translatedGuide.headings.practice ?? "Frage zum Üben";
+      this.query<HTMLElement>("#cueFollowHeading").textContent = this.t("followHeading");
+      this.query<HTMLElement>("#cuePracticeHeading").textContent = this.t("practiceHeading");
       this.query<HTMLElement>("#cueFollow").textContent = translatedGuide.follow;
       this.query<HTMLElement>("#cuePractice").textContent = translatedGuide.practice;
     }
     this.query<HTMLElement>("#cueMemory").textContent = guide.cue;
-    const figure = figureFor(move.id);
-    const videos = figure.youtube.cardLinks;
-    const resources = (figure.resources?.cardLinks ?? []).filter((resource) => !resource.language || resource.language === this.language);
+    const resources = figure.resources.filter((resource) => resource.type === "youtube" || !resource.language || resource.language === this.language);
     const videoSection = this.query<HTMLElement>("#cueVideos");
-    videoSection.hidden = videos.length === 0 && resources.length === 0;
-    this.query<HTMLElement>("#cueVideoList").innerHTML = `${videos.map((video) => `
-      <a class="guide-video-link" href="${escapeHtml(youtubeUrl(video.videoId))}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(this.t("openOnYouTube"))}: ${escapeHtml(video.title)}">
+    videoSection.hidden = resources.length === 0;
+    this.query<HTMLElement>("#cueVideoList").innerHTML = resources.map((resource) => resource.type === "youtube" ? `
+      <a class="guide-video-link" href="${escapeHtml(youtubeUrl(resource.videoId))}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(this.t("openOnYouTube"))}: ${escapeHtml(resource.title)}">
         <span class="video-play" aria-hidden="true">▶</span>
-        <span class="video-copy"><small>${escapeHtml(videoKindLabel(this.language, video.kind))}</small><strong>${escapeHtml(video.title)}</strong></span>
+        <span class="video-copy"><small>${escapeHtml(videoKindLabel(this.language, resource.kind))}</small><strong>${escapeHtml(resource.title)}</strong></span>
         <span class="video-external" aria-hidden="true">↗</span>
-      </a>`).join("")}${resources.map((resource) => `
+      </a>` : `
       <a class="guide-video-link" href="${escapeHtml(resource.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(resource.title)}">
         <span class="video-play" aria-hidden="true">↗</span>
         <span class="video-copy"><small>${escapeHtml(webResourceKindLabel(this.language, resource.kind))}</small><strong>${escapeHtml(resource.title)}</strong></span>
         <span class="video-external" aria-hidden="true">↗</span>
-      </a>`).join("")}`;
+      </a>`).join("");
     if (!this.cueDialog.open) this.cueDialog.showModal();
   }
 

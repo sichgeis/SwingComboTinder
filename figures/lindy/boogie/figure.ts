@@ -31,19 +31,9 @@ export default defineFigure({
       "lead": "Der Lead teilt Timing und grobe Richtung mit dem eigenen Körper. Der Follow darf die Form selbst gestalten; Hände können kein Bein sinnvoll dirigieren.",
       "connection": "Im Frame ist vor allem der Puls spürbar. Richtungsdruck bleibt klein, die Arme ruhig. So können beide ähnlich grooven, ohne identisch auszusehen.",
       "cue": "Standbein und Puls bleiben klar – der freie Fuß darf erzählen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Halte Puls und Standbein zuverlässig und gestalte den freien Fuß selbst. Gemeinsames Timing verlangt keine identische Form.",
       "practice": "Bleibt der gemeinsame Groove klar, wenn beide dieselbe rhythmische Idee unterschiedlich aussehen lassen?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

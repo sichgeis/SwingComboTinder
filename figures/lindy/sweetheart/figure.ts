@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead baut die Position mit Schritten und Körperdrehung auf. Die Hände finden dadurch fast von selbst ihren Platz. Werden die Arme zuerst gewickelt, fehlt dem Körper oft der Raum.",
       "connection": "Sweetheart fühlt sich kompakt, aber nicht gefangen an. Ellbogen hängen weich nach unten, Hände bleiben vor dem Körper und beide Schultern können sich frei bewegen.",
       "cue": "Erst nebeneinander ankommen, dann die Hände bequem ordnen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Reise in den Platz neben dem Lead und sortiere die Hände erst, wenn dein Körper dort angekommen ist. Bewahre vorne und seitlich Bewegungsfreiheit.",
       "practice": "Entsteht Sweetheart aus eurem Weg oder sieht man zuerst Arme, die eine Position zusammenbauen?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

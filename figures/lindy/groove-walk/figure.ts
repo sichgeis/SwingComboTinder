@@ -31,19 +31,9 @@ export default defineFigure({
       "lead": "Der Lead schlägt Richtung und Tempo mit dem eigenen Zentrum vor. Gute Führung lässt Lücken, in denen der Follow die Musik selbst beantworten kann.",
       "connection": "Der Frame bleibt ruhig genug, dass kleine Ideen spürbar werden. Er ist weder schlaff noch kontrollierend – eher ein leiser Gesprächskanal.",
       "cue": "Einfach gehen, denselben Puls teilen und die Musik dazwischenlassen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Teile Weg und Timing, aber beantworte die Musik mit deinem eigenen Körper. Kleine rhythmische Entscheidungen brauchen keine Erlaubnis für jeden Akzent.",
       "practice": "Welche Teile müssen wirklich gemeinsam sein, damit unterschiedliche Grooves trotzdem wie ein Gespräch wirken?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

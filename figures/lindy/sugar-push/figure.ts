@@ -34,25 +34,16 @@ export default defineFigure({
       "lead": "Der Lead führt keine Wand mit den Händen. Er verkürzt selbst den Abstand, wird im richtigen Moment weich und bewegt sein Zentrum wieder zurück. Dadurch wird die Umkehr verständlich.",
       "connection": "Open Stretch wird zunächst neutral, dann für einen Moment zu sanfter Kompression und anschließend wieder lang. Die Hände bleiben dabei erstaunlich ruhig.",
       "cue": "Abstand schließen, weich treffen, gemeinsam wieder öffnen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Reise weiter, bis die gemeinsame Kompression deinen Weg weich umkehrt. Suche keinen festen Endpunkt und schiebe dich nicht selbst vorzeitig zurück.",
       "practice": "Fühlt sich die Umkehr wie ein gemeinsames Umlenken an oder wie eine Wand, an der eine Person abprallt?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "KGU-bwbK26I",
-        "title": "Sugar Push",
-        "kind": "tutorial"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "KGU-bwbK26I",
+      "title": "Sugar Push",
+      "kind": "tutorial"
+    }
+  ]
 });

@@ -35,9 +35,9 @@ task env
 task images:studio
 ```
 
-Open <http://127.0.0.1:4174>. The default **Content** workspace lists every figure with factual validity, translation, resource, and artwork indicators. Select a figure to edit Basics, English, German, teaching sources, card-visible YouTube videos, and generic web resources. Unsaved values appear immediately in the shared German/English front/back card preview. Stable IDs, style, order, directory, and artwork import remain read-only.
+Open <http://127.0.0.1:4174>. The default **Content** workspace lists every figure with factual validity, translation, resource, and artwork indicators. Select a figure to edit typed Basics, English and German guide copy, and the ordered app-visible YouTube or web resources. Unsaved values appear immediately in the shared German/English front/back card preview. Stable IDs, style, order, directory, and artwork import remain read-only. Teaching-source provenance remains in each figure's `notes.md` rather than production content.
 
-Saving validates the complete figure, confirms that referenced frames exist, detects source changes made after the editor loaded, writes and checks a temporary TypeScript file, and atomically replaces `figure.ts`. Invalid or conflicted saves leave the source untouched. Switching figures, changing workspaces, or closing the page with unsaved changes requires confirmation.
+Saving validates the complete figure, detects source changes made after the editor loaded, writes and checks a temporary TypeScript file, and atomically replaces `figure.ts`. Invalid or conflicted saves leave the source untouched. Switching figures, changing workspaces, or closing the page with unsaved changes requires confirmation.
 
 ## Image Queue
 

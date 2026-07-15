@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead verändert nur die Orientierung der Hand und öffnet einen Inside-Bogen leicht vor dem Follow. Ein zusätzliches Anschieben wäre zu spät – Reise und Energie liefert bereits der Swingout.",
       "connection": "Die Hand wird aus der Rotationsverbindung heraus beweglich und leicht. Nach der Landung wächst die Verbindung wieder in den typischen Open Stretch.",
       "cue": "Den Swingout zu Ende reisen lassen und dem Ausgang eine Innendrehung geben.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Reise den Swingout vollständig nach außen und füge die Innendrehung in diesen bestehenden Weg ein. Die Variation ersetzt den Ausgang nicht.",
       "practice": "Ist unter der Drehung noch der normale Swingout-Ausgang zu erkennen, oder geht die Reise zugunsten der Rotation verloren?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

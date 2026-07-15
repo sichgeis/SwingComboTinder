@@ -94,10 +94,7 @@ export const parseFigureContent = (source: string, filename: string, slug: strin
   const { cardImport, value } = definitionFromSource(source, filename);
   const move = sourceRecord(value.move);
   const guides = sourceRecord(value.guides);
-  const youtube = sourceRecord(value.youtube);
-  const resources = sourceRecord(value.resources ?? {});
-  const cardLinks = Array.isArray(youtube.cardLinks) ? youtube.cardLinks.map((resource) => ({ type: "youtube", ...(resource as Record<string, unknown>) })) : [];
-  const webLinks = Array.isArray(resources.cardLinks) ? resources.cardLinks.map((resource) => ({ type: "web", ...(resource as Record<string, unknown>) })) : [];
+  const resources = Array.isArray(value.resources) ? value.resources : [];
   return validateFigureContent({
     identity: {
       id: move.id,
@@ -114,7 +111,7 @@ export const parseFigureContent = (source: string, filename: string, slug: strin
       end: move.end
     },
     guides,
-    cardResources: [...cardLinks, ...webLinks]
+    cardResources: resources
   });
 };
 

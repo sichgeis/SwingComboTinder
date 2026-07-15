@@ -34,35 +34,28 @@ export default defineFigure({
       "lead": "Der Lead startet mit dem eigenen Schwerpunkt und der Rotation des Oberkörpers. Wenn sich die linke Seite öffnet, wird der Ausgang sichtbar. Die verbundene Hand begleitet diese Öffnung, sie erzeugt sie nicht.",
       "connection": "In Closed fühlt sich die Verbindung tragend an, in der Mitte kurz dichter und am Ende länger. Der Stretch entsteht, weil beide weitergehen und auf den eigenen Füßen landen – nicht weil jemand am Arm zieht.",
       "cue": "Gemeinsam in den Kreis, durch die Mitte, dann voneinander weg.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Reise durch die gemeinsame Mitte, statt dort auf ein Signal zu warten. Halte deinen Schwung so lange aufrecht, bis die öffnende Bahn eindeutig wird.",
       "practice": "Bleibt der Weg durch die Mitte kontinuierlich, oder muss eine Hand den Ausgang nachträglich herstellen?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "VSE7SD3l3uA",
-        "title": "Swing Out – Learn to Lindy Hop from the Ground Up",
-        "kind": "tutorial"
-      },
-      {
-        "videoId": "wHt_ihwO3_I",
-        "title": "5 Things to Make Your Swing Out Better – Follow Edition",
-        "kind": "technique"
-      },
-      {
-        "videoId": "wQDJta-eUYY",
-        "title": "4 Things to Make Your Swing Out Better – Leader Edition",
-        "kind": "technique"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "VSE7SD3l3uA",
+      "title": "Swing Out – Learn to Lindy Hop from the Ground Up",
+      "kind": "tutorial"
+    },
+    {
+      "type": "youtube",
+      "videoId": "wHt_ihwO3_I",
+      "title": "5 Things to Make Your Swing Out Better – Follow Edition",
+      "kind": "technique"
+    },
+    {
+      "type": "youtube",
+      "videoId": "wQDJta-eUYY",
+      "title": "4 Things to Make Your Swing Out Better – Leader Edition",
+      "kind": "technique"
+    }
+  ]
 });

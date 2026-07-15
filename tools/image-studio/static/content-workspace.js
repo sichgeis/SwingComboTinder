@@ -93,15 +93,19 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
 
   const cardResourcesEditor = () => {
     const resources = contentState.content.cardResources;
-    const videoKinds = ["tutorial", "technique", "variation", "history"].map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) }));
-    const webKinds = [{ value: "article", label: "Article" }, { value: "reference", label: "Reference" }];
+    const videoKinds = metadataChoices(contentState.metadataOptions.videoKinds);
+    const webKinds = metadataChoices(contentState.metadataOptions.webResourceKinds);
+    const languages = [
+      { value: "", label: "All languages" },
+      ...contentState.metadataOptions.resourceLanguages.map((value) => ({ value, label: value === "de" ? "German" : "English" }))
+    ];
     return `<div class="resource-section">
       <div class="resource-heading"><h3>App-visible resources</h3><div><button type="button" data-content-action="add-youtube-resource">Add YouTube</button> <button type="button" data-content-action="add-web-resource">Add web link</button></div></div>
       ${resources.length === 0 ? '<p class="resource-empty">No app-visible resources. This is valid.</p>' : resources.map((resource, index) => `<div class="resource-row">
         ${selectField("Resource type", `cardResources.${index}.type`, resource.type, [{ value: "youtube", label: "YouTube" }, { value: "web", label: "Web resource" }])}
         ${resource.type === "youtube"
           ? `${contentField("YouTube video ID", `cardResources.${index}.videoId`, resource.videoId)}${contentField("Title", `cardResources.${index}.title`, resource.title)}${selectField("Category", `cardResources.${index}.kind`, resource.kind, videoKinds)}`
-          : `${contentField("URL", `cardResources.${index}.url`, resource.url, { type: "url" })}${contentField("Title", `cardResources.${index}.title`, resource.title)}${selectField("Category", `cardResources.${index}.kind`, resource.kind, webKinds)}${selectField("Language", `cardResources.${index}.language`, resource.language || "", [{ value: "", label: "All languages" }, { value: "de", label: "German" }, { value: "en", label: "English" }])}`}
+          : `${contentField("URL", `cardResources.${index}.url`, resource.url, { type: "url" })}${contentField("Title", `cardResources.${index}.title`, resource.title)}${selectField("Category", `cardResources.${index}.kind`, resource.kind, webKinds)}${selectField("Language", `cardResources.${index}.language`, resource.language || "", languages)}`}
         ${resourceActions("cardResources", index, resources.length)}
       </div>`).join("")}
     </div>`;
@@ -127,13 +131,10 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     const germanFields = ["description", "steps", "body", "lead", "follow", "connection", "cue", "practice"]
       .map((key) => contentField(key[0].toUpperCase() + key.slice(1), `guides.de.${key}`, guides.de[key], { textarea: true, full: true }))
       .join("");
-    const headingFields = ["steps", "body", "lead", "follow", "connection", "practice"]
-      .map((key) => contentField(`${key[0].toUpperCase() + key.slice(1)} heading`, `guides.de.headings.${key}`, guides.de.headings[key]))
-      .join("");
     contentFields.innerHTML = [
       section("Basics", basicsFields),
       section("English", englishFields),
-      section("German", `${germanFields}<div class="resource-section"><div class="resource-heading"><h3>Custom section headings</h3></div><div class="resource-row">${headingFields}</div></div>`),
+      section("German", germanFields),
       section("Resources", cardResourcesEditor())
     ].join("");
     applyContentIssues(contentState.contentIssues);

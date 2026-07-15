@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead organisiert zuerst den Weg und hebt die Verbindung nur bis zu einer angenehmen Höhe. Die eigene Drehung führt den Arm weiter. Die Hand hält keinen festen Punkt über dem Kopf fest.",
       "connection": "Während beide unter dem Bogen sind, wird die Verbindung weich und beweglich. Sie darf erst am Ausgang wieder deutlicher werden; festgehaltene Schultern machen die Figur unnötig eng.",
       "cue": "Der Bogen reist mit – niemand wird um einen stehenden Arm gedreht.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Bleib aufrecht und folge dem wandernden Weg unter dem Armbogen. Du musst dich weder klein machen noch um eine feststehende Hand kreisen.",
       "practice": "Wandert der Bogen mit euren Körpern, oder müssen sich die Körper unter einem festen Punkt hindurchfädeln?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

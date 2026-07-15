@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead zeigt den Kreis, indem er selbst kreisförmig reist und neben sich einen klaren Platz entstehen lässt. Der Follow kann diesem Weg folgen, ohne über die Hand eingesammelt zu werden.",
       "connection": "Die Verbindung fühlt sich gleichmäßig und verlässlich an. Sie darf in der Drehung etwas dichter werden und wird bei der Ankunft weich. Ein großer Open Stretch gehört hier nicht zur Aufgabe.",
       "cue": "Den Kreis zu Ende tanzen – Closed entsteht unterwegs.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Setze den eigenen Kreis fort und lass Closed Position unterwegs entstehen. Verkürze den Weg nicht, nur weil die Nähe zum Lead wieder da ist.",
       "practice": "Könnt ihr denselben Mittelpunkt umrunden, ohne dass eine Person zur Achse der anderen wird?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

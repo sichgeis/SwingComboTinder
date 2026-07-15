@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Statt mehr Kraft gibt der Lead eine gleichmäßige, leichte Drehrichtung. Öffnet der Follow den Arm, wird langsamer oder sucht die Landung, ist das Signal zum Beenden da.",
       "connection": "Die Hand bleibt beweglich und folgt der Drehung. Dauernder Zug macht die Achse schief; ein ruhiges Angebot am Ausgang hilft mehr als ein letztes Anschieben.",
       "cue": "Nur weiterdrehen, wenn die erste Runde noch Zeit und Balance übrig lässt.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Beende zunächst eine vollständige erste Drehung. Nur wenn Zeit, Achse und Momentum übrig sind, lass daraus eine zweite Runde entstehen.",
       "practice": "Fühlt sich die zweite Rotation wie die Fortsetzung der ersten an oder wie eine neue, zusätzlich angeschobene Aufgabe?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

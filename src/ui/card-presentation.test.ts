@@ -9,17 +9,17 @@ describe("card presentation", () => {
     const figure = {
       ...original,
       move: { ...original.move, name: "Inside <Turn>" },
-      resources: {
-        cardLinks: [
-          { url: "https://example.com/en", title: "English reference", kind: "reference" as const, language: "en" as const },
-          { url: "https://example.com/de", title: "Deutsche Quelle", kind: "article" as const, language: "de" as const }
-        ]
-      }
+      resources: [
+        { type: "web" as const, url: "https://example.com/en", title: "English reference", kind: "reference" as const, language: "en" as const },
+        { type: "youtube" as const, videoId: "LX3WPFUpSEc", title: "Video tutorial", kind: "tutorial" as const },
+        { type: "web" as const, url: "https://example.com/de", title: "Deutsche Quelle", kind: "article" as const, language: "de" as const }
+      ]
     };
     const markup = renderCardMarkup({ figure, language: "de", index: 0 });
     expect(markup).toContain("Inside &lt;Turn&gt;");
     expect(markup).toContain("Deutsche Quelle");
     expect(markup).not.toContain("English reference");
+    expect(markup.indexOf("Video tutorial")).toBeLessThan(markup.indexOf("Deutsche Quelle"));
   });
 
   it("derives card status from the nightly choice", () => {
@@ -41,6 +41,9 @@ describe("card presentation", () => {
     expect(german).toContain("Drehung");
     expect(german).toContain("6 oder 8 Counts");
     expect(german).toContain("Rotierend");
+    expect(german).toContain("Was passiert?");
+    expect(german).toContain("Woran du es merkst");
+    expect(german).toContain("Rhythmus und Spielraum");
   });
 
   it("renders structured ending positions in canonical order", () => {

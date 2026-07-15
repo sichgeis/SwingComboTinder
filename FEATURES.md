@@ -2,6 +2,18 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Figure model and Studio alignment
+
+- Status: Done
+- Approved: 2026-07-15
+- Goal: Remove duplicated presentation and adapter fields and keep Content Studio editing the same typed figure model consumed by the app.
+- Scope: Centralize repeated German headings, keep runtime moves metadata-only, unify app-visible resources as one ordered discriminated list, and serve all known Studio option values from shared typed definitions.
+- Non-goals: Do not change figure classifications or prose, remove German follow/practice content or ending metadata, or add combo, flow, recommendation, or mastery behavior.
+- Specification: [`specs/figure-model-alignment.md`](specs/figure-model-alignment.md)
+- Progress: Repository-wide audit completed. Removed 252 repeated heading values and duplicated runtime guide fields; migrated all 42 packages from split YouTube/web wrappers to one ordered resource list; aligned Studio validation, persistence, controls, preview, and app rendering.
+- Validation: `npm run check` passes with 20 test files and 56 tests. Persistence loads and round-trips all 42 definitions. A temporary Studio instance on port 4175 returned all shared option lists and rendered Tuck Turn without legacy heading data through the real German preview API.
+- Next action: None; reassess individual guide fields only when a concrete editing or product workflow no longer needs them.
+
 ## Implemented product baseline
 
 - Status: Done

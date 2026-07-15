@@ -25,4 +25,4 @@ export const figureFor = (id: string): FigureDefinition => {
   return figure;
 };
 
-export const moves: readonly Move[] = figures.map(({ move, guides }) => ({ ...move, ...guides.en }));
+export const moves: readonly Move[] = figures.map(({ move }) => move);

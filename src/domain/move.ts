@@ -35,15 +35,6 @@ export interface MoveGuide {
   readonly cue: string;
 }
 
-export interface GuideHeadings {
-  readonly steps: string;
-  readonly body: string;
-  readonly lead: string;
-  readonly connection: string;
-  readonly follow: string;
-  readonly practice: string;
-}
-
 export interface Move {
   readonly id: string;
   readonly name: string;
@@ -52,16 +43,9 @@ export interface Move {
   readonly count: CountPattern;
   readonly motion: MotionKind;
   readonly end: MoveEnding;
-  readonly description: string;
-  readonly steps: string;
-  readonly body: string;
-  readonly lead: string;
-  readonly connection: string;
-  readonly cue: string;
 }
 
-export type MoveTranslation = MoveGuide & {
-  readonly headings: GuideHeadings;
+export type GermanMoveGuide = MoveGuide & {
   readonly follow: string;
   readonly practice: string;
 };

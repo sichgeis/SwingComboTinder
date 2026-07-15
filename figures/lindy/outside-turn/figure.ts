@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Die Außenrichtung wird früh durch Körper und Handweg angekündigt. Die Hand umrundet die Achse des Follows, ohne das Handgelenk einzudrehen oder den Arm nach hinten zu ziehen.",
       "connection": "Während der Rotation ist weniger Verbindung oft besser. Druck in der Schulter ist kein Zeichen für mehr Führung, sondern dafür, Bogen und Drehung kleiner zu machen.",
       "cue": "Den Weg früh zeigen, die Drehung leicht lassen, die Landung freihalten.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Erhalte deine Vorwärtsbewegung, während du dich nach außen drehst. Wähle Größe und Geschwindigkeit so, dass jede Gewichtsverlagerung vollständig bleibt.",
       "practice": "Reist die Drehung wirklich durch den Raum oder wird sie zu einer Rotation auf der Stelle?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

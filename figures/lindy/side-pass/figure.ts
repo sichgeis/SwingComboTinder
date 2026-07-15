@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Die Hand bleibt ungefähr dort, wo die Reise stattfindet, und bewegt sich mit dem Follow. Sie zieht weder um die Hüfte des Leads noch quer über die Spur.",
       "connection": "Der Stretch startet die Bewegung und wird beim Vorbeigehen fast neutral. Erst wenn beide sich wieder öffnen, wird die Verbindung erneut länger.",
       "cue": "Mit dem ganzen Körper Platz machen – der Follow nimmt den freien Weg.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Reise durch den sichtbaren freien Raum und erhalte deine Richtung bis am Lead vorbei. Lass dich nicht um dessen Körper herumziehen.",
       "practice": "Ist die geöffnete Bahn so eindeutig, dass der Follow sie auch ohne seitlichen Zug finden würde?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

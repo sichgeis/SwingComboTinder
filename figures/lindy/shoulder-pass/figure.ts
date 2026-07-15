@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead öffnet die eigene Körperseite und hält die Hand auf dem Weg des Follows. Die Schulter wird aus der Bahn genommen, statt den Follow an sie heranzuholen.",
       "connection": "Im engsten Moment ist die Verbindung leicht. Arm und Schulter brauchen Bewegungsfreiheit. Erst wenn wieder Abstand entsteht, darf sich die Handverbindung verlängern.",
       "cue": "Die Schulter öffnet die Tür; der Follow geht auf der eigenen Spur hindurch.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Bleib auf deiner Spur und reise an der geöffneten Schulter vorbei. Nähe ist hier kein Grund, den Körper zur Verbindung hin zu neigen.",
       "practice": "Entsteht die enge Passage durch gute Spuren oder wird der Follow mit der Hand an die Schulter herangeholt?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

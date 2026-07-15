@@ -8,8 +8,6 @@ describe("German move guides", () => {
     for (const { guides: { de: guide } } of figures) {
       const copy = [guide.description, guide.steps, guide.body, guide.lead, guide.follow, guide.connection, guide.practice, guide.cue];
       expect(copy.every((text) => text.trim().length >= 30)).toBe(true);
-      const headings = [guide.headings.steps, guide.headings.body, guide.headings.lead, guide.headings.follow, guide.headings.connection, guide.headings.practice];
-      expect(headings.every((heading) => heading.trim().length >= 7)).toBe(true);
       expect(guide.practice.trim().endsWith("?")).toBe(true);
     }
   });

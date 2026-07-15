@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Das Stop-Signal kommt aus Körperposition und Timing. Für das Go entfernt sich der Lead wieder und macht den nächsten Raum eindeutig frei. Beides muss im Zentrum lesbar sein.",
       "connection": "Der Auffangmoment ist kurz und flächig, nicht hart. Gute Kompression fühlt sich sicher an; das anschließende Release fühlt sich noch klarer an.",
       "cue": "Früh auffangen, den Rhythmus behalten, den nächsten Weg weit öffnen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Lass deine Bewegung in den angebotenen Raum hineinlaufen und stoppe mit den eigenen Füßen. Erhalte Rhythmus und Bereitschaft für den wieder geöffneten Weg.",
       "practice": "Ist der Stopp früh genug lesbar, dass er sich wie Ankommen statt wie Aufprall anfühlt?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

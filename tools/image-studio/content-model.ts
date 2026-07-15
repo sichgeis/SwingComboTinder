@@ -2,6 +2,7 @@ import {
   countPatterns,
   endPositions,
   motionKinds,
+  languages,
   moveFamilies,
   moveStyles,
   type CountPattern,
@@ -9,18 +10,21 @@ import {
   type MotionKind,
   type MoveEnding,
   type MoveFamily,
+  type Language,
   type MoveStyle
 } from "../../src/domain/move";
 import { videoKinds, webResourceKinds, type FigureDefinition, type WebResourceKind } from "../../figures/define-figure";
 
-export const resourceLanguages = ["en", "de"] as const;
-type ResourceLanguage = (typeof resourceLanguages)[number];
+export const resourceLanguages = languages;
 
 export const figureMetadataOptions = {
   families: moveFamilies,
   countPatterns,
   motionKinds,
-  endPositions
+  endPositions,
+  videoKinds,
+  webResourceKinds,
+  resourceLanguages
 } as const;
 
 export interface ContentValidationIssue {
@@ -54,14 +58,6 @@ export interface GuideDto {
 }
 
 export interface GermanGuideDto extends GuideDto {
-  readonly headings: {
-    readonly steps: string;
-    readonly body: string;
-    readonly lead: string;
-    readonly connection: string;
-    readonly follow: string;
-    readonly practice: string;
-  };
   readonly follow: string;
   readonly practice: string;
 }
@@ -78,7 +74,7 @@ export interface WebResourceDto {
   readonly url: string;
   readonly title: string;
   readonly kind: WebResourceKind;
-  readonly language?: ResourceLanguage;
+  readonly language?: Language;
 }
 
 export type CardResourceDto = YoutubeResourceDto | WebResourceDto;
@@ -112,12 +108,12 @@ const record = (value: unknown, path: string, issues: ContentValidationIssue[]):
   return {};
 };
 
-const textValue = (value: unknown, path: string, issues: ContentValidationIssue[], required = true): string => {
+const textValue = (value: unknown, path: string, issues: ContentValidationIssue[]): string => {
   if (typeof value !== "string") {
     issues.push({ path, message: "Expected text." });
     return "";
   }
-  if (required && value.trim().length === 0) issues.push({ path, message: "Required text cannot be empty." });
+  if (value.trim().length === 0) issues.push({ path, message: "Required text cannot be empty." });
   return value;
 };
 
@@ -176,21 +172,12 @@ const parseGermanGuide = (value: unknown, issues: ContentValidationIssue[]): Ger
   const path = "guides.de";
   const source = record(value, path, issues);
   const guide = parseGuide(source, path, issues);
-  const headings = record(source.headings, `${path}.headings`, issues);
   const practice = textValue(source.practice, `${path}.practice`, issues);
   if (practice.trim() && !practice.trim().endsWith("?")) {
     issues.push({ path: `${path}.practice`, message: "The practice prompt must end with a question mark." });
   }
   return {
     ...guide,
-    headings: {
-      steps: textValue(headings.steps, `${path}.headings.steps`, issues),
-      body: textValue(headings.body, `${path}.headings.body`, issues),
-      lead: textValue(headings.lead, `${path}.headings.lead`, issues),
-      connection: textValue(headings.connection, `${path}.headings.connection`, issues),
-      follow: textValue(headings.follow, `${path}.headings.follow`, issues),
-      practice: textValue(headings.practice, `${path}.headings.practice`, issues)
-    },
     follow: textValue(source.follow, `${path}.follow`, issues),
     practice
   };
@@ -235,7 +222,7 @@ const parseCardResources = (value: unknown, issues: ContentValidationIssue[]): r
       const kind = textValue(source.kind, `${path}.kind`, issues);
       if (!webResourceKinds.includes(kind as WebResourceDto["kind"])) issues.push({ path: `${path}.kind`, message: "Unknown web resource category." });
       const language = source.language;
-      if (language !== undefined && !resourceLanguages.includes(language as ResourceLanguage)) {
+      if (language !== undefined && !resourceLanguages.includes(language as Language)) {
         issues.push({ path: `${path}.language`, message: "Resource language must be en or de." });
       }
       return [{
@@ -243,7 +230,7 @@ const parseCardResources = (value: unknown, issues: ContentValidationIssue[]): r
         url,
         title: textValue(source.title, `${path}.title`, issues),
         kind: kind as WebResourceDto["kind"],
-        ...(typeof language === "string" ? { language: language as ResourceLanguage } : {})
+        ...(typeof language === "string" ? { language: language as Language } : {})
       }];
     }
     issues.push({ path: `${path}.type`, message: "Resource type must be youtube or web." });
@@ -297,12 +284,9 @@ export const figureDefinitionDataFromContent = (content: FigureContentDto): Reco
     end: content.basics.end
   },
   guides: content.guides,
-  youtube: {
-    cardLinks: content.cardResources.filter((resource): resource is YoutubeResourceDto => resource.type === "youtube").map(({ videoId, title, kind }) => ({ videoId, title, kind }))
-  },
-  resources: {
-    cardLinks: content.cardResources.filter((resource): resource is WebResourceDto => resource.type === "web").map(({ url, title, kind, language }) => ({ url, title, kind, ...optional("language", language) }))
-  }
+  resources: content.cardResources.map((resource) => resource.type === "youtube"
+    ? { type: resource.type, videoId: resource.videoId, title: resource.title, kind: resource.kind }
+    : { type: resource.type, url: resource.url, title: resource.title, kind: resource.kind, ...optional("language", resource.language) })
 });
 
 export const figureDefinitionFromContent = (contentValue: unknown, card: string): FigureDefinition => {

@@ -34,30 +34,22 @@ export default defineFigure({
       "lead": "Der Lead kündigt die öffnende Seite mit eigener Rotation an. Die verbundene Hand folgt diesem Bogen locker und bleibt so platziert, dass die Rückkehr leicht gefunden werden kann.",
       "connection": "Beim Öffnen verlängert sich die Verbindung kurz, in der Außendrehung wird sie sehr leicht und bei der Rückkehr wieder klarer. Handgelenke und Ellbogen bleiben beweglich.",
       "cue": "Nach außen öffnen, den Kick tanzen, aus den Füßen zurückkommen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Setze deine Rotation fort, bis die gemeinsame Hand den Weg weich auffängt. Kehre aus dieser gespeicherten Energie zurück, ohne die nächste Seite vorwegzunehmen.",
       "practice": "Stoppen beide ihren eigenen Körper mit der gemeinsamen Verbindung, oder stoppt eine Person die andere?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "iB64qssfkGg",
-        "title": "Hand To Hand Charleston",
-        "kind": "tutorial"
-      },
-      {
-        "videoId": "tNmtisATf1A",
-        "title": "More S-Turn Variations",
-        "kind": "variation"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "iB64qssfkGg",
+      "title": "Hand To Hand Charleston",
+      "kind": "tutorial"
+    },
+    {
+      "type": "youtube",
+      "videoId": "tNmtisATf1A",
+      "title": "More S-Turn Variations",
+      "kind": "variation"
+    }
+  ]
 });

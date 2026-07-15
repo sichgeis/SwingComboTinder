@@ -34,25 +34,16 @@ export default defineFigure({
       "lead": "Der Lead bringt die Hand früh, niedrig und nah an eine bequeme Übergabestelle. Die neue Hand übernimmt ohne Griffwechsel-Hektik. Danach folgt sie der Drehung, statt den gewickelten Arm hochzuhebeln.",
       "connection": "In der Wicklung braucht es fast keinen Zug. Je leichter die Hand dort wird, desto freier kann die Schulter bleiben. Stretch entsteht erst wieder, wenn sich die Figur öffnet.",
       "cue": "Hand bequem übergeben, Schulter frei lassen, aus der Wicklung heraustanzen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Lass den Arm nur so weit hinter den Rücken kommen, wie deine Schulter bequem mitgeht, und tanze deine Rotation kontinuierlich weiter.",
       "practice": "Kann der Handwechsel fast unspektakulär geschehen, ohne Zug am gewickelten Arm und ohne Pause in den Füßen?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "bx0mjcFuZ8A",
-        "title": "TX Tommy History",
-        "kind": "history"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "bx0mjcFuZ8A",
+      "title": "TX Tommy History",
+      "kind": "history"
+    }
+  ]
 });

@@ -34,19 +34,9 @@ export default defineFigure({
       "lead": "Der Lead macht den Weg mit den eigenen Schritten frei und bietet die neue Hand früh und offen an. Der Handwechsel darf unspektakulär sein. Die Umkehr wird aus Schwerpunkt und Rock Step geführt, nicht durch einen Ruck an der frisch gefassten Hand.",
       "connection": "Beim Vorbeigleiten ist die Verbindung fast gewichtslos. Erst im Rock Step entsteht ein deutlicher, aber angenehmer Stretch in Rücken und Armen. Dieser Stretch löst die nächste Reise aus; die Finger halten Kontakt, aber keinen Griff.",
       "cue": "Vorbeigleiten, Gegenhand finden, gemeinsam zurückfedern.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Gleite vollständig am Lead vorbei, finde die angebotene Gegenhand und lass den Back Rock den neuen Stretch aufbauen. Kehre erst aus diesem gemeinsamen Wendepunkt um.",
       "practice": "Ist der Rock Step ein elastischer Richtungswechsel oder nur eine Pause zwischen zwei voneinander getrennten Passagen?"
     }
   },
-  "youtube": {
-    "cardLinks": []
-  }
+  "resources": []
 });

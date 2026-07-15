@@ -34,30 +34,22 @@ export default defineFigure({
       "lead": "Zeige erst den Richtungswechsel und öffne dann den Raum für die Drehung. Die Hand begleitet diesen Weg. Sie zieht den Follow weder herum noch liefert sie allein die Rotation.",
       "connection": "Die einfache Version passt oft in sechs Counts; für eine doppelte Drehung kann die Idee auf acht Counts wachsen. Entscheidend ist, dass Musik und Balance wirklich Platz für die zusätzliche Runde lassen.",
       "cue": "Richtung wechseln, Raum öffnen, Rotation weiterfließen lassen.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Beantworte zuerst die aktuelle Richtung. Wenn sich der Weg öffnet, nimm die Rotation mit vollständigen Schritten mit und beende sie in deiner eigenen Balance.",
       "practice": "Bleibt die Bewegung auch während des Richtungswechsels rund, oder entstehen zwei voneinander getrennte Aktionen?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "LX3WPFUpSEc",
-        "title": "Alllll the Tuck Turns",
-        "kind": "tutorial"
-      },
-      {
-        "videoId": "zTlnB-tcMio",
-        "title": "Changing the Rhythm in Tuck Turns",
-        "kind": "variation"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "LX3WPFUpSEc",
+      "title": "Alllll the Tuck Turns",
+      "kind": "tutorial"
+    },
+    {
+      "type": "youtube",
+      "videoId": "zTlnB-tcMio",
+      "title": "Changing the Rhythm in Tuck Turns",
+      "kind": "variation"
+    }
+  ]
 });

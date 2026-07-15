@@ -34,30 +34,22 @@ export default defineFigure({
       "lead": "Der Lead führt erst den Weg, dann die Feder. Das Release zeigt in Reiserichtung. Ein Druck direkt auf den Follow würde die Bahn blockieren statt sie zu öffnen.",
       "connection": "Die Verbindung wird kurz dichter und danach sofort leichter. Die gespeicherte Energie ist als Richtung spürbar, nicht als Stoß aus den Händen.",
       "cue": "Die Bahn festlegen, kurz einfedern, die Energie auf dieser Bahn freigeben.",
-      "headings": {
-        "steps": "Was passiert?",
-        "body": "Woran du es merkst",
-        "lead": "Als Lead",
-        "connection": "Rhythmus und Spielraum",
-        "follow": "Als Follow",
-        "practice": "Frage zum Üben"
-      },
       "follow": "Beantworte den Tuck, ohne deine Reise zu verlieren. Lass die Richtungsänderung die Drehung auf der bereits sichtbaren Bahn freigeben.",
       "practice": "Bleibt trotz Kompression klar, wohin die Figur reist, oder verschwindet die Bahn im Tuck-Moment?"
     }
   },
-  "youtube": {
-    "cardLinks": [
-      {
-        "videoId": "LX3WPFUpSEc",
-        "title": "Alllll the Tuck Turns",
-        "kind": "tutorial"
-      },
-      {
-        "videoId": "zTlnB-tcMio",
-        "title": "Changing the Rhythm in Tuck Turns",
-        "kind": "variation"
-      }
-    ]
-  }
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "LX3WPFUpSEc",
+      "title": "Alllll the Tuck Turns",
+      "kind": "tutorial"
+    },
+    {
+      "type": "youtube",
+      "videoId": "zTlnB-tcMio",
+      "title": "Changing the Rhythm in Tuck Turns",
+      "kind": "variation"
+    }
+  ]
 });
