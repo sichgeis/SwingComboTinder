@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "boogie",
     "name": "Boogie Forward / Back",
-    "alias": "Rhythm over figures",
     "style": "lindy",
     "family": "Rhythm",
     "count": "8 count",
     "motion": "Linear",
-    "end": "Any",
-    "familiarity": "Maybe I know it",
-    "flows": "groove walk · send out · musical break"
+    "end": "Any"
   },
   "guides": {
     "en": {
@@ -45,25 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "4F0JVmtJMm0",
-        "timestampSeconds": 14,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "L3Bd3YRSLO4",
-        "title": "Keep Punching (The Big Apple), 1939 — Whitey's Lindy Hoppers",
-        "channel": "Frankie Manning Foundation archive",
-        "notes": "Artwork reference selection: historic Black vernacular jazz footage."
-      },
-      {
-        "videoId": "4F0JVmtJMm0",
-        "notes": "Reference catalog candidate (Exact solo-jazz move tutorial). Key frame: Show a strong profile or three-quarter silhouette emphasizing alternating torso lean and traveling feet."
-      }
-    ],
     "cardLinks": []
   }
-
 });

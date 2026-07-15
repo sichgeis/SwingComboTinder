@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "shoulder-pass",
     "name": "Shoulder Pass",
-    "alias": "A close fly-by",
     "style": "lindy",
     "family": "Linear",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "New territory",
-    "flows": "free spin · pass by · send out"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "kFoi6PTiuok",
-        "timestampSeconds": 416,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "oDMJup5JPMA",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "kFoi6PTiuok",
-        "notes": "Reference catalog candidate (Closest side-pass family reference). Key frame: Show the follower passing close to the leader’s shoulder, with that shoulder relationship central in frame."
-      }
-    ],
     "cardLinks": []
   }
-
 });

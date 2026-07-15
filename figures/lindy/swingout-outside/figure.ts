@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "swingout-outside",
     "name": "Swingout + Outside Turn",
-    "alias": "Open up the ending",
     "style": "lindy",
     "family": "Circular",
     "count": "8 count",
     "motion": "Circular",
-    "end": "Open",
-    "familiarity": "Curious",
-    "flows": "Lindy circle · free spin · groove walk"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "GrCAQy4irMM",
-        "timestampSeconds": 55,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "m_-PZqdtlLU",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "GrCAQy4irMM",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Show the outward rotation at the swingout exit, with clear separation and spiral arm line."
-      }
-    ],
     "cardLinks": []
   }
-
 });

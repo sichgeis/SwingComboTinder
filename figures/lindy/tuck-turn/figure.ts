@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "tuck-turn",
     "name": "Tuck Turn",
-    "alias": "Compress & release",
     "style": "lindy",
     "family": "Turn",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "Comfort move",
-    "flows": "pass by · sugar push · bring in"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,18 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "ZwsjyNCIExM",
-        "timestampSeconds": 228,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "ZwsjyNCIExM",
-        "notes": "Artwork reference selection."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "LX3WPFUpSEc",
@@ -70,5 +55,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

@@ -1,4 +1,4 @@
-import { isChoice, isMoveStyle, type Language } from "../domain/move";
+import { isBuildChoice, isMoveStyle, type Language } from "../domain/move";
 import { createSession, type Decision, type Session } from "../domain/session";
 
 export const SESSION_STORAGE_KEY = "swing-thing-session-v2";
@@ -15,7 +15,7 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const parseChoices = (value: unknown): Record<string, "pass" | "keep" | "star"> => {
   if (!isRecord(value)) return {};
-  return Object.fromEntries(Object.entries(value).filter((entry): entry is [string, "pass" | "keep" | "star"] => isChoice(entry[1])));
+  return Object.fromEntries(Object.entries(value).filter((entry): entry is [string, "pass" | "keep" | "star"] => isBuildChoice(entry[1])));
 };
 
 const parseHistory = (value: unknown): Decision[] => {
@@ -26,7 +26,7 @@ const parseHistory = (value: unknown): Decision[] => {
     && typeof item.index === "number"
     && item.index >= 0
     && typeof item.id === "string"
-    && isChoice(item.action));
+    && isBuildChoice(item.action));
 };
 
 export class LocalSessionStore {
@@ -53,10 +53,7 @@ export class LocalSessionStore {
         styles,
         index,
         choices: parseChoices(parsed.choices),
-        history: parseHistory(parsed.history).filter((decision) => decision.index < maximum),
-        comboSeed: typeof parsed.comboSeed === "number" && Number.isInteger(parsed.comboSeed) && parsed.comboSeed >= 0
-          ? parsed.comboSeed
-          : 0
+        history: parseHistory(parsed.history).filter((decision) => decision.index < maximum)
       };
     } catch {
       return createSession();

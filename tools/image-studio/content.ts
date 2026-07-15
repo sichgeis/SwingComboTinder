@@ -1,6 +1,5 @@
 import { createHash } from "node:crypto";
-import { access, readFile, rename, unlink, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { readFile, rename, unlink, writeFile } from "node:fs/promises";
 
 import ts from "typescript";
 
@@ -10,7 +9,6 @@ import {
   validateFigureContent
 } from "./content-model";
 import type {
-  ContentValidationIssue,
   FigureContentDto,
   FigureIdentityDto,
   LoadedFigureContent
@@ -110,16 +108,12 @@ export const parseFigureContent = (source: string, filename: string, slug: strin
     },
     basics: {
       name: move.name,
-      alias: move.alias,
       family: move.family,
       count: move.count,
       motion: move.motion,
-      end: move.end,
-      familiarity: move.familiarity,
-      flows: move.flows
+      end: move.end
     },
     guides,
-    teachingSources: youtube.teachingSources ?? [],
     cardResources: [...cardLinks, ...webLinks]
   });
 };
@@ -127,19 +121,6 @@ export const parseFigureContent = (source: string, filename: string, slug: strin
 export const readFigureContentFile = async (path: string, slug: string): Promise<LoadedFigureContent> => {
   const source = await readFile(path, "utf8");
   return { content: parseFigureContent(source, path, slug), revision: revisionFor(source) };
-};
-
-const validateTeachingFrames = async (content: FigureContentDto, definitionPath: string): Promise<void> => {
-  const issues: ContentValidationIssue[] = [];
-  for (const [index, source] of content.teachingSources.entries()) {
-    if (!source.frame) continue;
-    try {
-      await access(resolve(dirname(definitionPath), source.frame));
-    } catch {
-      issues.push({ path: `teachingSources.${index}.frame`, message: "Referenced teaching frame does not exist." });
-    }
-  }
-  if (issues.length) throw new ContentValidationError(issues);
 };
 
 export const saveFigureContentFile = async (
@@ -154,7 +135,6 @@ export const saveFigureContentFile = async (
   if (JSON.stringify(content.identity) !== JSON.stringify(expectedIdentity)) {
     throw new ContentValidationError([{ path: "identity", message: "Figure identity and asset fields are read-only." }]);
   }
-  await validateTeachingFrames(content, path);
   const nextSource = serializeFigureContent(content);
   if (typescriptDiagnostics(nextSource, path).length) throw new Error("Generated figure source is not valid TypeScript.");
   const temporaryPath = `${path}.${process.pid}.${Date.now()}.tmp`;

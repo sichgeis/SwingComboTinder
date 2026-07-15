@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "outside-turn",
     "name": "Outside Turn",
-    "alias": "Turn away & return",
     "style": "lindy",
     "family": "Turn",
     "count": "6 or 8 count",
     "motion": "Rotational",
-    "end": "Open",
-    "familiarity": "Tonight's goal",
-    "flows": "Lindy circle · free spin · swingout from open"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "Rfdomc-n-co",
-        "timestampSeconds": 140,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "GrCAQy4irMM",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "Rfdomc-n-co",
-        "notes": "Reference catalog candidate (Combined inside/outside-turn tutorial). Key frame: Show the follower halfway through outward rotation; shoulders clearly turning away from center."
-      }
-    ],
     "cardLinks": []
   }
-
 });

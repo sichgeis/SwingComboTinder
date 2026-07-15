@@ -13,7 +13,7 @@ describe("LocalSessionStore", () => {
   it("round-trips the existing v2 session schema", () => {
     const storage = new MemoryStorage();
     const store = new LocalSessionStore(storage);
-    const session = { ...createSession(["lindy", "shag"]), index: 4, comboSeed: 2 };
+    const session = { ...createSession(["lindy", "shag"]), index: 4 };
     expect(store.save(session)).toBe(true);
     expect(store.load(() => 35)).toEqual(session);
   });

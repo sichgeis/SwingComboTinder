@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "lindy-circle",
     "name": "Lindy Circle",
-    "alias": "The collector",
     "style": "lindy",
     "family": "Circular",
     "count": "8 count",
     "motion": "Circular",
-    "end": "Closed",
-    "familiarity": "Comfort move",
-    "flows": "promenade · swingout from closed · groove walk"
+    "end": "Closed"
   },
   "guides": {
     "en": {
@@ -45,25 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "dxTrTeGC14o",
-        "timestampSeconds": 4,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "AwJjk00bauE",
-        "title": "A Night at the Savoy — Norma Miller, Billy Ricker, Al Minns, and Frankie Manning",
-        "channel": "Frankie Manning Media Archive",
-        "notes": "Artwork reference selection: historic Black Lindy Hop footage."
-      },
-      {
-        "videoId": "P083vG0JKB8",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Show the middle of the shared rotation in closed position, with the circular pathway readable."
-      }
-    ],
     "cardLinks": []
   }
-
 });

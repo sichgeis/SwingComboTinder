@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "collegiate-kicks",
     "name": "Collegiate Kicks",
-    "alias": "Make the slows visible",
     "style": "shag",
     "family": "Shag Rhythm",
     "count": "6 count",
     "motion": "Vertical",
-    "end": "Closed / Side-by-side",
-    "familiarity": "Comfort move",
-    "flows": "Cross Kicks · Shag breaks · closed Shag turn"
+    "end": "Closed / Side-by-side"
   },
   "guides": {
     "en": {
@@ -45,17 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "hOSJUW2kr30",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "O-X0VjLufDo",
-        "notes": "Reference catalog candidate (Closest swing-kick fundamentals reference). Key frame: Show alternating compact forward kicks with upright torso and pronounced Shag pulse."
-      }
-    ],
     "cardLinks": []
   }
-
 });

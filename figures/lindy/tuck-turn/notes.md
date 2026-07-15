@@ -17,6 +17,13 @@ Show the compression-and-release instant of a six-count tuck turn: both approach
 
 a Black man and an East Asian woman, both adults, in colorful modern vintage-inspired swing clothes
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=ZwsjyNCIExM&t=228s) — timestamp: 228s; frame: `teaching-frames/selected.png`
+  - Editorial note: Source listed for the selected teaching frame.
+- [YouTube source 2](https://www.youtube.com/watch?v=ZwsjyNCIExM)
+  - Editorial note: Artwork reference selection.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

@@ -33,7 +33,7 @@ describe("move catalog", () => {
 
   it("provides complete metadata and English teaching copy", () => {
     for (const { move, guides: { en: guide } } of figures) {
-      expect([move.id, move.name, move.alias, move.family, move.motion, move.end, move.count, move.familiarity, move.flows]
+      expect([move.id, move.name, move.family, move.motion, move.end, move.count]
         .every((value) => value.trim().length > 0)).toBe(true);
       expect([guide.description, guide.steps, guide.body, guide.lead, guide.connection, guide.cue]
         .every((value) => value.trim().length >= 20)).toBe(true);

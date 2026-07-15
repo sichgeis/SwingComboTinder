@@ -17,6 +17,13 @@ Show classic Collegiate Shag kicks in a compact side-by-side or closed frame: up
 
 a South Asian woman and a Latino man, both adults, in cheerful campus-inspired vintage clothing
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=hOSJUW2kr30)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 2](https://www.youtube.com/watch?v=O-X0VjLufDo)
+  - Editorial note: Reference catalog candidate (Closest swing-kick fundamentals reference). Key frame: Show alternating compact forward kicks with upright torso and pronounced Shag pulse.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

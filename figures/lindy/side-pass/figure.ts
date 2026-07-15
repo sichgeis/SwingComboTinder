@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "side-pass",
     "name": "Side Pass",
-    "alias": "Sliding doors",
     "style": "lindy",
     "family": "Linear",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "Maybe I know it",
-    "flows": "pass by · tuck turn · bring in"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "kFoi6PTiuok",
-        "timestampSeconds": 340,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "0U7C7OHb5ww",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "kFoi6PTiuok",
-        "notes": "Reference catalog candidate (Exact side-pass/change-place tutorial). Key frame: Capture the moment one partner clears the other’s side, creating two opposing travel diagonals."
-      }
-    ],
     "cardLinks": []
   }
-
 });

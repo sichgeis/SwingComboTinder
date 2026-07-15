@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "shag-texas-tommy",
     "name": "Shag Texas Tommy",
-    "alias": "Low capture, lively feet",
     "style": "shag",
     "family": "Shag Turn",
     "count": "6 or 12 count",
     "motion": "Rotational",
-    "end": "Open / Closed",
-    "familiarity": "Stretch goal",
-    "flows": "Shag pass-by · closed Shag turn · Collegiate kicks"
+    "end": "Open / Closed"
   },
   "guides": {
     "en": {
@@ -45,17 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "z-VIPVDIf_0",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "N7RzWwENXwc",
-        "notes": "Reference catalog candidate (Texas Tommy mechanics reference). Key frame: Show the behind-the-back hand transfer, redrawn with Shag’s compact frame and faster rhythm."
-      }
-    ],
     "cardLinks": []
   }
-
 });

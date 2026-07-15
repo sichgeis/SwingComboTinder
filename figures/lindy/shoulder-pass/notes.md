@@ -17,6 +17,15 @@ Show a close-looking shoulder pass on separate tracks: the follow travels past t
 
 a Black woman and a Middle Eastern man, both adults, in clean understated vintage-inspired clothes
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=kFoi6PTiuok&t=416s) — timestamp: 416s; frame: `teaching-frames/selected.png`
+  - Editorial note: Source listed for the selected teaching frame.
+- [YouTube source 2](https://www.youtube.com/watch?v=oDMJup5JPMA)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 3](https://www.youtube.com/watch?v=kFoi6PTiuok)
+  - Editorial note: Reference catalog candidate (Closest side-pass family reference). Key frame: Show the follower passing close to the leader’s shoulder, with that shoulder relationship central in frame.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

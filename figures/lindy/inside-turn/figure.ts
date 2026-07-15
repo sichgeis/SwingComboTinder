@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "inside-turn",
     "name": "Inside Turn",
-    "alias": "Turn into the line",
     "style": "lindy",
     "family": "Turn",
     "count": "6 or 8 count",
     "motion": "Rotational",
-    "end": "Open",
-    "familiarity": "Tonight's goal",
-    "flows": "sugar push · Lindy circle · pass by"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "Rfdomc-n-co",
-        "timestampSeconds": 80,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "oJWjeLCDnOk",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "Rfdomc-n-co",
-        "notes": "Reference catalog candidate (Combined inside/outside-turn tutorial). Key frame: Show the follower halfway through inward rotation, connected hand above the turning pathway."
-      }
-    ],
     "cardLinks": []
   }
-
 });

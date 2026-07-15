@@ -1,12 +1,10 @@
 import { figureFor } from "../../figures/catalog";
 import { youtubeUrl } from "../../figures/define-figure";
 import { moves } from "../domain/catalog";
-import { generateCombos, type Combo } from "../domain/combos";
 import { guideFor } from "../domain/localize";
-import type { Choice, Language, Move, MoveStyle, MoveTranslation } from "../domain/move";
+import type { BuildChoice, Language, Move, MoveStyle, MoveTranslation } from "../domain/move";
 import {
   createSession,
-  incrementComboSeed,
   movesForStyles,
   reconcileSession,
   recordDecision,
@@ -19,12 +17,6 @@ import { adjacentBrowseIndex, figuresForBrowsing } from "./browse-deck";
 import { escapeHtml, localizedMeta, renderCardMarkup, styleMeta, videoKindLabel, webResourceKindLabel } from "./card-presentation";
 import { isIntentionalCardGesture, isIntentionalHorizontalGesture, type TouchPoint } from "./horizontal-gesture";
 import { defaultLanguage, translate, type TranslationKey } from "./translations";
-
-const germanComboCopy = [
-  { label: "01 · WARM-UP", title: "Findet den gemeinsamen Rhythmus", note: "Beginnt mit Puls und einem einfachen Weg. Lasst den gewählten Stil ankommen, bevor eine größere Drehung dazukommt." },
-  { label: "02 · FLOW-SCHLEIFE", title: "Reisen, drehen, neu verbinden", note: "Haltet jeden Übergang lesbar. Der Wechsel des Bewegungswegs ist wichtiger, als jede Figur unterzubringen." },
-  { label: "03 · KLEINES ABENTEUER", title: "Eine mutige kleine Entscheidung", note: "Probiert den Spotlight-Move einmal mit gutem Platz. Wird die Verbindung unklar, kehrt zu Puls und vertrautem Weg zurück." }
-] as const;
 
 interface PointerStart {
   readonly id: number;
@@ -215,7 +207,7 @@ export class SwingThingController {
     this.saveSession();
   }
 
-  private cardMarkup(move: Move | undefined, index: number, inert = false, deckChoice?: Choice): string {
+  private cardMarkup(move: Move | undefined, index: number, inert = false, deckChoice?: BuildChoice): string {
     if (!move) return "";
     return renderCardMarkup({
       figure: figureFor(move.id),
@@ -247,11 +239,11 @@ export class SwingThingController {
     this.animating = false;
   }
 
-  private decide(action: Choice): void {
+  private decide(action: BuildChoice): void {
     const move = this.activeMoves()[this.session.index];
     if (this.animating || !move) return;
     this.animating = true;
-    const transforms: Record<Choice, string> = {
+    const transforms: Record<BuildChoice, string> = {
       pass: "translate(-145%, 18px) rotate(-18deg)", keep: "translate(145%, 18px) rotate(18deg)", star: "translate(0, -130%) rotate(-3deg)"
     };
     this.activeCard.classList.add("leaving");
@@ -442,7 +434,6 @@ export class SwingThingController {
       this.query<HTMLElement>("#cuePractice").textContent = translatedGuide.practice;
     }
     this.query<HTMLElement>("#cueMemory").textContent = guide.cue;
-    this.query<HTMLElement>("#cueFlow").textContent = move.flows;
     const figure = figureFor(move.id);
     const videos = figure.youtube.cardLinks;
     const resources = (figure.resources?.cardLinks ?? []).filter((resource) => !resource.language || resource.language === this.language);
@@ -462,25 +453,10 @@ export class SwingThingController {
     if (!this.cueDialog.open) this.cueDialog.showModal();
   }
 
-  private renderCombos(): Combo[] {
-    const combos = generateCombos(this.activeMoves(), this.session);
-    this.query<HTMLElement>("#comboList").innerHTML = combos.map((combo, index) => `
-      <article class="combo-card" data-index="${index + 1}"><span class="combo-label">${this.language === "de" ? germanComboCopy[index]?.label : combo.label}</span><h3>${this.comboTitle(combo, index)}</h3>
-        <div class="combo-steps">${combo.steps.map((move, step) => `${step > 0 ? "<i>→</i>" : ""}<span>${move.name}</span>`).join("")}</div>
-        <p class="combo-note">${this.language === "de" ? germanComboCopy[index]?.note : combo.note}</p></article>`).join("");
-    return combos;
-  }
-
-  private comboTitle(combo: Combo, index: number): string {
-    if (this.language === "en") return combo.title;
-    if (index === 2 && combo.title.startsWith("Spotlight:")) return combo.title;
-    return germanComboCopy[index]?.title ?? combo.title;
-  }
-
   private showResults(): void {
     const deck = this.activeMoves();
     this.showView(this.resultsView);
-    const count = (choice: Choice): number => Object.values(this.session.choices).filter((value) => value === choice).length;
+    const count = (choice: BuildChoice): number => Object.values(this.session.choices).filter((value) => value === choice).length;
     const keeps = count("keep");
     const stars = count("star");
     const passes = count("pass");
@@ -500,7 +476,6 @@ export class SwingThingController {
       <div class="summary-stat"><strong>${passes}</strong><span>${this.t("later")}</span></div>`;
     const ratio = deck.length > 0 ? Math.min(ready / deck.length, 1) : 0;
     requestAnimationFrame(() => { this.query<SVGElement>("#scoreCircle").style.strokeDashoffset = String(327 * (1 - ratio)); });
-    this.renderCombos();
     this.saveSession();
   }
 
@@ -513,12 +488,14 @@ export class SwingThingController {
   }
 
   private async shareSet(): Promise<void> {
-    const combos = generateCombos(this.activeMoves(), this.session);
     const focus = this.session.styles.map((style) => styleMeta[style].label).join(" + ");
-    const comboText = combos.map((combo, index) => `${this.comboTitle(combo, index)}: ${combo.steps.map(({ name }) => name).join(" → ")}`).join("\n\n");
+    const selected = this.activeMoves().filter(({ id }) => this.session.choices[id] !== "pass");
+    const practice = selected.filter(({ id }) => this.session.choices[id] === "star");
+    const comfortable = selected.filter(({ id }) => this.session.choices[id] !== "star");
+    const names = (items: readonly Move[]): string => items.length > 0 ? items.map(({ name }) => name).join(", ") : "—";
     const text = this.language === "de"
-      ? `Mein Swing-Thing-Set für heute (${focus}):\n\n${comboText}\n\nReset: atmen → Puls finden → einen vertrauten Weg wählen.`
-      : `My Swing Thing set for tonight (${focus}):\n\n${comboText}\n\nReset: breathe → find the pulse → choose a familiar pathway.`;
+      ? `Mein Swing-Thing-Deck für heute (${focus}):\n\nKann ich: ${names(comfortable)}\n\nHeute üben: ${names(practice)}`
+      : `My Swing Thing deck for tonight (${focus}):\n\nGot it: ${names(comfortable)}\n\nTry tonight: ${names(practice)}`;
     try {
       if (navigator.share) await navigator.share({ title: "My Swing Thing pocket set", text });
       else { await navigator.clipboard.writeText(text); this.showToast(this.t("copied")); }
@@ -559,14 +536,6 @@ export class SwingThingController {
     });
     this.query("#resetButton").addEventListener("click", () => this.resetToWelcome(this.t("deckReset")));
     this.query("#languageButton").addEventListener("click", () => this.toggleLanguage());
-    this.query("#shuffleButton").addEventListener("click", (event) => {
-      this.session = incrementComboSeed(this.session);
-      this.saveSession();
-      this.renderCombos();
-      const button = event.currentTarget as HTMLElement;
-      button.classList.remove("spinning");
-      requestAnimationFrame(() => button.classList.add("spinning"));
-    });
     document.querySelectorAll("[data-focus-style]").forEach((input) => input.addEventListener("change", () => this.renderFocusSelection()));
 
     const modeSwitch = this.query<HTMLElement>("#modeSwitch");

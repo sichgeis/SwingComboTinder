@@ -4,6 +4,8 @@
 - Approved: 2026-07-15
 - Goal: Turn the local image-oriented studio into a master-detail editor where one figure can be found, edited, previewed, validated, and saved safely.
 
+> Subsequent change: [`figure-model-and-flow-cleanup.md`](figure-model-and-flow-cleanup.md) removes aliases, static familiarity, flow suggestions, and production teaching-source fields from the completed editor while preserving its safe editing foundation.
+
 ## Context
 
 Swing Thing has 42 self-contained figure packages. Complete production content lives in each typed `figure.ts`: titles and metadata, English and German guides, teaching-source videos, app-visible videos, and the artwork import. The current local studio manages artwork and generation notes in a large figure grid but cannot maintain the rest of that content.

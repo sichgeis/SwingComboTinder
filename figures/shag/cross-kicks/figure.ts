@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "cross-kicks",
     "name": "Cross Kicks",
-    "alias": "Side-by-side Shag texture",
     "style": "shag",
     "family": "Shag Rhythm",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Side-by-side",
-    "familiarity": "Tonight's goal",
-    "flows": "Collegiate kicks · camel hops · Shag pass-by"
+    "end": "Side-by-side"
   },
   "guides": {
     "en": {
@@ -45,17 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "qQ2BvAyoHHY",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "O-X0VjLufDo",
-        "notes": "Reference catalog candidate (Closest kick mechanics reference). Key frame: Show one leg crossing clearly in front of the standing leg; use a front three-quarter angle."
-      }
-    ],
     "cardLinks": []
   }
-
 });

@@ -19,13 +19,10 @@ export interface FigureIdentityDto {
 
 export interface FigureBasicsDto {
   readonly name: string;
-  readonly alias: string;
   readonly family: string;
   readonly count: string;
   readonly motion: string;
   readonly end: string;
-  readonly familiarity: string;
-  readonly flows: string;
 }
 
 export interface GuideDto {
@@ -48,15 +45,6 @@ export interface GermanGuideDto extends GuideDto {
   };
   readonly follow: string;
   readonly practice: string;
-}
-
-export interface TeachingSourceDto {
-  readonly videoId: string;
-  readonly title?: string;
-  readonly channel?: string;
-  readonly timestampSeconds?: number;
-  readonly frame?: string;
-  readonly notes?: string;
 }
 
 export interface YoutubeResourceDto {
@@ -83,7 +71,6 @@ export interface FigureContentDto {
     readonly en: GuideDto;
     readonly de: GermanGuideDto;
   };
-  readonly teachingSources: readonly TeachingSourceDto[];
   readonly cardResources: readonly CardResourceDto[];
 }
 
@@ -121,12 +108,6 @@ const numberValue = (value: unknown, path: string, issues: ContentValidationIssu
     return 0;
   }
   return value;
-};
-
-const optionalText = (source: Record<string, unknown>, key: string, path: string, issues: ContentValidationIssue[]): string | undefined => {
-  const value = source[key];
-  if (value === undefined) return undefined;
-  return textValue(value, `${path}.${key}`, issues, false);
 };
 
 const parseGuide = (value: unknown, path: string, issues: ContentValidationIssue[]): GuideDto => {
@@ -169,33 +150,6 @@ const youtubeId = (value: unknown, path: string, issues: ContentValidationIssue[
   const id = textValue(value, path, issues);
   if (id && !/^[\w-]{11}$/.test(id)) issues.push({ path, message: "Expected an 11-character YouTube video ID." });
   return id;
-};
-
-const parseTeachingSources = (value: unknown, issues: ContentValidationIssue[]): readonly TeachingSourceDto[] => {
-  if (!Array.isArray(value)) {
-    issues.push({ path: "teachingSources", message: "Expected a list." });
-    return [];
-  }
-  return value.map((entry, index) => {
-    const path = `teachingSources.${index}`;
-    const source = record(entry, path, issues);
-    const timestamp = source.timestampSeconds;
-    if (timestamp !== undefined && (typeof timestamp !== "number" || !Number.isFinite(timestamp) || timestamp < 0)) {
-      issues.push({ path: `${path}.timestampSeconds`, message: "Expected a non-negative number." });
-    }
-    const frame = optionalText(source, "frame", path, issues);
-    if (frame && (!frame.startsWith("teaching-frames/") || frame.includes(".."))) {
-      issues.push({ path: `${path}.frame`, message: "Frame must be inside teaching-frames/." });
-    }
-    return {
-      videoId: youtubeId(source.videoId, `${path}.videoId`, issues),
-      ...optional("title", optionalText(source, "title", path, issues)),
-      ...optional("channel", optionalText(source, "channel", path, issues)),
-      ...(typeof timestamp === "number" && Number.isFinite(timestamp) && timestamp >= 0 ? { timestampSeconds: timestamp } : {}),
-      ...optional("frame", frame),
-      ...optional("notes", optionalText(source, "notes", path, issues))
-    };
-  });
 };
 
 const optional = <Key extends string, Value>(key: Key, value: Value | undefined): { readonly [Property in Key]?: Value } =>
@@ -267,19 +221,15 @@ export const validateFigureContent = (value: unknown): FigureContentDto => {
     },
     basics: {
       name: textValue(basics.name, "basics.name", issues),
-      alias: textValue(basics.alias, "basics.alias", issues),
       family: textValue(basics.family, "basics.family", issues),
       count: textValue(basics.count, "basics.count", issues),
       motion: textValue(basics.motion, "basics.motion", issues),
-      end: textValue(basics.end, "basics.end", issues),
-      familiarity: textValue(basics.familiarity, "basics.familiarity", issues),
-      flows: textValue(basics.flows, "basics.flows", issues)
+      end: textValue(basics.end, "basics.end", issues)
     },
     guides: {
       en: parseGuide(guides.en, "guides.en", issues),
       de: parseGermanGuide(guides.de, issues)
     },
-    teachingSources: parseTeachingSources(source.teachingSources, issues),
     cardResources: parseCardResources(source.cardResources, issues)
   };
   if (issues.length) throw new ContentValidationError(issues);
@@ -291,18 +241,14 @@ export const figureDefinitionDataFromContent = (content: FigureContentDto): Reco
   move: {
     id: content.identity.id,
     name: content.basics.name,
-    alias: content.basics.alias,
     style: content.identity.style,
     family: content.basics.family,
     count: content.basics.count,
     motion: content.basics.motion,
-    end: content.basics.end,
-    familiarity: content.basics.familiarity,
-    flows: content.basics.flows
+    end: content.basics.end
   },
   guides: content.guides,
   youtube: {
-    teachingSources: content.teachingSources,
     cardLinks: content.cardResources.filter((resource): resource is YoutubeResourceDto => resource.type === "youtube").map(({ videoId, title, kind }) => ({ videoId, title, kind }))
   },
   resources: {

@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "swingout-open",
     "name": "Swingout from Open",
-    "alias": "The Lindy engine",
     "style": "lindy",
     "family": "Circular",
     "count": "8 count",
     "motion": "Circular",
-    "end": "Open",
-    "familiarity": "Almost there",
-    "flows": "Lindy circle · another swingout · inside turn"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,19 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "U_2q1rXXEcE",
-        "title": "Frankie Manning and Norma Miller performing at Frankie's 85th",
-        "channel": "Lindy Collection archive",
-        "notes": "Artwork reference selection: historic Black Lindy Hop footage."
-      },
-      {
-        "videoId": "tB8hNrc-zls",
-        "frame": "teaching-frames/selected.png",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Show the approach from open into the rotational center, with the initial stretch still apparent."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "VSE7SD3l3uA",
@@ -81,5 +65,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

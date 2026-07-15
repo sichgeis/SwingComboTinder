@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "swingout-closed-end",
     "name": "Swingout to Closed",
-    "alias": "Complete the circle",
     "style": "lindy",
     "family": "Transition",
     "count": "8 count",
     "motion": "Circular",
-    "end": "Closed",
-    "familiarity": "Curious",
-    "flows": "promenade · Lindy circle · Charleston transition"
+    "end": "Closed"
   },
   "guides": {
     "en": {
@@ -45,22 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "OFsQYQIylrA",
-        "timestampSeconds": 82,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "RUtrt5fsq9k",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "OFsQYQIylrA",
-        "notes": "Reference catalog candidate (Swingout reference; ending variant requires frame selection). Key frame: Show the final return into closed position, with leader’s receiving arm and follower’s inward path visible."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "VSE7SD3l3uA",
@@ -69,5 +50,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

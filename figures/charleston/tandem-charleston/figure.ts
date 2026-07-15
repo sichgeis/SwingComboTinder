@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "tandem-charleston",
     "name": "Tandem Charleston",
-    "alias": "One rhythm, two silhouettes",
     "style": "charleston",
     "family": "Tandem",
     "count": "8 count",
     "motion": "Linear",
-    "end": "Tandem",
-    "familiarity": "Tonight's goal",
-    "flows": "Tandem rainbow · Tandem turn · reverse push out"
+    "end": "Tandem"
   },
   "guides": {
     "en": {
@@ -45,22 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "5MEfGPNf3nE",
-        "timestampSeconds": 206,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "ops1aliBCUc",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "5MEfGPNf3nE",
-        "notes": "Reference catalog candidate (Tandem entrance tutorial). Key frame: Show follower directly in front of leader, both facing same direction, staggered so four legs remain readable."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "ops1aliBCUc",
@@ -74,5 +55,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

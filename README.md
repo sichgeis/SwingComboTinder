@@ -76,14 +76,14 @@ generated/
 notes.md
 ```
 
-`figure.ts` contains the typed metadata, localized copy, video provenance, and app-visible YouTube or web resources. A figure can use `generated/current.png` as its full-resolution card source or fall back to `card.jpg`. Vite discovers all figure definitions automatically, orders them by their explicit `order`, and emits the selected artwork as a hashed 600 × 900 WebP at quality 80. Teaching frames remain versioned source material. Generation runs, metadata, and archived masters stay local; only a promoted `generated/current.png` is committed so clean checkouts can reproduce the production build.
+`figure.ts` contains factual typed metadata, localized copy, and app-visible YouTube or web resources. Editorial teaching-source provenance and artwork decisions live in `notes.md`. A figure can use `generated/current.png` as its full-resolution card source or fall back to `card.jpg`. Vite discovers all figure definitions automatically, orders them by their explicit `order`, and emits the selected artwork as a hashed 600 × 900 WebP at quality 80. Teaching frames remain versioned source material. Generation runs, metadata, and archived masters stay local; only a promoted `generated/current.png` is committed so clean checkouts can reproduce the production build.
 
 See [`figures/README.md`](figures/README.md) for the add and rework workflow.
 
 ## Architecture
 
 - `figures/` is the source of truth for Lindy Hop, Charleston, and Shag figure packages.
-- `src/domain/` contains the derived catalog and pure deck, session, video-reference, and combo rules.
+- `src/domain/` contains the derived catalog and pure deck, session, and resource-reference rules.
 - `src/infrastructure/` owns local-session persistence and schema migration.
 - `src/ui/` renders and coordinates the interface.
 - `src/styles/` and `src/assets/decorative/` contain presentation code and bundled artwork.

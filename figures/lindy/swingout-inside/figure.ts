@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "swingout-inside",
     "name": "Swingout + Inside Turn",
-    "alias": "A familiar path, remixed",
     "style": "lindy",
     "family": "Circular",
     "count": "8 count",
     "motion": "Circular",
-    "end": "Open",
-    "familiarity": "Curious",
-    "flows": "plain swingout · Lindy circle · sugar push"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "9XkYi-s5YWw",
-        "timestampSeconds": 98,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "qONuilPHcVY",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "9XkYi-s5YWw",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Show the follower’s inside rotation at the end/top of the swingout while preserving open-position geometry."
-      }
-    ],
     "cardLinks": []
   }
-
 });

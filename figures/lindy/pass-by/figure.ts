@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "pass-by",
     "name": "Pass By",
-    "alias": "Change places",
     "style": "lindy",
     "family": "Linear",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "Comfort move",
-    "flows": "tuck turn · side pass · sugar push"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "2vQbDkfY17c",
-        "timestampSeconds": 82,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "0i_4beY98pU",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "2vQbDkfY17c",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Capture the shoulder-to-shoulder crossing moment so the exchange of places is obvious."
-      }
-    ],
     "cardLinks": []
   }
-
 });

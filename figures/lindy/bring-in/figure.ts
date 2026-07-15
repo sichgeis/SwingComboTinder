@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "bring-in",
     "name": "Bring In",
-    "alias": "Come back together",
     "style": "lindy",
     "family": "Transition",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Closed",
-    "familiarity": "Comfort move",
-    "flows": "Lindy circle · promenade · swingout from closed"
+    "end": "Closed"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "DSaHxoTcovU",
-        "timestampSeconds": 20,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "RUtrt5fsq9k",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "DSaHxoTcovU",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Show the follower traveling inward from open just before closed position is completed."
-      }
-    ],
     "cardLinks": []
   }
-
 });

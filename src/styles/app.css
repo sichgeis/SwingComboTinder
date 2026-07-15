@@ -182,12 +182,11 @@ h1 em, h2 em { color: var(--coral); font-weight: 400; }
 .card-grain { position: absolute; inset: 0; opacity: .22; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E"); mix-blend-mode: soft-light; pointer-events: none; }
 .card-content { position: absolute; inset: 0; padding: clamp(16px, 5vw, 21px); display: flex; flex-direction: column; justify-content: space-between; }
 .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.family-pill, .familiarity-pill { padding: 7px 10px; border-radius: 99px; background: rgba(8, 29, 45, .78); backdrop-filter: blur(12px); border: 1px solid rgba(247,240,223,.16); font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-.familiarity-pill { color: var(--lime); }
+.family-pill, .choice-pill { padding: 7px 10px; border-radius: 99px; background: rgba(8, 29, 45, .78); backdrop-filter: blur(12px); border: 1px solid rgba(247,240,223,.16); font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.choice-pill { color: var(--lime); }
 .card-bottom { text-shadow: 0 2px 20px rgba(0,0,0,.55); }
 .move-number { display: block; margin-bottom: 5px; color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: .16em; }
 .move-card h2 { max-width: 96%; font-size: clamp(36px, 10.5vw, 56px); line-height: .92; text-wrap: balance; }
-.alias { margin: 8px 0 13px; color: var(--gold); font-size: 12px; font-style: italic; }
 .move-description { max-width: 390px; margin: 0 0 18px; color: rgba(247,240,223,.82); font-size: 13px; line-height: 1.45; }
 .move-meta { display: flex; flex-wrap: wrap; gap: 8px; }
 .move-meta span { padding: 6px 9px; border-radius: 6px; background: rgba(247,240,223,.1); font-size: 9px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(8px); }
@@ -260,22 +259,6 @@ h1 em, h2 em { color: var(--coral); font-weight: 400; }
 .summary-stat { padding: 18px 8px; background: var(--ink); text-align: center; }
 .summary-stat strong { display: block; margin-bottom: 5px; font-family: "DM Serif Display", serif; font-size: 27px; color: var(--paper); }
 .summary-stat span { color: var(--paper-muted); font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
-.section-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 22px; }
-.section-heading h2 { font-size: 36px; line-height: 1.02; }
-.shuffle-button { flex: none; width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; background: none; color: var(--gold); cursor: pointer; }
-.shuffle-button svg { width: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.shuffle-button.spinning svg { animation: spin .45s ease; }
-@keyframes spin { to { transform: rotate(180deg); } }
-
-.combo-list { display: grid; gap: 13px; }
-.combo-card { position: relative; padding: 20px; border-radius: 17px; overflow: hidden; background: #102b3e; border: 1px solid var(--line); }
-.combo-card::before { content: attr(data-index); position: absolute; right: 13px; top: -17px; font-family: "DM Serif Display", serif; color: rgba(247,240,223,.05); font-size: 100px; line-height: 1; }
-.combo-label { color: var(--gold); font-size: 9px; font-weight: 700; letter-spacing: .14em; }
-.combo-card h3 { margin: 6px 0 17px; font-family: "DM Serif Display", serif; font-weight: 400; font-size: 24px; }
-.combo-steps { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; position: relative; z-index: 1; }
-.combo-steps span { padding: 8px 10px; border-radius: 8px; background: rgba(247,240,223,.08); color: rgba(247,240,223,.88); font-size: 11px; }
-.combo-steps i { color: var(--coral); font-style: normal; }
-.combo-note { margin: 16px 0 0; padding-top: 14px; border-top: 1px solid var(--line); color: var(--paper-muted); font-size: 11px; line-height: 1.5; }
 .floor-note { display: flex; gap: 15px; margin: 38px 0; padding: 20px; border: 1px solid rgba(184,213,106,.25); border-radius: 17px; background: rgba(184,213,106,.06); }
 .note-icon { flex: none; width: 35px; height: 35px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); color: var(--ink); font-family: "DM Serif Display", serif; font-size: 19px; }
 .floor-note strong { font-family: "DM Serif Display", serif; font-size: 18px; }
@@ -296,9 +279,6 @@ h1 em, h2 em { color: var(--coral); font-weight: 400; }
 .memory-cue { margin: 24px 0 10px; padding: 17px; border: 1px solid rgba(243,181,98,.28); border-radius: 14px; background: rgba(243,181,98,.07); }
 .memory-cue span { display: block; margin-bottom: 6px; color: var(--gold); font-size: 8px; font-weight: 700; letter-spacing: .15em; }
 .memory-cue strong { display: block; font-family: "DM Serif Display", serif; font-size: 19px; font-weight: 400; line-height: 1.3; }
-.flows-into { margin: 22px 0; padding: 15px 0; display: flex; flex-direction: column; gap: 5px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.flows-into span { color: var(--gold); font-size: 8px; font-weight: 700; letter-spacing: .15em; }
-.flows-into strong { font-size: 12px; font-weight: 500; }
 .guide-videos { margin: 24px 0; }
 .guide-videos h3 { margin: 0 0 10px; color: var(--gold); font-size: 9px; font-weight: 700; letter-spacing: .13em; }
 .guide-video-list { display: grid; gap: 9px; }
@@ -322,7 +302,6 @@ h1 em, h2 em { color: var(--coral); font-weight: 400; }
   .deck-heading .eyebrow { margin: 0; }
   .progress-track { margin: 7px 0 8px; }
   .move-card h2 { font-size: clamp(33px, 10vw, 42px); }
-  .alias { margin: 5px 0 8px; }
   .move-description { margin-bottom: 9px; display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
   .welcome { justify-content: flex-start; padding-top: 6px; }
   .welcome h1 { font-size: 58px; }
@@ -336,7 +315,7 @@ h1 em, h2 em { color: var(--coral); font-weight: 400; }
 }
 
 @media (max-width: 350px) {
-  .family-pill, .familiarity-pill { padding-inline: 8px; font-size: 8px; }
+  .family-pill, .choice-pill { padding-inline: 8px; font-size: 8px; }
 }
 
 @media (min-width: 700px) {

@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "charleston-tuck-turn",
     "name": "Charleston Tuck Turn",
-    "alias": "Kick rhythm, tuck release",
     "style": "charleston",
     "family": "Charleston Turn",
     "count": "8 count",
     "motion": "Rotational",
-    "end": "Open / Side-by-side",
-    "familiarity": "Practice pick",
-    "flows": "side-by-side Charleston · hand-to-hand · Tandem Charleston"
+    "end": "Open / Side-by-side"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "5MEfGPNf3nE",
-        "timestampSeconds": 93,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "vT8pgq0tQN8",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "5MEfGPNf3nE",
-        "notes": "Reference catalog candidate (Tuck-turn entrance to Charleston reference). Key frame: Show the tuck/turn transition while Charleston kick rhythm remains visible in the legs."
-      }
-    ],
     "cardLinks": []
   }
-
 });

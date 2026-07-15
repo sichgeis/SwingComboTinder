@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "barrel-roll",
     "name": "Barrel Roll",
-    "alias": "Roll through together",
     "style": "lindy",
     "family": "Position",
     "count": "8 count",
     "motion": "Rotational",
-    "end": "Open",
-    "familiarity": "Tonight's goal",
-    "flows": "sugar push · pass by · bring in"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "m5VxNV9_Rnk",
-        "timestampSeconds": 87,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "X0u1Fzvcnao",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "m5VxNV9_Rnk",
-        "notes": "Reference catalog candidate (Exact named swing tutorial). Key frame: Show the back-to-back or wrapped phase, with connected arms forming the recognizable rolling shape."
-      }
-    ],
     "cardLinks": []
   }
-
 });

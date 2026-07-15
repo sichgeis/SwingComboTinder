@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "texas-tommy",
     "name": "Texas Tommy",
-    "alias": "The adventurous one",
     "style": "lindy",
     "family": "Circular",
     "count": "8 count",
     "motion": "Circular",
-    "end": "Open",
-    "familiarity": "Tonight's goal",
-    "flows": "free spin · sugar push · Lindy circle"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,18 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "N7RzWwENXwc",
-        "timestampSeconds": 47,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "N7RzWwENXwc",
-        "notes": "Artwork reference selection."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "bx0mjcFuZ8A",
@@ -65,5 +50,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

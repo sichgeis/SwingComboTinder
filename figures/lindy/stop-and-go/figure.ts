@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "stop-and-go",
     "name": "Stop & Go",
-    "alias": "Catch the rebound",
     "style": "lindy",
     "family": "Rhythm",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "New territory",
-    "flows": "tuck turn · sugar push · bring in"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,22 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "dtjmxXOFquk",
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "F1CDhfIRIv0",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "BWnzi60fhcY",
-        "notes": "Reference catalog candidate (Closest swing Stop & Go reference). Key frame: Show the checked/stopped position with a clear redirection setup and compact arm connection."
-      }
-    ],
     "cardLinks": []
   }
-
 });

@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "shag-tuck-turn",
     "name": "Shag Tuck Turn",
-    "alias": "Core prep, quick release",
     "style": "shag",
     "family": "Shag Turn",
     "count": "6 count",
     "motion": "Rotational",
-    "end": "Open / Closed",
-    "familiarity": "Tonight's goal",
-    "flows": "Shag pass-by · closed Shag turn · camel hops"
+    "end": "Open / Closed"
   },
   "guides": {
     "en": {
@@ -45,17 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "xRChtWQzaUY",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "ZwsjyNCIExM",
-        "notes": "Reference catalog candidate (Closest tuck-turn mechanics reference). Key frame: Show compression before the turn but redraw with Collegiate Shag posture and rhythm."
-      }
-    ],
     "cardLinks": []
   }
-
 });

@@ -1,4 +1,4 @@
-import { copyFile, mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
@@ -53,7 +53,6 @@ describe("figure content persistence", () => {
 
   it("detects stale writes and leaves the external source unchanged", async () => {
     const directory = await mkdtemp(resolve(tmpdir(), "swing-content-"));
-    await mkdir(resolve(directory, "teaching-frames"));
     const path = resolve(directory, "figure.ts");
     const originalPath = resolve(figuresRoot, "lindy/inside-turn/figure.ts");
     await writeFile(path, await readFile(originalPath, "utf8"));
@@ -65,16 +64,13 @@ describe("figure content persistence", () => {
 
   it("atomically saves valid content and returns its new revision", async () => {
     const directory = await mkdtemp(resolve(tmpdir(), "swing-content-save-"));
-    const frames = resolve(directory, "teaching-frames");
-    await mkdir(frames);
     const path = resolve(directory, "figure.ts");
     const originalDirectory = resolve(figuresRoot, "lindy/inside-turn");
     await writeFile(path, await readFile(resolve(originalDirectory, "figure.ts"), "utf8"));
-    await copyFile(resolve(originalDirectory, "teaching-frames/selected.png"), resolve(frames, "selected.png"));
     const loaded = await readFigureContentFile(path, "inside-turn");
-    const changed = { ...loaded.content, basics: { ...loaded.content.basics, alias: "A revised alias" } };
+    const changed = { ...loaded.content, basics: { ...loaded.content.basics, name: "A revised name" } };
     const saved = await saveFigureContentFile(path, loaded.content.identity, loaded.revision, changed);
     expect(saved.revision).not.toBe(loaded.revision);
-    expect((await readFigureContentFile(path, "inside-turn")).content.basics.alias).toBe("A revised alias");
+    expect((await readFigureContentFile(path, "inside-turn")).content.basics.name).toBe("A revised name");
   });
 });

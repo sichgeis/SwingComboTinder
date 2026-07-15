@@ -17,6 +17,13 @@ Show traveling Camel Hops in Collegiate Shag: both dancers make a small self-pow
 
 an older Black couple, both adults, in comfortable 1930s-inspired social-dance clothing
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=F7R-uHI8pOo)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 2](https://www.youtube.com/watch?v=Z4n5XVedd5g)
+  - Editorial note: Reference catalog candidate (Broad swing tutorial placeholder; needs Shag-specific frame validation). Key frame: Show both dancers in a light hopping phase with bent supporting knees and the camel-like alternating leg action.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

@@ -21,4 +21,13 @@ describe("card presentation", () => {
     expect(markup).toContain("Deutsche Quelle");
     expect(markup).not.toContain("English reference");
   });
+
+  it("derives card status from the nightly choice", () => {
+    const figure = figureFor("inside-turn");
+    expect(renderCardMarkup({ figure, language: "en", index: 0 })).toContain("CURIOUS");
+    expect(renderCardMarkup({ figure, language: "de", index: 0 })).toContain("NEUGIERIG");
+    expect(renderCardMarkup({ figure, language: "en", index: 0, deckChoice: "pass" })).toContain("NOT TONIGHT");
+    expect(renderCardMarkup({ figure, language: "en", index: 0, deckChoice: "keep" })).toContain("GOT IT");
+    expect(renderCardMarkup({ figure, language: "en", index: 0, deckChoice: "star" })).toContain("TRY TONIGHT");
+  });
 });

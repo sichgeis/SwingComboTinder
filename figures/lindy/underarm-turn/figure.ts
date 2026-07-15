@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "underarm-turn",
     "name": "Underarm Turn",
-    "alias": "The clear classic",
     "style": "lindy",
     "family": "Turn",
     "count": "6 count",
     "motion": "Rotational",
-    "end": "Open",
-    "familiarity": "Maybe I know it",
-    "flows": "send out · bring in · pass by"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "NokIEEBBIgY",
-        "timestampSeconds": 64,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "CaeOoSFcEec",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "NokIEEBBIgY",
-        "notes": "Reference catalog candidate (Exact underarm-turn tutorial). Key frame: Show the follower directly under the raised connected hand, full body and turning foot placement visible."
-      }
-    ],
     "cardLinks": []
   }
-
 });

@@ -17,6 +17,15 @@ Show the exit of a swingout with outside turn: after a clear shared-center rotat
 
 two Latino men, both adults, in 1940s-inspired club clothing
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=GrCAQy4irMM&t=55s) — timestamp: 55s; frame: `teaching-frames/selected.png`
+  - Editorial note: Source listed for the selected teaching frame.
+- [YouTube source 2](https://www.youtube.com/watch?v=m_-PZqdtlLU)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 3](https://www.youtube.com/watch?v=GrCAQy4irMM)
+  - Editorial note: Reference catalog candidate (Exact named tutorial). Key frame: Show the outward rotation at the swingout exit, with clear separation and spiral arm line.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

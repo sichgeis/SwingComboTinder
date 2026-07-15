@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "send-out",
     "name": "Send Out",
-    "alias": "Open the conversation",
     "style": "lindy",
     "family": "Linear",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "Comfort move",
-    "flows": "tuck turn · pass by · sugar push"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "EHubFEiS4tk",
-        "timestampSeconds": 340,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "pclM7FKLw-8",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "EHubFEiS4tk",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Capture the instant the follower is sent from closed toward open; joined hands form a strong diagonal."
-      }
-    ],
     "cardLinks": []
   }
-
 });

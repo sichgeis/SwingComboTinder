@@ -17,6 +17,13 @@ Show Shag cross kicks side by side facing the same direction: each free leg cros
 
 a plus-size Black woman and a Black nonbinary adult, both adults, in bold but practical vintage-inspired clothing
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=qQ2BvAyoHHY)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 2](https://www.youtube.com/watch?v=O-X0VjLufDo)
+  - Editorial note: Reference catalog candidate (Closest kick mechanics reference). Key frame: Show one leg crossing clearly in front of the standing leg; use a front three-quarter angle.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

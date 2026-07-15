@@ -21,6 +21,13 @@ two Black men, both adults, in waistcoats and high-waisted 1930s trousers
 
 
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=N7RzWwENXwc&t=47s) — timestamp: 47s; frame: `teaching-frames/selected.png`
+  - Editorial note: Source listed for the selected teaching frame.
+- [YouTube source 2](https://www.youtube.com/watch?v=N7RzWwENXwc)
+  - Editorial note: Artwork reference selection.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

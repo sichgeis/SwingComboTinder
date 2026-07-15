@@ -16,6 +16,13 @@ Show the Shag Texas Tommy signature safely: while maintaining upright quick foot
 
 two Black men, both adults, in sharp 1930s collegiate outfits
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=z-VIPVDIf_0)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 2](https://www.youtube.com/watch?v=N7RzWwENXwc)
+  - Editorial note: Reference catalog candidate (Texas Tommy mechanics reference). Key frame: Show the behind-the-back hand transfer, redrawn with Shag’s compact frame and faster rhythm.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

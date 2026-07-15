@@ -7,15 +7,6 @@ export type WebResourceKind = (typeof webResourceKinds)[number];
 
 export type FigureMove = Omit<Move, keyof MoveGuide>;
 
-export interface TeachingSource {
-  readonly videoId: string;
-  readonly title?: string;
-  readonly channel?: string;
-  readonly timestampSeconds?: number;
-  readonly frame?: string;
-  readonly notes?: string;
-}
-
 export interface CardVideoLink {
   readonly videoId: string;
   readonly title: string;
@@ -38,7 +29,6 @@ export interface FigureDefinition {
     readonly de: MoveTranslation;
   };
   readonly youtube: {
-    readonly teachingSources: readonly TeachingSource[];
     readonly cardLinks: readonly CardVideoLink[];
   };
   readonly resources?: {

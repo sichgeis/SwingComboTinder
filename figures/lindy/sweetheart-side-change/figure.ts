@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "sweetheart-side-change",
     "name": "Sweetheart Side Change",
-    "alias": "Switch sides in the wrap",
     "style": "lindy",
     "family": "Position",
     "count": "6 or 8 count",
     "motion": "Linear",
-    "end": "Wrapped",
-    "familiarity": "Practice pick",
-    "flows": "Sweetheart walks · unwind · send out"
+    "end": "Wrapped"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "QVYPuI3mlb0",
-        "timestampSeconds": 11,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "kqA_l2V4FV8",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "QVYPuI3mlb0",
-        "notes": "Reference catalog candidate (Closest named side-switch reference). Key frame: Show the wrapped sweetheart position while partners exchange sides; preserve crossed-arm geometry."
-      }
-    ],
     "cardLinks": []
   }
-
 });

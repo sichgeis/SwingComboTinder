@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "sweetheart",
     "name": "Sweetheart",
-    "alias": "Cuddle position",
     "style": "lindy",
     "family": "Position",
     "count": "6 or 8 count",
     "motion": "Linear",
-    "end": "Wrapped",
-    "familiarity": "Comfort move",
-    "flows": "groove walk · Sweetheart side change · unwind"
+    "end": "Wrapped"
   },
   "guides": {
     "en": {
@@ -45,19 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "TegYDzBFNO0",
-        "timestampSeconds": 210,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "TegYDzBFNO0",
-        "notes": "Artwork reference selection."
-      }
-    ],
     "cardLinks": []
   }
-
 });

@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "traveling-tuck",
     "name": "Traveling Tuck",
-    "alias": "Tuck on the move",
     "style": "lindy",
     "family": "Turn",
     "count": "6 or 8 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "New territory",
-    "flows": "sugar push · send out · pass by"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,22 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "oXYuMyufF9s",
-        "timestampSeconds": 216,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "mfHIZtTyLBo",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "oXYuMyufF9s",
-        "notes": "Reference catalog candidate (Exact traveling-tuck tutorial). Key frame: Show the tuck turning while progressing across the floor rather than rotating in place."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "LX3WPFUpSEc",
@@ -74,5 +55,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

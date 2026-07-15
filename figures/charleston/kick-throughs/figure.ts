@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "kick-throughs",
     "name": "Charleston Kick-Throughs",
-    "alias": "Trade the kicking lane",
     "style": "charleston",
     "family": "Charleston",
     "count": "8 count",
     "motion": "Linear",
-    "end": "Open / Side-by-side",
-    "familiarity": "Curious",
-    "flows": "hand-to-hand · side-by-side Charleston · Charleston tuck turn"
+    "end": "Open / Side-by-side"
   },
   "guides": {
     "en": {
@@ -45,21 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "cDQuXF-7xOY",
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "cDQuXF-7xOY",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "O-X0VjLufDo",
-        "notes": "Reference catalog candidate (Charleston fundamentals reference). Key frame: Show the crossing kick-through at maximum leg extension, with partners offset enough to avoid overlap."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "tQyv3GWOdnY",
@@ -68,5 +50,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

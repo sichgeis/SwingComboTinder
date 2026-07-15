@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "shag-breaks",
     "name": "Shag Breaks",
-    "alias": "Hold the slow, keep the pulse",
     "style": "shag",
     "family": "Shag Rhythm",
     "count": "6 count",
     "motion": "Vertical",
-    "end": "Closed",
-    "familiarity": "Practice pick",
-    "flows": "closed Shag turn · Collegiate kicks · camel hops"
+    "end": "Closed"
   },
   "guides": {
     "en": {
@@ -45,17 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "kYfnxMFxk44",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "1sYSaE6NN8A",
-        "notes": "Reference catalog candidate (Closest break-rhythm instructional reference). Key frame: Show the checked break with compact upper body and sharply readable weight change."
-      }
-    ],
     "cardLinks": []
   }
-
 });

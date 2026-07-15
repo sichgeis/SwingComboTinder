@@ -10,7 +10,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["brand/icon.svg", "brand/apple-touch-icon.png", "brand/social-preview.jpg"],
       manifest: {
-        name: "Swing Thing — Lindy Hop Combo Prep",
+        name: "Swing Thing — Swing Vocabulary Prep",
         short_name: "Swing Thing",
         description: "Build a focused Lindy Hop, Charleston, or Collegiate Shag deck for tonight.",
         start_url: ".",

@@ -17,6 +17,13 @@ Show a closed Collegiate Shag turn with the partners rotating together in a comp
 
 two East Asian men, both adults, in coordinated collegiate jackets and high-waisted trousers
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=0d1zwepEvIY)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 2](https://www.youtube.com/watch?v=FeQHfKhz_DA)
+  - Editorial note: Reference catalog candidate (Closest partnered swing-turn reference). Key frame: Show the pair rotating in compact closed hold, with Shag’s upright pulse and quick footwork emphasized.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

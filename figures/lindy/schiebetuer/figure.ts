@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "schiebetuer",
     "name": "Schiebetür",
-    "alias": "The sliding door",
     "style": "lindy",
     "family": "Linear",
     "count": "8 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "Practice pick",
-    "flows": "pass by · pass by to closed · Lindy circle"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "K5kDJYwRlvs",
-        "timestampSeconds": 124,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "set8yno9Ztw",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "K5kDJYwRlvs",
-        "notes": "Reference catalog candidate (Closest named “Sliding Door” swing reference). Key frame: Show partners passing in parallel lanes like sliding panels, ideally in a back-to-back or side-changing phase."
-      }
-    ],
     "cardLinks": []
   }
-
 });

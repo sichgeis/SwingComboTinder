@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "sugar-push",
     "name": "Sugar Push",
-    "alias": "The elastic reset",
     "style": "lindy",
     "family": "Linear",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Open",
-    "familiarity": "Practice pick",
-    "flows": "tuck turn · swingout from open · pass by"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,18 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "KGU-bwbK26I",
-        "timestampSeconds": 723,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "KGU-bwbK26I",
-        "notes": "Artwork reference selection."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "KGU-bwbK26I",
@@ -65,5 +50,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

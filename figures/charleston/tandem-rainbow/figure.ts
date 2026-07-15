@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "tandem-rainbow",
     "name": "Tandem Rainbow",
-    "alias": "Arc over, keep traveling",
     "style": "charleston",
     "family": "Tandem",
     "count": "8 or 16 count",
     "motion": "Rotational",
-    "end": "Tandem / Open",
-    "familiarity": "New territory",
-    "flows": "Tandem Charleston · Tandem turn · open Charleston"
+    "end": "Tandem / Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "5MEfGPNf3nE",
-        "timestampSeconds": 264,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "2WyCrIQKnnM",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "5MEfGPNf3nE",
-        "notes": "Reference catalog candidate (Tandem reference; rainbow frame must be selected). Key frame: Show the connected arms arcing overhead during the side change, creating the characteristic rainbow silhouette."
-      }
-    ],
     "cardLinks": []
   }
-
 });

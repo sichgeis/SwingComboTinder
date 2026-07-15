@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "hand-to-hand",
     "name": "Hand-to-Hand Charleston",
-    "alias": "Call & response",
     "style": "charleston",
     "family": "Charleston",
     "count": "8 count",
     "motion": "Rotational",
-    "end": "Open",
-    "familiarity": "Rusty",
-    "flows": "side-by-side Charleston · kick-throughs · Tandem entrance"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,22 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "MDVcFhs-7Rk",
-        "timestampSeconds": 104,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "urM_KBbuyCc",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "MDVcFhs-7Rk",
-        "notes": "Reference catalog candidate (Charleston class reference). Key frame: Show partners facing away on opposite diagonals with one-hand connection and mirrored kicks."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "iB64qssfkGg",
@@ -74,5 +55,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

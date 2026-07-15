@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "shag-closed-turn",
     "name": "Closed Shag Turn",
-    "alias": "Turn on the quick-quicks",
     "style": "shag",
     "family": "Shag Turn",
     "count": "6 count",
     "motion": "Rotational",
-    "end": "Closed",
-    "familiarity": "Comfort move",
-    "flows": "Shag breaks · Collegiate kicks · Shag tuck turn"
+    "end": "Closed"
   },
   "guides": {
     "en": {
@@ -45,17 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "0d1zwepEvIY",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "FeQHfKhz_DA",
-        "notes": "Reference catalog candidate (Closest partnered swing-turn reference). Key frame: Show the pair rotating in compact closed hold, with Shag’s upright pulse and quick footwork emphasized."
-      }
-    ],
     "cardLinks": []
   }
-
 });

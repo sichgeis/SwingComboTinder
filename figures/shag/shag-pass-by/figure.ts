@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "shag-pass-by",
     "name": "Shag Pass-By Turn",
-    "alias": "Fast feet, clean tracks",
     "style": "shag",
     "family": "Shag Turn",
     "count": "6 count",
     "motion": "Linear",
-    "end": "Open / Closed",
-    "familiarity": "Practice pick",
-    "flows": "Shag tuck turn · Cross Kicks · Shag Texas Tommy"
+    "end": "Open / Closed"
   },
   "guides": {
     "en": {
@@ -45,17 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "Q4np7y7lPr4",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "2vQbDkfY17c",
-        "notes": "Reference catalog candidate (Closest pass-by mechanics reference). Key frame: Show the crossing exchange plus rotation, with upright Shag posture and narrow foot placement."
-      }
-    ],
     "cardLinks": []
   }
-
 });

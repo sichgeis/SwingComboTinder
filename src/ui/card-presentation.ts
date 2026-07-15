@@ -1,5 +1,5 @@
 import { youtubeUrl, type FigureDefinition, type VideoKind, type WebResourceKind } from "../../figures/define-figure";
-import type { Choice, Language, MoveStyle, MoveTranslation } from "../domain/move";
+import type { BuildChoice, Language, MoveStyle, MoveTranslation } from "../domain/move";
 import { translate, type TranslationKey } from "./translations";
 
 export const styleMeta: Record<MoveStyle, { label: string; short: string }> = {
@@ -46,7 +46,7 @@ export interface CardPresentationOptions {
   readonly language: Language;
   readonly index: number;
   readonly inert?: boolean;
-  readonly deckChoice?: Choice;
+  readonly deckChoice?: BuildChoice;
   readonly imageUrl?: string;
 }
 
@@ -79,7 +79,13 @@ export const renderCardMarkup = ({
   const videos = figure.youtube.cardLinks;
   const webResources = (figure.resources?.cardLinks ?? []).filter((resource) => !resource.language || resource.language === language);
   const number = String(index + 1).padStart(2, "0");
-  const choice = deckChoice ? translate(language, deckChoice === "star" ? "tryTonight" : "gotIt") : localizedMeta(language, move.familiarity);
+  const choice = translate(language, deckChoice === "pass"
+    ? "notTonight"
+    : deckChoice === "keep"
+      ? "gotIt"
+      : deckChoice === "star"
+        ? "tryTonight"
+        : "curious");
   const image = escapeHtml(imageUrl ?? figure.card);
   return `
     <div class="card-inner">
@@ -87,10 +93,10 @@ export const renderCardMarkup = ({
         <div class="card-art" style="--card-art: url('${image}')"></div>
         <div class="card-grain"></div>
         <div class="card-content">
-          <div class="card-top"><span class="family-pill">${meta(move.family)}</span><span class="familiarity-pill">${escapeHtml(choice)}</span></div>
+          <div class="card-top"><span class="family-pill">${meta(move.family)}</span><span class="choice-pill">${escapeHtml(choice)}</span></div>
           <div class="card-bottom">
             <span class="move-number">MOVE ${number}</span>
-            <h2>${escapeHtml(move.name)}</h2>${language === "en" ? `<p class="alias">${escapeHtml(move.alias)}</p>` : ""}<p class="move-description">${escapeHtml(guide.description)}</p>
+            <h2>${escapeHtml(move.name)}</h2><p class="move-description">${escapeHtml(guide.description)}</p>
             <div class="move-meta"><span>${escapeHtml(styleMeta[move.style].short)}</span><span>${meta(move.count)}</span><span>${meta(move.motion)}</span><span>${t("ends")} ${meta(move.end)}</span></div>
           </div>
         </div>

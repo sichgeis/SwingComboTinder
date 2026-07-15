@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "swingout-closed",
     "name": "Swingout from Closed",
-    "alias": "The classic opener",
     "style": "lindy",
     "family": "Circular",
     "count": "8 count",
     "motion": "Circular",
-    "end": "Open",
-    "familiarity": "Almost there",
-    "flows": "swingout from open · Lindy circle · sugar push"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,24 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "OFsQYQIylrA",
-        "timestampSeconds": 49,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "ZQIWFOU-bp4",
-        "title": "Frankie Manning dancing Lindy Hop at the Savoy (Late 1930s?)",
-        "channel": "Frankie Manning Foundation archive",
-        "notes": "Artwork reference selection: historic Black Lindy Hop footage."
-      },
-      {
-        "videoId": "OFsQYQIylrA",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Show the mid-to-late swingout: follower traveling out of closed, one-hand connection extended, both full bodies visible."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "VSE7SD3l3uA",
@@ -81,5 +60,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

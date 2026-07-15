@@ -17,6 +17,13 @@ Show the unmistakable compression point of a sugar push: partners face one anoth
 
 a confident plus-size Black woman and a slim Black man, both adults, in 1940s-inspired casual clothes
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=KGU-bwbK26I&t=723s) — timestamp: 723s; frame: `teaching-frames/selected.png`
+  - Editorial note: Source listed for the selected teaching frame.
+- [YouTube source 2](https://www.youtube.com/watch?v=KGU-bwbK26I)
+  - Editorial note: Artwork reference selection.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

@@ -58,22 +58,6 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     <button type="button" data-content-action="remove-resource" data-collection="${collection}" data-index="${index}">Remove</button>
   </div>`;
 
-  const teachingSourcesEditor = () => {
-    const sources = contentState.content.teachingSources;
-    return `<div class="resource-section">
-      <div class="resource-heading"><h3>Teaching-source YouTube videos</h3><button type="button" data-content-action="add-teaching-source">Add source</button></div>
-      ${sources.length === 0 ? '<p class="resource-empty">No teaching sources.</p>' : sources.map((source, index) => `<div class="resource-row">
-        ${contentField("YouTube video ID", `teachingSources.${index}.videoId`, source.videoId)}
-        ${contentField("Title", `teachingSources.${index}.title`, source.title, { required: false })}
-        ${contentField("Channel", `teachingSources.${index}.channel`, source.channel, { required: false })}
-        ${contentField("Timestamp seconds", `teachingSources.${index}.timestampSeconds`, source.timestampSeconds, { required: false, type: "number", valueType: "optional-number" })}
-        ${contentField("Teaching frame", `teachingSources.${index}.frame`, source.frame, { required: false })}
-        ${contentField("Editorial notes", `teachingSources.${index}.notes`, source.notes, { required: false, textarea: true, full: true, rows: 3 })}
-        ${resourceActions("teachingSources", index, sources.length)}
-      </div>`).join("")}
-    </div>`;
-  };
-
   const cardResourcesEditor = () => {
     const resources = contentState.content.cardResources;
     const videoKinds = ["tutorial", "technique", "variation", "history"].map((value) => ({ value, label: value[0].toUpperCase() + value.slice(1) }));
@@ -99,13 +83,10 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       contentField("Directory slug", "identity.slug", identity.slug, { readonly: true }),
       contentField("Global order", "identity.order", identity.order, { readonly: true, type: "number" }),
       contentField("Canonical name", "basics.name", basics.name),
-      contentField("Alias", "basics.alias", basics.alias),
       contentField("Family", "basics.family", basics.family),
       contentField("Count", "basics.count", basics.count),
       contentField("Motion", "basics.motion", basics.motion),
-      contentField("Ending position", "basics.end", basics.end),
-      contentField("Familiarity", "basics.familiarity", basics.familiarity),
-      contentField("Flow suggestions", "basics.flows", basics.flows, { full: true })
+      contentField("Ending position", "basics.end", basics.end)
     ].join("");
     const englishFields = ["description", "steps", "body", "lead", "connection", "cue"]
       .map((key) => contentField(key[0].toUpperCase() + key.slice(1), `guides.en.${key}`, guides.en[key], { textarea: true, full: true }))
@@ -120,7 +101,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       section("Basics", basicsFields),
       section("English", englishFields),
       section("German", `${germanFields}<div class="resource-section"><div class="resource-heading"><h3>Custom section headings</h3></div><div class="resource-row">${headingFields}</div></div>`),
-      section("Resources", `${teachingSourcesEditor()}${cardResourcesEditor()}`)
+      section("Resources", cardResourcesEditor())
     ].join("");
     applyContentIssues(contentState.contentIssues);
   };
@@ -158,7 +139,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     const query = contentSearch.value.trim().toLowerCase();
     const style = contentStyle.value;
     const visible = getFigures().filter((figure) => {
-      const haystack = `${figure.name} ${figure.alias || ""} ${figure.id}`.toLowerCase();
+      const haystack = `${figure.name} ${figure.id}`.toLowerCase();
       return (!style || figure.style === style) && (!query || haystack.includes(query));
     });
     contentCount.textContent = String(visible.length);
@@ -176,7 +157,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     const key = parts.pop();
     let target = root;
     for (const part of parts) target = target[Number.isInteger(Number(part)) ? Number(part) : part];
-    const optionalBlank = value === "" && (/^teachingSources\.\d+\.(title|channel|frame|notes)$/.test(path) || /^cardResources\.\d+\.language$/.test(path));
+    const optionalBlank = value === "" && /^cardResources\.\d+\.language$/.test(path);
     if (value === undefined || optionalBlank) delete target[key];
     else target[key] = value;
   };
@@ -298,9 +279,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     if (!button || !contentState.content) return;
     rememberOpenSections();
     const action = button.dataset.contentAction;
-    if (action === "add-teaching-source") {
-      contentState.content.teachingSources.push({ videoId: "" });
-    } else if (action === "add-youtube-resource") {
+    if (action === "add-youtube-resource") {
       contentState.content.cardResources.push({ type: "youtube", videoId: "", title: "", kind: "tutorial" });
     } else if (action === "add-web-resource") {
       contentState.content.cardResources.push({ type: "web", url: "", title: "", kind: "article" });

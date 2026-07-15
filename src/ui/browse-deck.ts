@@ -1,8 +1,8 @@
-import type { Choice, Move } from "../domain/move";
+import type { BuildChoice, Move } from "../domain/move";
 
 export const figuresForBrowsing = (
   moves: readonly Move[],
-  choices: Readonly<Record<string, Choice>>
+  choices: Readonly<Record<string, BuildChoice>>
 ): Move[] => moves.filter(({ id }) => choices[id] !== "pass");
 
 export const adjacentBrowseIndex = (

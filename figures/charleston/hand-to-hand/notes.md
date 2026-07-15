@@ -17,6 +17,15 @@ Show hand-to-hand Charleston at the outward-facing moment: the dancers rotate aw
 
 a Black woman and a Latina woman, both adults, in colorful 1930s-inspired separates
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=MDVcFhs-7Rk&t=104s) — timestamp: 104s; frame: `teaching-frames/selected.png`
+  - Editorial note: Source listed for the selected teaching frame.
+- [YouTube source 2](https://www.youtube.com/watch?v=urM_KBbuyCc)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 3](https://www.youtube.com/watch?v=MDVcFhs-7Rk)
+  - Editorial note: Reference catalog candidate (Charleston class reference). Key frame: Show partners facing away on opposite diagonals with one-hand connection and mirrored kicks.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

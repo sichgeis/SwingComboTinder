@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "promenade",
     "name": "Promenade",
-    "alias": "Walk together",
     "style": "lindy",
     "family": "Travel",
     "count": "6 or 8 count",
     "motion": "Linear",
-    "end": "Closed / Open",
-    "familiarity": "Comfort move",
-    "flows": "free spin · underarm turn · send out"
+    "end": "Closed / Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "lslTN8s2NJI",
-        "timestampSeconds": 75,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "jC_EtSuuX5Q",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "lslTN8s2NJI",
-        "notes": "Reference catalog candidate (Exact named tutorial). Key frame: Show both partners traveling in the same direction in a compact side-by-side V shape."
-      }
-    ],
     "cardLinks": []
   }
-
 });

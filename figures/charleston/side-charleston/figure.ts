@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "side-charleston",
     "name": "Side-by-Side Charleston",
-    "alias": "Kick together, stay compact",
     "style": "charleston",
     "family": "Charleston",
     "count": "8 count",
     "motion": "Linear",
-    "end": "Side-by-side",
-    "familiarity": "Comfort move",
-    "flows": "hand-to-hand · Charleston tuck turn · Tandem Charleston"
+    "end": "Side-by-side"
   },
   "guides": {
     "en": {
@@ -45,24 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "O-X0VjLufDo",
-        "timestampSeconds": 32,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "EsxtGBMQGq4",
-        "title": "Swing Dancing from Hellzapoppin' (1941) — Whitey's Lindy Hoppers",
-        "channel": "Frankie Manning Foundation archive",
-        "notes": "Artwork reference selection: historic Black Lindy Hop footage."
-      },
-      {
-        "videoId": "O-X0VjLufDo",
-        "notes": "Reference catalog candidate (Charleston fundamentals reference). Key frame: Show classic side-by-side position with matching opposite kicks and the leader’s arm around follower’s back."
-      }
-    ],
     "cardLinks": [
       {
         "videoId": "Z8Z6cWgqOq4",
@@ -76,5 +55,4 @@ export default defineFigure({
       }
     ]
   }
-
 });

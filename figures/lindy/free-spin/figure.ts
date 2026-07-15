@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "free-spin",
     "name": "Free Spin",
-    "alias": "Release & reconnect",
     "style": "lindy",
     "family": "Turn",
     "count": "6 count",
     "motion": "Rotational",
-    "end": "Open",
-    "familiarity": "Maybe I know it",
-    "flows": "sugar push · pass by · bring in"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "HbyrAloG0jM",
-        "timestampSeconds": 89,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "igmo48OdyZ4",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "HbyrAloG0jM",
-        "notes": "Reference catalog candidate (Free-spin tutorial). Key frame: Show the follower released and rotating independently, with the former connection and travel direction still readable."
-      }
-    ],
     "cardLinks": []
   }
-
 });

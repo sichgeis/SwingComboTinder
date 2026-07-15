@@ -17,6 +17,13 @@ Show a comfortable sweetheart position: both face the same direction side by sid
 
 two Black women, both adults of visibly different heights, in lively 1930s daywear
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=TegYDzBFNO0&t=210s) — timestamp: 210s; frame: `teaching-frames/selected.png`
+  - Editorial note: Source listed for the selected teaching frame.
+- [YouTube source 2](https://www.youtube.com/watch?v=TegYDzBFNO0)
+  - Editorial note: Artwork reference selection.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

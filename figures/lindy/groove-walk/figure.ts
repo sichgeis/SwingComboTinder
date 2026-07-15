@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "groove-walk",
     "name": "Groove Walk",
-    "alias": "Let the music breathe",
     "style": "lindy",
     "family": "Rhythm",
     "count": "As musical",
     "motion": "Linear",
-    "end": "Any",
-    "familiarity": "Comfort move",
-    "flows": "promenade · send out · musical pause"
+    "end": "Any"
   },
   "guides": {
     "en": {
@@ -45,22 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "djVHQu8Yra4",
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "qPcRnNYF-uA",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "Qp3pS1UZ0Pg",
-        "notes": "Reference catalog candidate (Broader Lindy fundamentals reference). Key frame: Show relaxed side-by-side or open walking with visible pulse, bent knees, and directional groove."
-      }
-    ],
     "cardLinks": []
   }
-
 });

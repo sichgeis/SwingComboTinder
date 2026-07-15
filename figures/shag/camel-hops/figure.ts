@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "camel-hops",
     "name": "Camel Hops",
-    "alias": "Travel the bounce",
     "style": "shag",
     "family": "Shag Rhythm",
     "count": "6 or 12 count",
     "motion": "Travel",
-    "end": "Closed / Open",
-    "familiarity": "Curious",
-    "flows": "Shag breaks · Cross Kicks · closed Shag turn"
+    "end": "Closed / Open"
   },
   "guides": {
     "en": {
@@ -45,17 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "F7R-uHI8pOo",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "Z4n5XVedd5g",
-        "notes": "Reference catalog candidate (Broad swing tutorial placeholder; needs Shag-specific frame validation). Key frame: Show both dancers in a light hopping phase with bent supporting knees and the camel-like alternating leg action."
-      }
-    ],
     "cardLinks": []
   }
-
 });

@@ -7,14 +7,11 @@ export default defineFigure({
   "move": {
     "id": "double-turn",
     "name": "Double Turn",
-    "alias": "Only if it feels easy",
     "style": "lindy",
     "family": "Turn",
     "count": "8 count",
     "motion": "Rotational",
-    "end": "Open",
-    "familiarity": "Stretch goal",
-    "flows": "sugar push · groove walk · bring in"
+    "end": "Open"
   },
   "guides": {
     "en": {
@@ -45,23 +42,6 @@ export default defineFigure({
     }
   },
   "youtube": {
-    "teachingSources": [
-      {
-        "videoId": "JNj3GR-ZXGs",
-        "timestampSeconds": 362,
-        "frame": "teaching-frames/selected.png",
-        "notes": "Source listed for the selected teaching frame."
-      },
-      {
-        "videoId": "5SU9hzrt5JQ",
-        "notes": "Artwork reference selection."
-      },
-      {
-        "videoId": "JNj3GR-ZXGs",
-        "notes": "Reference catalog candidate (Multiple-turn tutorial). Key frame: Show a clearly wound second rotation, with spotting, vertical axis, and raised hand path visible."
-      }
-    ],
     "cardLinks": []
   }
-
 });

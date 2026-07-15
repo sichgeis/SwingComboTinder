@@ -17,6 +17,15 @@ Show true tandem Charleston: one dancer stands directly behind the other facing 
 
 an East Asian woman leading and a Black man following, both adults, in coordinated 1940s-inspired clothing
 
+## Teaching sources
+
+- [YouTube source 1](https://www.youtube.com/watch?v=5MEfGPNf3nE&t=206s) — timestamp: 206s; frame: `teaching-frames/selected.png`
+  - Editorial note: Source listed for the selected teaching frame.
+- [YouTube source 2](https://www.youtube.com/watch?v=ops1aliBCUc)
+  - Editorial note: Artwork reference selection.
+- [YouTube source 3](https://www.youtube.com/watch?v=5MEfGPNf3nE)
+  - Editorial note: Reference catalog candidate (Tandem entrance tutorial). Key frame: Show follower directly in front of leader, both facing same direction, staggered so four legs remain readable.
+
 ## Working notes
 
-Add pose corrections, generation decisions, and future rework requests here. YouTube provenance is structured in `figure.ts`.
+Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.
