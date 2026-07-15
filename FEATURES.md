@@ -2,6 +2,16 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Flexible bilingual card guides
+
+- Status: Proposed
+- Maturity: Draft; implementation is not authorized.
+- Goal: Let each English and German card guide use its own ordered set of titled teaching sections while keeping the figure name, short description, and closing memory cue as explicit fields.
+- Scope: Replace the fixed steps/body/lead/follow/connection/practice guide slots with one constrained Markdown-like body per language; parse, validate, edit, preview, and render the same format in the app and Content Studio; migrate all 42 guides without changing their prose or visible section order.
+- Non-goals: Do not add general-purpose Markdown, embedded HTML, links or media in guide copy, rich-text editing, localized figure names, or changes to factual metadata and resources.
+- Specification: [`specs/flexible-bilingual-card-guides.md`](specs/flexible-bilingual-card-guides.md)
+- Next action: Review and approve or revise the proposed guide model and authoring syntax.
+
 ## Studio editorial cockpit
 
 - Status: Done
