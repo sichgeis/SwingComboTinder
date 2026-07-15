@@ -7,11 +7,11 @@ This file is the compact current-work surface for Swing Thing. Detailed accepted
 - Status: Done
 - Approved: 2026-07-15
 - Goal: Make Content and Image Queue a compact, attention-first editorial cockpit while retaining the Studio's art-deco identity and safe local workflows.
-- Scope: Compact shell, derived Content filters, clear loading/error/draft states, collapsible technical identity, revert/save/save-next actions, improved mobile selection, attention-first Image Queue filters, compact metrics, bulk visible selection, and a generation request plan.
-- Non-goals: Do not change the figure model, add durable copy-review state or AI writing, trigger paid generation during validation, add dependencies, or replace the Studio architecture.
+- Scope: Desktop-only compact shell, derived Content filters, clear loading/error/draft states, collapsible technical identity, revert/save/save-next actions, attention-first Image Queue filters, compact metrics, bulk visible selection, and a generation request plan.
+- Non-goals: Do not support mobile or tablet Studio workflows, change the figure model, add durable copy-review state or AI writing, trigger paid generation during validation, add dependencies, or replace the Studio architecture.
 - Specification: [`specs/studio-editorial-cockpit.md`](specs/studio-editorial-cockpit.md)
-- Progress: Implemented the compact shell, derived Content and Image Queue filters, clearer loading/draft/validation states, collapsible identity, revert/save/save-next, mobile picker, attention metrics, visible bulk selection, request planning, and a self-contained live app-card preview.
-- Validation: `npm run check` passes with 20 test files and 56 tests. A temporary Studio loaded the real 42-figure catalog without browser errors; desktop Content/Image Queue and 390 × 844 Content flows were verified and captured without saving content or sending paid image requests.
+- Progress: Implemented the compact shell, derived Content and Image Queue filters, clearer loading/draft/validation states, collapsible identity, revert/save/save-next, attention metrics, visible bulk selection, request planning, and a self-contained live app-card preview. The supported Studio target was subsequently clarified as desktop-only.
+- Validation: `npm run check` passes with 20 test files and 56 tests. A temporary Studio loaded the real 42-figure catalog without browser errors; desktop Content and Image Queue flows were verified and captured without saving content or sending paid image requests.
 - Next action: None; use the cockpit for real editorial work and reassess only from observed friction.
 
 ## Figure model and Studio alignment
@@ -43,7 +43,7 @@ This file is the compact current-work surface for Swing Thing. Detailed accepted
 - Non-goals: Do not add review states, maintenance queues, bulk editing, AI writing, content-file migration, or a broader image-workflow redesign.
 - Specification: [`specs/content-studio-editorial-core.md`](specs/content-studio-editorial-core.md)
 - Progress: All four approved increments were implemented on 2026-07-15. A subsequent behavior-preserving Goldene-Mitte refactor separated the Content workspace controller, content model, source persistence, and named server actions while preserving the workflow and Image Queue.
-- Validation: `npm run check` passes with 21 test files and 56 tests. Browser validation covered all-figure loading, unsaved live preview, web-resource rendering, German/English front/back controls, mobile Editor/Preview switching, and the 42-card Image Queue without saving test drafts.
+- Validation: `npm run check` passes with 21 test files and 56 tests. Browser validation covered all-figure loading, unsaved live preview, web-resource rendering, German/English front/back controls, and the 42-card Image Queue without saving test drafts.
 - Next action: None; use the completed editorial core for real content maintenance and evaluate the separate Option B draft from that experience.
 
 ## Content Studio maintenance workspace

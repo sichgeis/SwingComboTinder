@@ -6,7 +6,7 @@
 
 ## Context
 
-The completed Content Studio is functionally capable, but visual review at desktop and phone widths found that branding and repeated status data occupy more space than the frequent editorial decisions. The figure library is dense, technical identity looks editable, mobile users must move through a large library before reaching the editor, and the Image Queue presents completed figures before exceptions that need attention. Initial loading and incompatible/stale-server failures can also resemble a legitimately empty catalog.
+The completed Content Studio is functionally capable, but desktop review found that branding and repeated status data occupy more space than the frequent editorial decisions. The figure library is dense, technical identity looks editable, and the Image Queue presents completed figures before exceptions that need attention. Initial loading and incompatible/stale-server failures can also resemble a legitimately empty catalog.
 
 This specification incorporates the useful, immediately actionable subset of the older maintenance-workspace draft without introducing durable review state or another data model.
 
@@ -21,8 +21,6 @@ This specification incorporates the useful, immediately actionable subset of the
 5. Compare the live card in German or English and on front or back.
 6. See saved, unsaved, invalid, updating, and saved-success states clearly.
 7. Revert a draft, save it, or save and advance to the next visible figure.
-
-On narrow screens, selecting a figure collapses the library into a compact picker summary. Editor/Preview switching and save actions remain readily reachable.
 
 ### Image Queue
 
@@ -44,7 +42,8 @@ On narrow screens, selecting a figure collapses the library into a compact picke
 - Image Queue filtering must not create persistent editorial review state.
 - Paid generation remains explicit and is never triggered during validation.
 - Loading failures must display an actionable error rather than an empty valid catalog.
-- Keyboard focus and touch targets must remain visible and usable.
+- Keyboard focus and pointer targets must remain visible and usable.
+- The Studio is a desktop-only local production tool. Supported UX, layout decisions, and visual validation target desktop browser windows.
 
 ## Non-goals
 
@@ -54,20 +53,20 @@ On narrow screens, selecting a figure collapses the library into a compact picke
 - Drag-and-drop resource or image ordering
 - Changing image providers, prices, permissions, or generation defaults
 - Rebuilding the Studio with a framework or adding dependencies
-- Pixel-identical mobile and desktop layouts
+- Mobile and tablet support for the Studio
+- Mobile-specific navigation, layout, interaction, or validation requirements
 
 ## Acceptance criteria
 
-- The shell uses materially less vertical space at desktop and phone widths.
+- The shell uses materially less vertical space in a desktop browser window.
 - Content exposes style and attention filters, explicit loading/error/empty states, and a less repetitive figure list.
 - Technical identity is collapsed by default and editable fields remain clearly distinct.
 - Revert, Save, and Save + next are available only in appropriate states.
-- Mobile selection collapses the library and enables direct Editor/Preview switching.
 - Image Queue defaults to attention-needed work, supports status/style filters plus select-visible/clear, and shows an accurate request plan.
 - Approved figures remain reachable without dominating the default queue.
 - Existing content persistence, preview, generation, promotion, image approval, and rework behavior continues to work.
 - `npm run check` passes.
-- Real desktop and mobile screenshots demonstrate the Content and Image Queue states using repository data.
+- Real desktop screenshots demonstrate the Content and Image Queue states using repository data.
 
 ## Technical constraints
 
@@ -78,24 +77,25 @@ On narrow screens, selecting a figure collapses the library into a compact picke
 
 ## Decisions
 
-- The direction is a compact desktop-first editorial tool with fully usable responsive behavior.
+- The Studio is a desktop-only editorial tool. Responsive behavior that happens to remain in the implementation is incidental and is not a supported product requirement.
 - Brand character remains in color, typography, and small accents rather than a large hero masthead.
 - The work ships in two coherent increments: Content cockpit, then attention-first Image Queue.
 - The user explicitly approved specification and implementation on 2026-07-15.
 
 ## Progress
 
-- 2026-07-15: Reviewed the current Studio with real repository data at desktop and 390 × 844 phone dimensions.
+- 2026-07-15: Reviewed the current Studio with real repository data, including desktop behavior used to define the supported cockpit.
 - 2026-07-15: Specification approved; implementation started.
-- 2026-07-15: Shipped the compact persistent shell, derived Content filters, explicit catalog recovery state, remembered figure selection, collapsible technical identity, field counts, draft/revert/save/save-next actions, and the mobile figure picker.
+- 2026-07-15: Shipped the compact persistent shell, derived Content filters, explicit catalog recovery state, remembered figure selection, collapsible technical identity, field counts, and draft/revert/save/save-next actions.
+- 2026-07-15: Product direction clarified after delivery: the Studio is desktop-only; existing responsive behavior is not supported scope.
 - 2026-07-15: Shipped the attention-first Image Queue with derived view filters, compact metrics, visible-selection controls, request planning, and expanded review controls whenever approved artwork has new candidates or is marked for rework.
 - 2026-07-15: Made the preview stylesheet self-contained inside the sandboxed iframe after browser validation exposed that the previous linked stylesheet could report “Live” while rendering an empty card.
 
 ## Validation
 
 - Automated: `npm run check` passes with 20 test files and 56 tests, strict type checking, lint, and the production build.
-- Browser: A temporary Studio on port 4175 loaded the real 42-figure catalog without page errors. Desktop checks covered Content selection/live card rendering and the default attention queue. A 390 × 844 check switched from Charleston Tuck Turn to Hand-to-Hand Charleston through the compact picker and confirmed saved state plus live preview without modifying source content.
-- Screenshots: `/private/tmp/swing-thing-studio-cockpit-screenshots/content-desktop.png`, `/private/tmp/swing-thing-studio-cockpit-screenshots/image-queue-desktop.png`, and `/private/tmp/swing-thing-studio-cockpit-screenshots/content-mobile.png`.
+- Browser: A temporary Studio on port 4175 loaded the real 42-figure catalog without page errors. Desktop checks covered Content selection/live card rendering and the default attention queue without modifying source content.
+- Screenshots: `/private/tmp/swing-thing-studio-cockpit-screenshots/content-desktop.png` and `/private/tmp/swing-thing-studio-cockpit-screenshots/image-queue-desktop.png`.
 - Paid generation: Not run, as required.
 
 ## Next action

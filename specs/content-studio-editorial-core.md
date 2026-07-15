@@ -4,7 +4,7 @@
 - Approved: 2026-07-15
 - Goal: Turn the local image-oriented studio into a master-detail editor where one figure can be found, edited, previewed, validated, and saved safely.
 
-> Subsequent changes: [`figure-model-and-flow-cleanup.md`](figure-model-and-flow-cleanup.md) removes aliases, static familiarity, flow suggestions, and production teaching-source fields. [`figure-model-alignment.md`](figure-model-alignment.md) centralizes repeated German headings and replaces the split resource storage adapter with one ordered discriminated resource list.
+> Subsequent changes: [`figure-model-and-flow-cleanup.md`](figure-model-and-flow-cleanup.md) removes aliases, static familiarity, flow suggestions, and production teaching-source fields. [`figure-model-alignment.md`](figure-model-alignment.md) centralizes repeated German headings and replaces the split resource storage adapter with one ordered discriminated resource list. [`studio-editorial-cockpit.md`](studio-editorial-cockpit.md) establishes the Studio as a desktop-only production tool; mobile and tablet Studio support is no longer a requirement.
 
 ## Context
 
@@ -17,7 +17,7 @@ Option A of the master-detail Content Studio proposal is the approved next itera
 1. Open the local Swing Thing Content Studio in the Content workspace.
 2. Search or filter the compact figure library and select a figure.
 3. Edit its Basics, English, German, or Resources section.
-4. Inspect unsaved changes immediately in a mobile-sized app-card preview, switching between English/German and front/back.
+4. Inspect unsaved changes immediately in an app-card-shaped preview, switching between English/German and front/back.
 5. Correct field-level validation problems and save the complete figure in one operation.
 6. Continue with another figure. If unsaved changes exist, switching or leaving requires confirmation.
 
@@ -25,13 +25,13 @@ The top-level Content and Image Queue workspaces remain clearly available. Image
 
 ## Layout
 
-On wide screens, use three coordinated areas:
+The supported desktop layout uses three coordinated areas:
 
 - A compact figure library with search, dance-style filtering, and factual content indicators.
 - A structured editor with Basics, English, German, and Resources sections.
-- A sticky live card preview at mobile card dimensions.
+- A sticky live card preview at the production card's aspect ratio.
 
-On narrower screens, keep the library usable and expose Editor and Preview as switchable views rather than compressing three columns.
+Mobile and tablet layouts are outside the supported Studio scope.
 
 ## Editable content
 
@@ -131,7 +131,7 @@ A failed or conflicted save leaves the original file unchanged. The generated so
 
 - Rename the local tool to Swing Thing Content Studio.
 - Add Content and Image Queue workspace navigation.
-- Add the master-detail Content workspace and responsive layout.
+- Add the desktop master-detail Content workspace.
 - Introduce the content DTO, validation, reader, deterministic writer, source revision, and atomic save path.
 - Edit all existing Basics, English, German, and YouTube fields.
 - Add generic app-visible web resources to the content model and production card.
@@ -150,6 +150,7 @@ A failed or conflicted save leaves the original file unchanged. The generated so
 - Migrating figure content to JSON, YAML, or a remote CMS
 - Redesigning the image generation and promotion workflow
 - Remote hosting, authentication, or multi-user editing
+- Mobile or tablet Studio support
 
 ## Acceptance criteria
 
@@ -193,6 +194,7 @@ A failed or conflicted save leaves the original file unchanged. The generated so
 - Empty optional resources and fallback artwork are factual states, not automatic errors.
 - Stable identity and filesystem-affecting fields remain read-only.
 - Option B is recorded separately as a Proposed draft and receives no implementation authority from this approval.
+- The supported Studio workflow is usable in a desktop browser window.
 
 ## Delivery increments
 
@@ -214,7 +216,7 @@ A failed or conflicted save leaves the original file unchanged. The generated so
 
 - Automated: `npm run check` passed linting, strict type checks, 21 test files with 56 tests, and the production PWA build.
 - Persistence: all 42 figure definitions load; deterministic round trips, valid atomic saves, invalid content, and stale-write conflicts are covered by focused tests.
-- Browser: verified the 42-figure library, live unsaved bilingual preview, front/back switching, field-level invalid-resource feedback, generic web-resource preview, mobile Editor/Preview switching, and preserved Image Queue with all 42 figures.
+- Browser: verified the 42-figure library, live unsaved bilingual preview, front/back switching, field-level invalid-resource feedback, generic web-resource preview, and preserved Image Queue with all 42 figures.
 - Safety: browser test drafts were removed without saving; no production figure content changed during manual validation.
 
 ## Next action

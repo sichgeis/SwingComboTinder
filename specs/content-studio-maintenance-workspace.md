@@ -45,6 +45,7 @@ Optional absence, including zero app-visible resources or fallback artwork, shou
 
 - Multi-user collaboration or authentication
 - Remote hosting or editing
+- Mobile or tablet Studio support
 - Git commits or releases from the studio
 - Full version history
 - Bulk text replacement
