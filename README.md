@@ -1,6 +1,6 @@
 # Swing Thing
 
-A phone-first Swing vocabulary refresher for building a focused deck from Lindy Hop, partnered Charleston, and Collegiate Shag figures. Swipe through the deck, mark what feels comfortable or adventurous, and get three personalized mini-combos for the social floor.
+A phone-first Swing vocabulary refresher for building and browsing a focused deck from Lindy Hop, partnered Charleston, and Collegiate Shag figures. Prepare for the evening by removing figures that do not belong tonight, then use the dedicated Browse mode to revisit the remaining cards and their detailed guides on the social floor.
 
 The interface and complete move guides support German and English. German is the default, while canonical figure names remain unchanged. Selected guides include curated tutorials, technique lessons, variations, and historical context.
 
@@ -44,6 +44,10 @@ task images:plan MODE=marked -- --style lindy
 task images:generate MODE=all CONCURRENCY=3 -- --quality medium --count 2
 task images:generate MODE=marked -- --debug
 ```
+
+## Development workflow
+
+Current feature status, validation evidence, and the next action live in [`FEATURES.md`](FEATURES.md). Substantial approved work receives a dedicated specification under [`specs/`](specs/README.md); small fixes and routine maintenance remain intentionally lightweight. Repository-wide operating and delivery rules live in [`AGENTS.md`](AGENTS.md).
 
 ## Image generation
 
@@ -90,15 +94,14 @@ See [`figures/README.md`](figures/README.md) for the add and rework workflow.
 
 The application keeps its stateful control flow in `SwingThingController` and `LocalSessionStore`; domain rules remain immutable functions.
 
-## Gestures and local state
+## Build, Browse, and local state
 
-- Swipe left: not tonight
-- Swipe right: I know this
-- Swipe up: try tonight
-- Tap a card: switch between its illustrated front and move guide
-- Scroll vertically on the back: read the guide while horizontal swipe decisions remain available
+- Build starts with every figure from the selected dance styles; swipe left to remove a figure from tonight's deck, right for “I know this,” or up for “try tonight.”
+- Browse shows every figure not explicitly removed. Swipe left or right to move through the deck without changing its contents.
+- Tap a card in either mode to switch between its illustrated front and move guide.
+- In Browse, horizontal navigation stays on the current front or detail side; scroll vertically on the back to read the complete guide.
 
-Deck focus and progress are stored locally. The application installs as an offline-capable PWA, automatically activates versioned releases, and checks for service-worker updates whenever an installed app returns to the foreground. Its share metadata includes a 1200 × 630 preview for messaging and social platforms.
+Deck focus, decisions, progress, and the last Browse position are stored locally. The application installs as an offline-capable PWA, automatically activates versioned releases, and checks for service-worker updates whenever an installed app returns to the foreground. Its share metadata includes a 1200 × 630 preview for messaging and social platforms.
 
 ## Release
 
