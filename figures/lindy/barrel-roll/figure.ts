@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "barrel-roll",
     "name": "Barrel Roll",
     "style": "lindy",
-    "family": "Position",
-    "count": "8 count",
-    "motion": "Rotational",
+    "family": "position",
+    "count": "eight",
+    "motion": "rotational",
     "end": "Open"
   },
   "guides": {

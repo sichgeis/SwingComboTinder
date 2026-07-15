@@ -8,6 +8,7 @@ import { getImageEnvironment, loadEnvironment } from "./environment";
 import {
   ContentConflictError,
   ContentValidationError,
+  figureMetadataOptions,
   figureDefinitionFromContent,
   readFigureContentFile,
   saveFigureContentFile,
@@ -291,7 +292,7 @@ const serveFigureContent = async (response: ServerResponse, id: string | null): 
   if (!id) throw new Error("Missing figure ID.");
   const figure = await findFigure(id);
   const loaded = await readFigureContentFile(figure.definitionPath, figure.slug);
-  sendJson(response, 200, { ...loaded, imageUrl: figureImageUrl(figure) });
+  sendJson(response, 200, { ...loaded, imageUrl: figureImageUrl(figure), metadataOptions: figureMetadataOptions });
 };
 
 const saveFigureContent = async (

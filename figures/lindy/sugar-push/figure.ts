@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "sugar-push",
     "name": "Sugar Push",
     "style": "lindy",
-    "family": "Linear",
-    "count": "6 count",
-    "motion": "Linear",
+    "family": "linear",
+    "count": "six",
+    "motion": "linear",
     "end": "Open"
   },
   "guides": {

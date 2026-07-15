@@ -1,5 +1,13 @@
 import { youtubeUrl, type FigureDefinition, type VideoKind, type WebResourceKind } from "../../figures/define-figure";
-import type { BuildChoice, Language, MoveStyle, MoveTranslation } from "../domain/move";
+import type {
+  BuildChoice,
+  CountPattern,
+  Language,
+  MotionKind,
+  MoveFamily,
+  MoveStyle,
+  MoveTranslation
+} from "../domain/move";
 import { translate, type TranslationKey } from "./translations";
 
 export const styleMeta: Record<MoveStyle, { label: string; short: string }> = {
@@ -8,21 +16,49 @@ export const styleMeta: Record<MoveStyle, { label: string; short: string }> = {
   shag: { label: "Collegiate Shag", short: "Shag" }
 };
 
-const germanMeta: Readonly<Record<string, string>> = {
-  Circular: "Kreisförmig", Linear: "Linear", Turn: "Drehung", Position: "Position", Rhythm: "Rhythmus",
-  Transition: "Übergang", Travel: "Reise", Rotational: "Rotierend", "Charleston Turn": "Charleston-Drehung",
-  Charleston: "Charleston", Tandem: "Tandem", "Shag Rhythm": "Shag-Rhythmus", "Shag Turn": "Shag-Drehung",
-  Open: "Open", Closed: "Closed", "Closed / Open": "Closed / Open", "Side-by-side": "Side-by-Side",
-  "6 count": "6 Counts", "8 count": "8 Counts", "6 or 8 count": "6 oder 8 Counts", "6 or 12 count": "6 oder 12 Counts",
-  "8 or 16 count": "8 oder 16 Counts", Any: "Beliebig", "As musical": "Musikalisch", Vertical: "Vertikal",
-  "Closed / Side-by-side": "Closed / Side-by-Side", "Open / Closed": "Open / Closed", "Open / Side-by-side": "Open / Side-by-Side",
-  "Tandem / Open": "Tandem / Open", Wrapped: "Gewickelt",
-  "Comfort move": "Sichere Figur", "Almost there": "Fast geschafft", "Tonight's goal": "Ziel für heute",
-  "Practice pick": "Übungsfigur", Curious: "Neugierig", Rusty: "Eingerostet", "Maybe I know it": "Vielleicht bekannt",
-  "New territory": "Neuland", "Stretch goal": "Herausforderung"
+const familyLabels: Record<MoveFamily, Record<Language, string>> = {
+  circular: { en: "Circular", de: "Kreisförmig" },
+  linear: { en: "Linear", de: "Linear" },
+  turn: { en: "Turn", de: "Drehung" },
+  position: { en: "Position", de: "Position" },
+  rhythm: { en: "Rhythm", de: "Rhythmus" },
+  transition: { en: "Transition", de: "Übergang" },
+  travel: { en: "Travel", de: "Reise" },
+  charleston: { en: "Charleston", de: "Charleston" },
+  "charleston-turn": { en: "Charleston Turn", de: "Charleston-Drehung" },
+  tandem: { en: "Tandem", de: "Tandem" },
+  "shag-rhythm": { en: "Shag Rhythm", de: "Shag-Rhythmus" },
+  "shag-turn": { en: "Shag Turn", de: "Shag-Drehung" }
 };
 
-export const localizedMeta = (language: Language, value: string): string => language === "de" ? (germanMeta[value] ?? value) : value;
+const countLabels: Record<CountPattern, Record<Language, string>> = {
+  six: { en: "6 count", de: "6 Counts" },
+  eight: { en: "8 count", de: "8 Counts" },
+  "six-or-eight": { en: "6 or 8 count", de: "6 oder 8 Counts" },
+  "six-or-twelve": { en: "6 or 12 count", de: "6 oder 12 Counts" },
+  "eight-or-sixteen": { en: "8 or 16 count", de: "8 oder 16 Counts" },
+  musical: { en: "As musical", de: "Musikalisch" }
+};
+
+const motionLabels: Record<MotionKind, Record<Language, string>> = {
+  linear: { en: "Linear", de: "Linear" },
+  rotational: { en: "Rotational", de: "Rotierend" },
+  circular: { en: "Circular", de: "Kreisförmig" },
+  vertical: { en: "Vertical", de: "Vertikal" },
+  travel: { en: "Travel", de: "Reise" }
+};
+
+const germanEndingLabels: Readonly<Record<string, string>> = {
+  Open: "Open", Closed: "Closed", "Closed / Open": "Closed / Open", "Side-by-side": "Side-by-Side",
+  Any: "Beliebig",
+  "Closed / Side-by-side": "Closed / Side-by-Side", "Open / Closed": "Open / Closed", "Open / Side-by-side": "Open / Side-by-Side",
+  "Tandem / Open": "Tandem / Open", Wrapped: "Gewickelt", Tandem: "Tandem"
+};
+
+export const familyLabel = (language: Language, value: MoveFamily): string => familyLabels[value][language];
+export const countPatternLabel = (language: Language, value: CountPattern): string => countLabels[value][language];
+export const motionKindLabel = (language: Language, value: MotionKind): string => motionLabels[value][language];
+const legacyEndingLabel = (language: Language, value: string): string => language === "de" ? (germanEndingLabels[value] ?? value) : value;
 
 export const videoKindLabel = (language: Language, kind: VideoKind): string => {
   const keys: Record<VideoKind, TranslationKey> = {
@@ -60,7 +96,6 @@ export const renderCardMarkup = ({
 }: CardPresentationOptions): string => {
   const move = figure.move;
   const guide = figure.guides[language];
-  const meta = (value: string): string => escapeHtml(localizedMeta(language, value));
   const t = (key: TranslationKey): string => escapeHtml(translate(language, key));
   const translated = language === "de" ? guide as MoveTranslation : undefined;
   const sections = translated ? [
@@ -93,11 +128,11 @@ export const renderCardMarkup = ({
         <div class="card-art" style="--card-art: url('${image}')"></div>
         <div class="card-grain"></div>
         <div class="card-content">
-          <div class="card-top"><span class="family-pill">${meta(move.family)}</span><span class="choice-pill">${escapeHtml(choice)}</span></div>
+          <div class="card-top"><span class="family-pill">${escapeHtml(familyLabel(language, move.family))}</span><span class="choice-pill">${escapeHtml(choice)}</span></div>
           <div class="card-bottom">
             <span class="move-number">MOVE ${number}</span>
             <h2>${escapeHtml(move.name)}</h2><p class="move-description">${escapeHtml(guide.description)}</p>
-            <div class="move-meta"><span>${escapeHtml(styleMeta[move.style].short)}</span><span>${meta(move.count)}</span><span>${meta(move.motion)}</span><span>${t("ends")} ${meta(move.end)}</span></div>
+            <div class="move-meta"><span>${escapeHtml(styleMeta[move.style].short)}</span><span>${escapeHtml(countPatternLabel(language, move.count))}</span><span>${escapeHtml(motionKindLabel(language, move.motion))}</span><span>${t("ends")} ${escapeHtml(legacyEndingLabel(language, move.end))}</span></div>
           </div>
         </div>
       </section>

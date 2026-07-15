@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "stop-and-go",
     "name": "Stop & Go",
     "style": "lindy",
-    "family": "Rhythm",
-    "count": "6 count",
-    "motion": "Linear",
+    "family": "rhythm",
+    "count": "six",
+    "motion": "linear",
     "end": "Open"
   },
   "guides": {

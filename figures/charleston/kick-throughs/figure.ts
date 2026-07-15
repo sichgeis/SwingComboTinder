@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "kick-throughs",
     "name": "Charleston Kick-Throughs",
     "style": "charleston",
-    "family": "Charleston",
-    "count": "8 count",
-    "motion": "Linear",
+    "family": "charleston",
+    "count": "eight",
+    "motion": "linear",
     "end": "Open / Side-by-side"
   },
   "guides": {

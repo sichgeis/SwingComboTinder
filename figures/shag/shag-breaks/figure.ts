@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "shag-breaks",
     "name": "Shag Breaks",
     "style": "shag",
-    "family": "Shag Rhythm",
-    "count": "6 count",
-    "motion": "Vertical",
+    "family": "shag-rhythm",
+    "count": "six",
+    "motion": "vertical",
     "end": "Closed"
   },
   "guides": {

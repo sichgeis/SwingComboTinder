@@ -14,7 +14,7 @@ import {
 import type { LocalSessionStore } from "../infrastructure/local-session-store";
 import { classifyCardGesture } from "./card-gesture";
 import { adjacentBrowseIndex, figuresForBrowsing } from "./browse-deck";
-import { escapeHtml, localizedMeta, renderCardMarkup, styleMeta, videoKindLabel, webResourceKindLabel } from "./card-presentation";
+import { escapeHtml, familyLabel, renderCardMarkup, styleMeta, videoKindLabel, webResourceKindLabel } from "./card-presentation";
 import { isIntentionalCardGesture, isIntentionalHorizontalGesture, type TouchPoint } from "./horizontal-gesture";
 import { defaultLanguage, translate, type TranslationKey } from "./translations";
 
@@ -83,10 +83,6 @@ export class SwingThingController {
 
   private t(key: TranslationKey): string {
     return translate(this.language, key);
-  }
-
-  private meta(value: string): string {
-    return localizedMeta(this.language, value);
   }
 
   private applyLanguage(): void {
@@ -410,7 +406,7 @@ export class SwingThingController {
     if (!move) return;
     const guide = guideFor(move, this.language);
     this.query<HTMLElement>("#cueTitle").textContent = move.name;
-    this.query<HTMLElement>("#cueStyle").textContent = `${styleMeta[move.style].label} · ${this.meta(move.family)}`;
+    this.query<HTMLElement>("#cueStyle").textContent = `${styleMeta[move.style].label} · ${familyLabel(this.language, move.family)}`;
     const headings = this.language === "de" ? (guide as MoveTranslation).headings : {
       steps: this.t("rhythmHeading"), body: this.t("bodyHeading"), lead: this.t("leadHeading"), connection: this.t("connectionHeading")
     };

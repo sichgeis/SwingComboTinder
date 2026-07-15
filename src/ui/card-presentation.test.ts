@@ -30,4 +30,16 @@ describe("card presentation", () => {
     expect(renderCardMarkup({ figure, language: "en", index: 0, deckChoice: "keep" })).toContain("GOT IT");
     expect(renderCardMarkup({ figure, language: "en", index: 0, deckChoice: "star" })).toContain("TRY TONIGHT");
   });
+
+  it("localizes semantic family, count, and motion codes", () => {
+    const figure = figureFor("inside-turn");
+    const english = renderCardMarkup({ figure, language: "en", index: 0 });
+    const german = renderCardMarkup({ figure, language: "de", index: 0 });
+    expect(english).toContain("Turn");
+    expect(english).toContain("6 or 8 count");
+    expect(english).toContain("Rotational");
+    expect(german).toContain("Drehung");
+    expect(german).toContain("6 oder 8 Counts");
+    expect(german).toContain("Rotierend");
+  });
 });

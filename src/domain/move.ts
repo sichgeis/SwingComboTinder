@@ -7,6 +7,18 @@ export type BuildChoice = (typeof buildChoices)[number];
 export const languages = ["en", "de"] as const;
 export type Language = (typeof languages)[number];
 
+export const moveFamilies = [
+  "circular", "linear", "turn", "position", "rhythm", "transition", "travel",
+  "charleston", "charleston-turn", "tandem", "shag-rhythm", "shag-turn"
+] as const;
+export type MoveFamily = (typeof moveFamilies)[number];
+
+export const countPatterns = ["six", "eight", "six-or-eight", "six-or-twelve", "eight-or-sixteen", "musical"] as const;
+export type CountPattern = (typeof countPatterns)[number];
+
+export const motionKinds = ["linear", "rotational", "circular", "vertical", "travel"] as const;
+export type MotionKind = (typeof motionKinds)[number];
+
 export interface MoveGuide {
   readonly description: string;
   readonly steps: string;
@@ -29,9 +41,9 @@ export interface Move {
   readonly id: string;
   readonly name: string;
   readonly style: MoveStyle;
-  readonly family: string;
-  readonly count: string;
-  readonly motion: string;
+  readonly family: MoveFamily;
+  readonly count: CountPattern;
+  readonly motion: MotionKind;
   readonly end: string;
   readonly description: string;
   readonly steps: string;

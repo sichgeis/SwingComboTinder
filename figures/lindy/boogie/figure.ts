@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "boogie",
     "name": "Boogie Forward / Back",
     "style": "lindy",
-    "family": "Rhythm",
-    "count": "8 count",
-    "motion": "Linear",
+    "family": "rhythm",
+    "count": "eight",
+    "motion": "linear",
     "end": "Any"
   },
   "guides": {

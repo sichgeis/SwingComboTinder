@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "charleston-tuck-turn",
     "name": "Charleston Tuck Turn",
     "style": "charleston",
-    "family": "Charleston Turn",
-    "count": "8 count",
-    "motion": "Rotational",
+    "family": "charleston-turn",
+    "count": "eight",
+    "motion": "rotational",
     "end": "Open / Side-by-side"
   },
   "guides": {

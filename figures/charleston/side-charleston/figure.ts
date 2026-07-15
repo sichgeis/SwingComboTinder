@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "side-charleston",
     "name": "Side-by-Side Charleston",
     "style": "charleston",
-    "family": "Charleston",
-    "count": "8 count",
-    "motion": "Linear",
+    "family": "charleston",
+    "count": "eight",
+    "motion": "linear",
     "end": "Side-by-side"
   },
   "guides": {

@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "shag-tuck-turn",
     "name": "Shag Tuck Turn",
     "style": "shag",
-    "family": "Shag Turn",
-    "count": "6 count",
-    "motion": "Rotational",
+    "family": "shag-turn",
+    "count": "six",
+    "motion": "rotational",
     "end": "Open / Closed"
   },
   "guides": {

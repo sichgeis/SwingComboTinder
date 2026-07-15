@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "shag-pass-by",
     "name": "Shag Pass-By Turn",
     "style": "shag",
-    "family": "Shag Turn",
-    "count": "6 count",
-    "motion": "Linear",
+    "family": "shag-turn",
+    "count": "six",
+    "motion": "linear",
     "end": "Open / Closed"
   },
   "guides": {

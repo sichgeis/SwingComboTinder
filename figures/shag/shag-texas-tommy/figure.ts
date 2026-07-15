@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "shag-texas-tommy",
     "name": "Shag Texas Tommy",
     "style": "shag",
-    "family": "Shag Turn",
-    "count": "6 or 12 count",
-    "motion": "Rotational",
+    "family": "shag-turn",
+    "count": "six-or-twelve",
+    "motion": "rotational",
     "end": "Open / Closed"
   },
   "guides": {

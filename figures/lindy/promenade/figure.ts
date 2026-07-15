@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "promenade",
     "name": "Promenade",
     "style": "lindy",
-    "family": "Travel",
-    "count": "6 or 8 count",
-    "motion": "Linear",
+    "family": "travel",
+    "count": "six-or-eight",
+    "motion": "linear",
     "end": "Closed / Open"
   },
   "guides": {

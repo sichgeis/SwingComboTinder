@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "tandem-rainbow",
     "name": "Tandem Rainbow",
     "style": "charleston",
-    "family": "Tandem",
-    "count": "8 or 16 count",
-    "motion": "Rotational",
+    "family": "tandem",
+    "count": "eight-or-sixteen",
+    "motion": "rotational",
     "end": "Tandem / Open"
   },
   "guides": {

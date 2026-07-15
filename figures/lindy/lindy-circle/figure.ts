@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "lindy-circle",
     "name": "Lindy Circle",
     "style": "lindy",
-    "family": "Circular",
-    "count": "8 count",
-    "motion": "Circular",
+    "family": "circular",
+    "count": "eight",
+    "motion": "circular",
     "end": "Closed"
   },
   "guides": {

@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "outside-turn",
     "name": "Outside Turn",
     "style": "lindy",
-    "family": "Turn",
-    "count": "6 or 8 count",
-    "motion": "Rotational",
+    "family": "turn",
+    "count": "six-or-eight",
+    "motion": "rotational",
     "end": "Open"
   },
   "guides": {

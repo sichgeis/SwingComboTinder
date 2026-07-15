@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "cross-kicks",
     "name": "Cross Kicks",
     "style": "shag",
-    "family": "Shag Rhythm",
-    "count": "6 count",
-    "motion": "Linear",
+    "family": "shag-rhythm",
+    "count": "six",
+    "motion": "linear",
     "end": "Side-by-side"
   },
   "guides": {

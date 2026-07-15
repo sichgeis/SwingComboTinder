@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "groove-walk",
     "name": "Groove Walk",
     "style": "lindy",
-    "family": "Rhythm",
-    "count": "As musical",
-    "motion": "Linear",
+    "family": "rhythm",
+    "count": "musical",
+    "motion": "linear",
     "end": "Any"
   },
   "guides": {

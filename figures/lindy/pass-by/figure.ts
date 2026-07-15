@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "pass-by",
     "name": "Pass By",
     "style": "lindy",
-    "family": "Linear",
-    "count": "6 count",
-    "motion": "Linear",
+    "family": "linear",
+    "count": "six",
+    "motion": "linear",
     "end": "Open"
   },
   "guides": {

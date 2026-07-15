@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "swingout-inside",
     "name": "Swingout + Inside Turn",
     "style": "lindy",
-    "family": "Circular",
-    "count": "8 count",
-    "motion": "Circular",
+    "family": "circular",
+    "count": "eight",
+    "motion": "circular",
     "end": "Open"
   },
   "guides": {

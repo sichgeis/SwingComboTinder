@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "hand-to-hand",
     "name": "Hand-to-Hand Charleston",
     "style": "charleston",
-    "family": "Charleston",
-    "count": "8 count",
-    "motion": "Rotational",
+    "family": "charleston",
+    "count": "eight",
+    "motion": "rotational",
     "end": "Open"
   },
   "guides": {

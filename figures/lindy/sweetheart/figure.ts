@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "sweetheart",
     "name": "Sweetheart",
     "style": "lindy",
-    "family": "Position",
-    "count": "6 or 8 count",
-    "motion": "Linear",
+    "family": "position",
+    "count": "six-or-eight",
+    "motion": "linear",
     "end": "Wrapped"
   },
   "guides": {

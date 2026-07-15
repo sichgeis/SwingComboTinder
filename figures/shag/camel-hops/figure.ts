@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "camel-hops",
     "name": "Camel Hops",
     "style": "shag",
-    "family": "Shag Rhythm",
-    "count": "6 or 12 count",
-    "motion": "Travel",
+    "family": "shag-rhythm",
+    "count": "six-or-twelve",
+    "motion": "travel",
     "end": "Closed / Open"
   },
   "guides": {

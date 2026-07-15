@@ -43,3 +43,15 @@ This file is the compact current-work surface for Swing Thing. Detailed accepted
 - Progress: Removed aliases, static familiarity, flow suggestions, generated combos, and production teaching sources across the app, Content Studio, and all 42 figure packages. Preserved nightly swipe choices with a central Curious/Neugierig default, retained user-visible resources and ending positions, migrated all 113 teaching-source records into figure notes, and changed sharing to list selected figures without generated sequences.
 - Validation: `npm run check` passes with 20 test files and 52 tests plus the production PWA build. A provenance audit compared every removed teaching source with its migrated note and found no missing IDs, titles, channels, timestamps, frame references, or editorial notes.
 - Next action: None; reassess future recommendation or durable mastery concepts from the simplified model.
+
+## Typed figure metadata
+
+- Status: In progress
+- Approved: 2026-07-15
+- Goal: Replace the remaining known-value figure metadata strings with semantic, runtime-validated types without changing visible card meaning.
+- Scope: Introduce shared enum-like unions and Content Studio dropdowns for family, count, and motion; replace slash-delimited ending strings with a structured `any` or position-list model; migrate all 42 figures and preserve localized labels.
+- Non-goals: Do not redesign the existing family taxonomy, change figure classifications, add recommendation behavior, or restructure free-text guide and resource content.
+- Specification: [`specs/typed-figure-metadata.md`](specs/typed-figure-metadata.md)
+- Progress: Family, count, and motion now use semantic enum-like codes across the domain, all 42 figures, runtime validation, localized card presentation, and Content Studio dropdowns.
+- Validation: Increment-one type checks, linting, 20 test files with 53 tests, and a complete 42-figure enum audit pass.
+- Next action: Replace free-text endings with structured ending positions.

@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "double-turn",
     "name": "Double Turn",
     "style": "lindy",
-    "family": "Turn",
-    "count": "8 count",
-    "motion": "Rotational",
+    "family": "turn",
+    "count": "eight",
+    "motion": "rotational",
     "end": "Open"
   },
   "guides": {

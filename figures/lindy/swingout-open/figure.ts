@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "swingout-open",
     "name": "Swingout from Open",
     "style": "lindy",
-    "family": "Circular",
-    "count": "8 count",
-    "motion": "Circular",
+    "family": "circular",
+    "count": "eight",
+    "motion": "circular",
     "end": "Open"
   },
   "guides": {

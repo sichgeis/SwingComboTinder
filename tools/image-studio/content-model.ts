@@ -1,8 +1,23 @@
-import { moveStyles } from "../../src/domain/move";
+import {
+  countPatterns,
+  motionKinds,
+  moveFamilies,
+  moveStyles,
+  type CountPattern,
+  type MotionKind,
+  type MoveFamily,
+  type MoveStyle
+} from "../../src/domain/move";
 import { videoKinds, webResourceKinds, type FigureDefinition, type WebResourceKind } from "../../figures/define-figure";
 
 export const resourceLanguages = ["en", "de"] as const;
 type ResourceLanguage = (typeof resourceLanguages)[number];
+
+export const figureMetadataOptions = {
+  families: moveFamilies,
+  countPatterns,
+  motionKinds
+} as const;
 
 export interface ContentValidationIssue {
   readonly path: string;
@@ -11,7 +26,7 @@ export interface ContentValidationIssue {
 
 export interface FigureIdentityDto {
   readonly id: string;
-  readonly style: string;
+  readonly style: MoveStyle;
   readonly slug: string;
   readonly order: number;
   readonly cardImport: string;
@@ -19,9 +34,9 @@ export interface FigureIdentityDto {
 
 export interface FigureBasicsDto {
   readonly name: string;
-  readonly family: string;
-  readonly count: string;
-  readonly motion: string;
+  readonly family: MoveFamily;
+  readonly count: CountPattern;
+  readonly motion: MotionKind;
   readonly end: string;
 }
 
@@ -108,6 +123,17 @@ const numberValue = (value: unknown, path: string, issues: ContentValidationIssu
     return 0;
   }
   return value;
+};
+
+const enumValue = <Value extends string>(
+  value: unknown,
+  allowed: readonly Value[],
+  path: string,
+  issues: ContentValidationIssue[]
+): Value => {
+  const parsed = textValue(value, path, issues);
+  if (!allowed.some((candidate) => candidate === parsed)) issues.push({ path, message: "Unknown value." });
+  return parsed as Value;
 };
 
 const parseGuide = (value: unknown, path: string, issues: ContentValidationIssue[]): GuideDto => {
@@ -207,8 +233,7 @@ export const validateFigureContent = (value: unknown): FigureContentDto => {
   const identity = record(source.identity, "identity", issues);
   const basics = record(source.basics, "basics", issues);
   const guides = record(source.guides, "guides", issues);
-  const style = textValue(identity.style, "identity.style", issues);
-  if (!moveStyles.includes(style as (typeof moveStyles)[number])) issues.push({ path: "identity.style", message: "Unknown dance style." });
+  const style = enumValue(identity.style, moveStyles, "identity.style", issues);
   const order = numberValue(identity.order, "identity.order", issues);
   if (!Number.isInteger(order) || order < 0) issues.push({ path: "identity.order", message: "Order must be a non-negative integer." });
   const content: FigureContentDto = {
@@ -221,9 +246,9 @@ export const validateFigureContent = (value: unknown): FigureContentDto => {
     },
     basics: {
       name: textValue(basics.name, "basics.name", issues),
-      family: textValue(basics.family, "basics.family", issues),
-      count: textValue(basics.count, "basics.count", issues),
-      motion: textValue(basics.motion, "basics.motion", issues),
+      family: enumValue(basics.family, moveFamilies, "basics.family", issues),
+      count: enumValue(basics.count, countPatterns, "basics.count", issues),
+      motion: enumValue(basics.motion, motionKinds, "basics.motion", issues),
       end: textValue(basics.end, "basics.end", issues)
     },
     guides: {

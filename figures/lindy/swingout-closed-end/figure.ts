@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "swingout-closed-end",
     "name": "Swingout to Closed",
     "style": "lindy",
-    "family": "Transition",
-    "count": "8 count",
-    "motion": "Circular",
+    "family": "transition",
+    "count": "eight",
+    "motion": "circular",
     "end": "Closed"
   },
   "guides": {

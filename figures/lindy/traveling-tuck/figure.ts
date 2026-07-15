@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "traveling-tuck",
     "name": "Traveling Tuck",
     "style": "lindy",
-    "family": "Turn",
-    "count": "6 or 8 count",
-    "motion": "Linear",
+    "family": "turn",
+    "count": "six-or-eight",
+    "motion": "linear",
     "end": "Open"
   },
   "guides": {

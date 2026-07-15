@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "bring-in",
     "name": "Bring In",
     "style": "lindy",
-    "family": "Transition",
-    "count": "6 count",
-    "motion": "Linear",
+    "family": "transition",
+    "count": "six",
+    "motion": "linear",
     "end": "Closed"
   },
   "guides": {

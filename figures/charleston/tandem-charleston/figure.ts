@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "tandem-charleston",
     "name": "Tandem Charleston",
     "style": "charleston",
-    "family": "Tandem",
-    "count": "8 count",
-    "motion": "Linear",
+    "family": "tandem",
+    "count": "eight",
+    "motion": "linear",
     "end": "Tandem"
   },
   "guides": {

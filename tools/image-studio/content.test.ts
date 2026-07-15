@@ -49,6 +49,9 @@ describe("figure content persistence", () => {
     const source = await readFile(resolve(figuresRoot, "lindy/inside-turn/figure.ts"), "utf8");
     const content = parseFigureContent(source, "figure.ts", "inside-turn");
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, name: "" } })).toThrow(ContentValidationError);
+    expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, family: "typo" } })).toThrow(ContentValidationError);
+    expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, count: "seven" } })).toThrow(ContentValidationError);
+    expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, motion: "sideways" } })).toThrow(ContentValidationError);
   });
 
   it("detects stale writes and leaves the external source unchanged", async () => {

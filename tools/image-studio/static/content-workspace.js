@@ -2,6 +2,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const contentState = {
     activeContentId: null,
     content: null,
+    metadataOptions: null,
     originalContent: "",
     contentRevision: "",
     contentIssues: [],
@@ -50,6 +51,20 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
 
   const selectField = (label, path, value, choices, options = {}) => `<label class="content-field ${options.full ? "full" : ""}" data-field-path="${escapeHtml(path)}"><span>${escapeHtml(label)}</span><select data-content-path="${escapeHtml(path)}">${choices.map(({ value: optionValue, label: optionLabel }) => `<option value="${escapeHtml(optionValue)}" ${value === optionValue ? "selected" : ""}>${escapeHtml(optionLabel)}</option>`).join("")}</select><small class="field-error"></small></label>`;
 
+  const metadataChoiceLabels = {
+    six: "6 count",
+    eight: "8 count",
+    "six-or-eight": "6 or 8 count",
+    "six-or-twelve": "6 or 12 count",
+    "eight-or-sixteen": "8 or 16 count",
+    musical: "As musical"
+  };
+
+  const metadataChoices = (values) => values.map((value) => ({
+    value,
+    label: metadataChoiceLabels[value] || value.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ")
+  }));
+
   const section = (title, body) => `<details class="content-section" ${contentState.openSections.has(title) ? "open" : ""}><summary>${escapeHtml(title)}</summary><div class="content-section-body">${body}</div></details>`;
 
   const resourceActions = (collection, index, length) => `<div class="resource-actions">
@@ -75,7 +90,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   };
 
   const renderContentFields = () => {
-    if (!contentState.content) return;
+    if (!contentState.content || !contentState.metadataOptions) return;
     const { identity, basics, guides } = contentState.content;
     const basicsFields = [
       contentField("Stable ID", "identity.id", identity.id, { readonly: true }),
@@ -83,9 +98,9 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       contentField("Directory slug", "identity.slug", identity.slug, { readonly: true }),
       contentField("Global order", "identity.order", identity.order, { readonly: true, type: "number" }),
       contentField("Canonical name", "basics.name", basics.name),
-      contentField("Family", "basics.family", basics.family),
-      contentField("Count", "basics.count", basics.count),
-      contentField("Motion", "basics.motion", basics.motion),
+      selectField("Family", "basics.family", basics.family, metadataChoices(contentState.metadataOptions.families)),
+      selectField("Count", "basics.count", basics.count, metadataChoices(contentState.metadataOptions.countPatterns)),
+      selectField("Motion", "basics.motion", basics.motion, metadataChoices(contentState.metadataOptions.motionKinds)),
       contentField("Ending position", "basics.end", basics.end)
     ].join("");
     const englishFields = ["description", "steps", "body", "lead", "connection", "cue"]
@@ -209,6 +224,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       const loaded = await request(`/api/figure-content?id=${encodeURIComponent(id)}`);
       contentState.activeContentId = id;
       contentState.content = loaded.content;
+      contentState.metadataOptions = loaded.metadataOptions;
       contentState.originalContent = JSON.stringify(loaded.content);
       contentState.contentRevision = loaded.revision;
       contentState.contentIssues = [];

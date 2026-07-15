@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "free-spin",
     "name": "Free Spin",
     "style": "lindy",
-    "family": "Turn",
-    "count": "6 count",
-    "motion": "Rotational",
+    "family": "turn",
+    "count": "six",
+    "motion": "rotational",
     "end": "Open"
   },
   "guides": {

@@ -8,9 +8,9 @@ export default defineFigure({
     "id": "schiebetuer",
     "name": "Schiebetür",
     "style": "lindy",
-    "family": "Linear",
-    "count": "8 count",
-    "motion": "Linear",
+    "family": "linear",
+    "count": "eight",
+    "motion": "linear",
     "end": "Open"
   },
   "guides": {
