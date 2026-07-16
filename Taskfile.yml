@@ -3,6 +3,7 @@ version: "3"
 vars:
   MODE: '{{default "missing" .MODE}}'
   CONCURRENCY: '{{default "3" .CONCURRENCY}}'
+  TRANSCRIPT_SOURCE: '{{default "../swing-yt-transcript-downloader/swing_transcripts_full" .SOURCE}}'
 
 tasks:
   default:
@@ -49,6 +50,7 @@ tasks:
     desc: Run linting, type checks, tests, and the production build
     deps: [install]
     cmds:
+      - python3 -m unittest discover -s tools/transcripts -p 'test_*.py'
       - npm run check
 
   lint:
@@ -94,3 +96,19 @@ tasks:
     deps: [install]
     cmds:
       - npm run images:generate -- --mode {{.MODE}} --concurrency {{.CONCURRENCY}} {{.CLI_ARGS}}
+
+  transcripts:plan:
+    desc: Preview importing completed tutorial transcripts into figure packages
+    cmds:
+      - >-
+        python3 tools/transcripts/import_transcripts.py
+        --source {{shellQuote .TRANSCRIPT_SOURCE}}
+        --dry-run
+
+  transcripts:import:
+    desc: Import completed tutorial transcripts into figure packages
+    cmds:
+      - >-
+        python3 tools/transcripts/import_transcripts.py
+        --source {{shellQuote .TRANSCRIPT_SOURCE}}
+        {{if .OVERWRITE}}--overwrite{{end}}

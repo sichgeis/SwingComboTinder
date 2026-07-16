@@ -8,10 +8,24 @@ figures/<style>/<figure-id>/
   card.jpg
   teaching-frames/
   generated/
+  transcripts/      # optional imported research transcripts
   notes.md
 ```
 
 `figure.ts` is the typed source of truth for factual metadata, English and German card copy, and one ordered discriminated list of YouTube or generic web resources shown on the card back. Each localized guide keeps a short `description`, a sectioned `body`, and a closing `remember` cue. Body sections begin with `## Heading`; plain-text paragraphs are separated by blank lines. English and German may use different headings, section counts, and ordering. Known family, count, motion, ending-position, resource-category, and optional resource-language values are constrained by shared domain types and server-supplied Content Studio controls rather than stored as display text. `notes.md` keeps teaching-source provenance and artwork decisions out of production content. Figures with a full-resolution `generated/current.png` use it as their card source; figures without one fall back to `card.jpg`. Vite converts either source to a 600 × 900 WebP at quality 80 for the PWA. Teaching frames remain versioned source material but do not enter the production build. Of the generated files, only the promoted `generated/current.png` is versioned; candidates, metadata, and archived masters remain local.
+
+`transcripts/` contains optional research copies of complete captions retrieved for that figure. These
+Markdown files are versioned source material but are not loaded by the application. Preview or run
+the idempotent sibling-project import with:
+
+```sh
+task transcripts:plan
+task transcripts:import
+task transcripts:import SOURCE=/custom/transcript/output
+```
+
+The importer reads completed entries from `index.csv`, preserves filenames and metadata, skips
+identical files, and refuses to replace differing files unless `OVERWRITE=1` is supplied.
 
 Use `task images:studio` to edit existing figure content through the local master-detail Content workspace. It provides a shared app-card preview, field validation, external-change detection, and atomic full-figure saving. Identity, style, order, directory, and artwork imports remain source-maintained fields rather than editable studio content.
 
