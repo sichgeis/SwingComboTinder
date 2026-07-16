@@ -27,6 +27,11 @@ task transcripts:import SOURCE=/custom/transcript/output
 The importer reads completed entries from `index.csv`, preserves filenames and metadata, skips
 identical files, and refuses to replace differing files unless `OVERWRITE=1` is supplied.
 
+When transcripts are used to write or revise the bilingual card copy, follow the
+[`card-back style guide`](CARD_BACK_STYLE_GUIDE.md). It defines the German-first synthesis workflow,
+Swing Denglisch, spatial precision, compact section structure, English adaptation, remember cues,
+and review checklist.
+
 Use `task images:studio` to edit existing figure content through the local master-detail Content workspace. It provides a shared app-card preview, field validation, external-change detection, and atomic full-figure saving. Identity, style, order, directory, and artwork imports remain source-maintained fields rather than editable studio content.
 
 ## Reworking a figure
