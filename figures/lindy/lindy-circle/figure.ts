@@ -30,5 +30,18 @@ export default defineFigure({
       "remember": "Durch die Bahn gehen, Rückenconnection halten und die Rotation auf den eigenen Füßen beenden."
     }
   },
-  "resources": []
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "P083vG0JKB8",
+      "title": "Learn2LindyHop, Ch. 17 – Lindy Circle",
+      "kind": "tutorial"
+    },
+    {
+      "type": "youtube",
+      "videoId": "YEvwNwpSRMA",
+      "title": "Lindy Circle – hepjen & Ken Watanabe",
+      "kind": "tutorial"
+    }
+  ]
 });
