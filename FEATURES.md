@@ -2,6 +2,16 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Card publication state
+
+- Status: Proposed
+- Maturity: Draft; implementation is not authorized.
+- Goal: Let the Content Studio keep unfinished figure cards as drafts and deliberately include or exclude each card from the production app.
+- Scope: Add an explicit `published` or `draft` state to every figure definition; edit it as an “Include in production” control in the Studio; show and filter the state in the dense library; keep drafts editable and previewable in both Studio workspaces; expose only published figures to the public app catalog.
+- Non-goals: Do not add multi-stage approval, scheduling, roles, remote publishing, bulk status changes, or automatic Git/deployment controls.
+- Specification: [`specs/card-publication-state.md`](specs/card-publication-state.md)
+- Next action: Obtain explicit approval for the proposed state names and behavior, then implement the typed model, Studio workflow, catalog filtering, migration, tests, and documentation.
+
 ## Flexible bilingual card guides
 
 - Status: Done
