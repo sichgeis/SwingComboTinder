@@ -2,6 +2,18 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Studio transcript import
+
+- Status: Done
+- Approved: 2026-07-17
+- Goal: Paste a YouTube URL into a selected figure's Content context and save its complete available captions in that figure package.
+- Scope: Figure-scoped Research transcripts UI; existing free downloader integration; machine-readable backend protocol; title-based safe filenames; existing-file list; bounded process execution; tests and documentation.
+- Non-goals: Do not search/crawl YouTube, bulk import through Studio, refresh existing files, summarize/edit card copy, add app-visible resources, translate/transcribe audio, or use paid providers/API keys.
+- Specification: [`specs/studio-transcript-import.md`](specs/studio-transcript-import.md)
+- Progress: Added title-based and JSON downloader modes, a bounded no-shell backend adapter, contained-path verification, the figure-scoped API, filesystem-backed transcript lists, Content paste/Enter/button workflow, focused coverage, and documentation.
+- Validation: `task check` passes with 22 Python maintenance tests, 23 application test files and 78 tests plus the production PWA build; browser syntax checking passes. The real 42-card Studio listed seven Lindy Circle transcripts and safely reported an archived pasted URL without another request, dirtying content, creating a duplicate, or logging an error. A separate cache-backed download created the exact title-named Markdown with complete metadata/timestamps and was removed afterward; no paid or live remote request was used.
+- Next action: None; select a figure and use Research transcripts for the next researched YouTube source.
+
 ## Studio teaching-pose upload
 
 - Status: Done

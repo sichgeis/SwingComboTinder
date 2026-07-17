@@ -43,6 +43,12 @@ and new transcript filenames for `- Video ID:` metadata. An already archived vid
 `OVERWRITE=1` with the Task command, or `--overwrite` with the Python CLI, to refresh the free
 provider response and rewrite that transcript while preserving an existing filename.
 
+The Dance Card Studio exposes the same downloader under a selected card's **Research transcripts**
+section. Paste one YouTube URL there to save the captions directly into that figure. New Studio
+imports use the original public video title as the filename; when that title is already occupied by
+a different video, the stable video ID is appended. The section lists the resulting repository path
+without adding the transcript to production card content.
+
 The provider chain is deliberately limited to the ignored local cache and the free hosted
 `youtube-transcript.ai` caption endpoint. It never calls `youtube-transcript.dev`, performs audio
 transcription, or reads an API key. Captions may be automatic, incomplete, unavailable, or wrong;

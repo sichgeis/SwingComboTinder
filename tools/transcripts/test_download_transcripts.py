@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import importlib.util
+import io
+import json
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -135,6 +138,36 @@ class TranscriptDownloaderTests(unittest.TestCase):
         self.assertIn("[00:00:02] First caption", content)
         self.assertEqual(client.caption_calls, [("P083vG0JKB8", "en", False)])
 
+    def test_studio_mode_names_new_transcript_from_video_title(self):
+        result = DOWNLOADER.download_one(
+            url="https://youtu.be/P083vG0JKB8",
+            figure=self.figure,
+            language="en",
+            client=FakeClient(),
+            title_filename=True,
+        )
+
+        assert result.path
+        self.assertEqual(result.path.name, "A Lesson- -Circle-.md")
+        self.assertEqual(result.title, 'A Lesson: "Circle"')
+        self.assertEqual(result.channel, "Laura Glaess")
+
+    def test_title_filename_uses_video_id_when_title_is_already_taken(self):
+        transcripts = self.figure / "transcripts"
+        transcripts.mkdir()
+        (transcripts / "A Lesson- -Circle-.md").write_text("different video\n", encoding="utf-8")
+
+        result = DOWNLOADER.download_one(
+            url="https://youtu.be/P083vG0JKB8",
+            figure=self.figure,
+            language="en",
+            client=FakeClient(),
+            title_filename=True,
+        )
+
+        assert result.path
+        self.assertEqual(result.path.name, "A Lesson- -Circle- - P083vG0JKB8.md")
+
     def test_repeat_download_skips_existing_video_without_network_calls(self):
         transcripts = self.figure / "transcripts"
         transcripts.mkdir()
@@ -153,6 +186,27 @@ class TranscriptDownloaderTests(unittest.TestCase):
         self.assertEqual(result.path, existing)
         self.assertEqual(client.caption_calls, [])
         self.assertEqual(client.metadata_calls, [])
+
+    def test_json_cli_reports_an_existing_transcript_without_network(self):
+        transcripts = self.figure / "transcripts"
+        transcripts.mkdir()
+        existing = transcripts / "Original title.md"
+        existing.write_text("# Figure\n\n- Video ID: P083vG0JKB8\n", encoding="utf-8")
+        output = io.StringIO()
+
+        with redirect_stdout(output):
+            status = DOWNLOADER.main([
+                "--figures", str(self.figures),
+                "--figure", "lindy/lindy-circle",
+                "--json",
+                "--title-filename",
+                "https://youtu.be/P083vG0JKB8",
+            ])
+
+        payload = json.loads(output.getvalue())
+        self.assertEqual(status, 0)
+        self.assertEqual(payload["unchanged"], 1)
+        self.assertEqual(payload["results"][0]["filename"], "Original title.md")
 
     def test_overwrite_refreshes_and_preserves_existing_filename(self):
         transcripts = self.figure / "transcripts"

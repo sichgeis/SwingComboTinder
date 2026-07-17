@@ -27,6 +27,10 @@ timestamped Markdown, and skips a video ID that is already present. Pass `OVERWR
 known transcript should be refreshed. Full CLI usage, including multiple URLs and source metadata
 overrides, is documented in [`tools/transcripts/README.md`](../tools/transcripts/README.md).
 
+The Content workspace in `task studio` provides the same single-URL workflow under **Research
+transcripts** for the selected figure. Studio downloads are named from the original YouTube title,
+listed with their repository-relative filesystem path, and remain research files outside `figure.ts`.
+
 The earlier sibling-project batch output can still be previewed or imported with:
 
 ```sh

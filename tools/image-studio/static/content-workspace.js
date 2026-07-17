@@ -17,6 +17,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     previewStyles: "",
     previewRequest: 0,
     previewTimer: null,
+    transcripts: [],
     openSections: new Set(["Basics"]),
     restoreAttempted: false
   };
@@ -217,6 +218,20 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     </div>`;
   };
 
+  const transcriptResearchEditor = () => {
+    const transcripts = contentState.transcripts;
+    return `<div class="transcript-research">
+      <div class="transcript-import-row">
+        <label class="content-field full"><span>YouTube URL</span><small class="field-hint">Downloads complete available English captions through the free provider and stores them only in this figure package.</small><input type="url" data-transcript-url placeholder="https://www.youtube.com/watch?v=…" autocomplete="off"><small class="field-error"></small></label>
+        <button type="button" data-content-action="download-transcript">Download transcript</button>
+      </div>
+      <p class="transcript-import-status" data-transcript-status role="status"></p>
+      ${transcripts.length
+        ? `<ul class="transcript-file-list">${transcripts.map((transcript) => `<li><strong>${escapeHtml(transcript.filename)}</strong><code>${escapeHtml(transcript.path)}</code></li>`).join("")}</ul>`
+        : '<p class="resource-empty">No research transcripts saved for this figure.</p>'}
+    </div>`;
+  };
+
   const renderContentFields = () => {
     if (!contentState.content || !contentState.metadataOptions) return;
     const { identity, basics, guides } = contentState.content;
@@ -249,7 +264,8 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       section("Basics", basicsFields, "Figure facts"),
       section("English", guideFields("en", guides.en), "3 fields"),
       section("German", guideFields("de", guides.de), "3 fields"),
-      section("Resources", cardResourcesEditor(), `${contentState.content.cardResources.length} link${contentState.content.cardResources.length === 1 ? "" : "s"}`)
+      section("Resources", cardResourcesEditor(), `${contentState.content.cardResources.length} link${contentState.content.cardResources.length === 1 ? "" : "s"}`),
+      section("Research transcripts", transcriptResearchEditor(), `${contentState.transcripts.length} file${contentState.transcripts.length === 1 ? "" : "s"}`)
     ].join("");
     applyContentIssues(contentState.contentIssues);
   };
@@ -402,6 +418,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       contentState.originalContent = JSON.stringify(loaded.content);
       contentState.contentRevision = loaded.revision;
       contentState.contentIssues = [];
+      contentState.transcripts = loaded.transcripts || [];
       contentState.openSections = new Set(["Basics"]);
       contentState.previewMarkup = "";
       contentEmpty.hidden = true;
@@ -564,11 +581,50 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     details.open ? contentState.openSections.add(title) : contentState.openSections.delete(title);
   }, true);
 
-  contentFields.addEventListener("click", (event) => {
+  contentFields.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-content-action]");
     if (!button || !contentState.content) return;
-    rememberOpenSections();
     const action = button.dataset.contentAction;
+    if (action === "download-transcript") {
+      const container = button.closest(".transcript-research");
+      const input = container.querySelector("[data-transcript-url]");
+      const status = container.querySelector("[data-transcript-status]");
+      const url = input.value.trim();
+      const figureId = contentState.activeContentId;
+      if (!url) {
+        status.className = "transcript-import-status error";
+        status.textContent = "Paste a YouTube URL first.";
+        input.focus();
+        return;
+      }
+      button.disabled = true;
+      input.disabled = true;
+      status.className = "transcript-import-status";
+      status.textContent = "Downloading free hosted captions…";
+      try {
+        const imported = await request("/api/transcripts", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ id: figureId, url })
+        });
+        if (contentState.activeContentId !== figureId) return;
+        contentState.transcripts = imported.transcripts;
+        rememberOpenSections();
+        renderContentFields();
+        const refreshedStatus = contentFields.querySelector("[data-transcript-status]");
+        refreshedStatus.className = "transcript-import-status success";
+        refreshedStatus.textContent = imported.result.status === "written"
+          ? `Saved ${imported.result.filename} in this figure's transcripts directory.`
+          : `${imported.result.filename} is already available for this figure.`;
+      } catch (error) {
+        status.className = "transcript-import-status error";
+        status.textContent = error.message;
+        button.disabled = false;
+        input.disabled = false;
+      }
+      return;
+    }
+    rememberOpenSections();
     if (action === "add-youtube-resource") {
       contentState.content.cardResources.push({ type: "youtube", videoId: "", title: "", kind: "tutorial" });
     } else if (action === "add-web-resource") {
@@ -587,6 +643,13 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     renderContentFields();
     updateContentHeader();
     schedulePreview();
+  });
+
+  contentFields.addEventListener("keydown", (event) => {
+    const input = event.target.closest("[data-transcript-url]");
+    if (!input || event.key !== "Enter") return;
+    event.preventDefault();
+    input.closest(".transcript-research").querySelector('[data-content-action="download-transcript"]').click();
   });
 
   contentRevert.addEventListener("click", () => {

@@ -56,6 +56,8 @@ class DownloadResult:
     status: str
     path: Path | None = None
     message: str = ""
+    title: str = ""
+    channel: str = ""
 
 
 def extract_video_id(value: str) -> str:
@@ -235,6 +237,17 @@ def sanitize_filename(value: str, max_length: int = 100) -> str:
     return value[:max_length].rstrip(" .")
 
 
+def title_destination(figure: Path, title: str, video_id: str) -> Path:
+    transcripts = figure / "transcripts"
+    candidate = transcripts / f"{sanitize_filename(title)}.md"
+    if not candidate.exists():
+        return candidate
+    fallback = transcripts / f"{sanitize_filename(title, 84)} - {video_id}.md"
+    if fallback.exists():
+        raise TranscriptError(f"A different transcript already occupies {fallback}")
+    return fallback
+
+
 def render_transcript(
     *,
     figure_name: str,
@@ -279,6 +292,7 @@ def download_one(
     overwrite: bool = False,
     title: str | None = None,
     channel: str | None = None,
+    title_filename: bool = False,
     now: datetime | None = None,
 ) -> DownloadResult:
     video_id = extract_video_id(url)
@@ -300,7 +314,9 @@ def download_one(
     )
 
     destination = existing or (
-        figure / "transcripts" / f"{video_id} - {sanitize_filename(metadata.title)}.md"
+        title_destination(figure, metadata.title, video_id)
+        if title_filename
+        else figure / "transcripts" / f"{video_id} - {sanitize_filename(metadata.title)}.md"
     )
     content = render_transcript(
         figure_name=read_figure_name(figure),
@@ -311,7 +327,14 @@ def download_one(
         retrieved_at=now or datetime.now(timezone.utc),
     )
     atomic_write(destination, content)
-    return DownloadResult(video_id, "written", destination, metadata_warning.lstrip("; "))
+    return DownloadResult(
+        video_id,
+        "written",
+        destination,
+        metadata_warning.lstrip("; "),
+        metadata.title,
+        metadata.channel,
+    )
 
 
 def parser() -> argparse.ArgumentParser:
@@ -326,7 +349,25 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--overwrite", action="store_true")
     result.add_argument("--title", help="Override the title when downloading exactly one URL")
     result.add_argument("--channel", help="Override the channel when downloading exactly one URL")
+    result.add_argument(
+        "--title-filename",
+        action="store_true",
+        help="Name new files from the public video title instead of prefixing the video ID",
+    )
+    result.add_argument("--json", action="store_true", help=argparse.SUPPRESS)
     return result
+
+
+def result_payload(result: DownloadResult) -> dict[str, str | None]:
+    return {
+        "videoId": result.video_id,
+        "status": result.status,
+        "path": str(result.path) if result.path else None,
+        "filename": result.path.name if result.path else None,
+        "message": result.message,
+        "title": result.title,
+        "channel": result.channel,
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -340,11 +381,15 @@ def main(argv: list[str] | None = None) -> int:
     try:
         figure = resolve_figure(args.figure, args.figures)
     except ValueError as error:
-        print(f"ERROR: {error}", file=sys.stderr)
+        if args.json:
+            print(json.dumps({"results": [], "error": str(error)}))
+        else:
+            print(f"ERROR: {error}", file=sys.stderr)
         return 2
 
     client = HostedTranscriptClient(args.cache)
     written = unchanged = failed = 0
+    results: list[dict[str, str | None]] = []
     for url in args.urls:
         try:
             result = download_one(
@@ -355,22 +400,44 @@ def main(argv: list[str] | None = None) -> int:
                 overwrite=args.overwrite,
                 title=args.title,
                 channel=args.channel,
+                title_filename=args.title_filename,
             )
+            results.append(result_payload(result))
             if result.status == "written":
                 written += 1
-                print(f"WROTE {result.video_id}: {result.path}")
-                if result.message:
+                if not args.json:
+                    print(f"WROTE {result.video_id}: {result.path}")
+                if result.message and not args.json:
                     print(f"WARN {result.video_id}: {result.message}", file=sys.stderr)
             else:
                 unchanged += 1
-                print(f"SKIP {result.video_id}: {result.path} ({result.message})")
+                if not args.json:
+                    print(f"SKIP {result.video_id}: {result.path} ({result.message})")
         except (OSError, ValueError, json.JSONDecodeError, TranscriptError) as error:
             failed += 1
-            print(f"FAILED {url}: {error}", file=sys.stderr)
+            results.append({
+                "videoId": "",
+                "status": "failed",
+                "path": None,
+                "filename": None,
+                "message": str(error),
+                "title": "",
+                "channel": "",
+            })
+            if not args.json:
+                print(f"FAILED {url}: {error}", file=sys.stderr)
 
-    print(f"Written: {written}")
-    print(f"Unchanged: {unchanged}")
-    print(f"Failed: {failed}")
+    if args.json:
+        print(json.dumps({
+            "results": results,
+            "written": written,
+            "unchanged": unchanged,
+            "failed": failed,
+        }))
+    else:
+        print(f"Written: {written}")
+        print(f"Unchanged: {unchanged}")
+        print(f"Failed: {failed}")
     return 1 if failed else 0
 
 

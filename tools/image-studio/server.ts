@@ -38,6 +38,7 @@ import {
 } from "./types";
 import { renderCardMarkup } from "../../src/ui/card-presentation";
 import { createFigurePackage, FigureCreationError } from "./create-figure";
+import { importYouTubeTranscript, listTranscriptFiles } from "./transcripts";
 
 const staticRoot = resolve(dirname(fileURLToPath(import.meta.url)), "static");
 const appStylesPath = resolve(repositoryRoot, "src/styles/app.css");
@@ -54,6 +55,7 @@ const environment = (() => {
 const port = environment.studioPort;
 const model = environment.model;
 const clients = new Set<ServerResponse>();
+const transcriptImports = new Set<string>();
 let runActive = false;
 
 interface RunRequest {
@@ -338,7 +340,12 @@ const serveFigureContent = async (response: ServerResponse, id: string | null): 
   if (!id) throw new Error("Missing figure ID.");
   const figure = await findFigure(id);
   const loaded = await readFigureContentFile(figure.definitionPath, figure.slug);
-  sendJson(response, 200, { ...loaded, imageUrl: figureImageUrl(figure), metadataOptions: figureMetadataOptions });
+  sendJson(response, 200, {
+    ...loaded,
+    imageUrl: figureImageUrl(figure),
+    metadataOptions: figureMetadataOptions,
+    transcripts: await listTranscriptFiles(figure)
+  });
 };
 
 const saveFigureContent = async (
@@ -428,6 +435,34 @@ const handleRequest = async (
   }
   if (request.method === "POST" && url.pathname === "/api/preview") {
     await serveFigurePreview(request, response);
+    return;
+  }
+  if (request.method === "POST" && url.pathname === "/api/transcripts") {
+    const body = await readJson(request);
+    if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
+    const values = body as Record<string, unknown>;
+    if (typeof values.id !== "string" || typeof values.url !== "string") {
+      throw new Error("Transcript download requires a figure id and YouTube URL.");
+    }
+    const importKey = values.id;
+    if (transcriptImports.has(importKey)) throw new Error("Another transcript download is already running for this figure.");
+    transcriptImports.add(importKey);
+    try {
+      const figure = await findFigure(values.id);
+      const result = await importYouTubeTranscript(figure, values.url);
+      requestLogger.info("transcript-imported", {
+        figureId: values.id,
+        videoId: result.videoId,
+        filename: result.filename,
+        status: result.status
+      });
+      sendJson(response, result.status === "written" ? 201 : 200, {
+        result,
+        transcripts: await listTranscriptFiles(figure)
+      });
+    } finally {
+      transcriptImports.delete(importKey);
+    }
     return;
   }
   if (request.method === "GET" && url.pathname === "/api/prompt") {
