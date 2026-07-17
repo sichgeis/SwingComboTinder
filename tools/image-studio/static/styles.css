@@ -76,6 +76,7 @@ body.resizing-library { cursor: col-resize; user-select: none; }
 .content-list-meta { display: flex; flex-wrap: wrap; gap: .45rem; }
 .badge { padding: .1rem .35rem; border: 1px solid var(--line); border-radius: 999px; }
 .badge.good { color: var(--mint); border-color: #397560; }
+.badge.published { color: #b8d8e5; border-color: #527181; }
 .badge.warn, .badge.draft { color: var(--amber); border-color: #7b6033; }
 .badge.bad { color: var(--red); border-color: #7b3f3a; }
 .badge.muted { color: var(--muted); }
@@ -107,6 +108,8 @@ body.resizing-library { cursor: col-resize; user-select: none; }
 .ending-options { display: flex; flex-wrap: wrap; gap: .5rem; }
 .ending-options label { min-height: 2.4rem; padding: .5rem .7rem; display: flex; align-items: center; gap: .45rem; border: 1px solid var(--line); border-radius: .55rem; background: rgba(247, 240, 223, .035); color: var(--muted); font-size: .72rem; }
 .ending-options input { accent-color: var(--amber); }
+.publication-toggle { min-height: 2.6rem; padding: .55rem .7rem; display: flex; align-items: center; gap: .55rem; border: 1px solid var(--line); border-radius: .55rem; background: rgba(247, 240, 223, .035); color: #eff5ef; font-size: .78rem; font-weight: 700; }
+.publication-toggle input { width: 1rem; height: 1rem; accent-color: var(--amber); }
 .content-field input[readonly] { color: #82979e; background: #09151c; }
 .content-field.has-error input, .content-field.has-error textarea, .content-field.has-error select { border-color: var(--red); }
 .field-error { min-height: .9rem; color: var(--red); font-size: .64rem; }

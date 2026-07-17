@@ -159,6 +159,13 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     return `${kind}${positions}`;
   };
 
+  const publicationEditor = () => `<div class="content-field full" data-field-path="publication">
+    <span>Production</span>
+    <label class="publication-toggle"><input type="checkbox" data-content-path="publication" ${contentState.content.publication === "published" ? "checked" : ""}> Include in production</label>
+    <small class="field-hint">Draft cards remain available throughout the Studio but do not appear in the public app.</small>
+    <small class="field-error"></small>
+  </div>`;
+
   const section = (title, body, meta = "") => `<details class="content-section" ${contentState.openSections.has(title) ? "open" : ""}><summary><span>${escapeHtml(title)}</span>${meta ? `<small>${escapeHtml(meta)}</small>` : ""}</summary><div class="content-section-body">${body}</div></details>`;
 
   const resourceActions = (collection, index, length) => `<div class="resource-actions">
@@ -197,6 +204,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       contentField("Global order", "identity.order", identity.order, { readonly: true, type: "number" })
     ].join("")}</div></details>`;
     const basicsFields = [
+      publicationEditor(),
       contentField("Canonical name", "basics.name", basics.name),
       selectField("Family", "basics.family", basics.family, metadataChoices(contentState.metadataOptions.families)),
       selectField("Count", "basics.count", basics.count, metadataChoices(contentState.metadataOptions.countPatterns)),
@@ -261,6 +269,10 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     renderContentList();
   };
 
+  const publicationFor = (figure) => figure.id === contentState.activeContentId && contentState.content
+    ? contentState.content.publication
+    : figure.publication;
+
   const visibleFigures = () => {
     const query = contentSearch.value.trim().toLowerCase();
     const style = contentStyle.value;
@@ -269,6 +281,8 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       const haystack = `${figure.name} ${figure.id}`.toLowerCase();
       const dirty = figure.id === contentState.activeContentId && contentIsDirty();
       const matchesStatus = status === "all"
+        || (status === "published" && publicationFor(figure) === "published")
+        || (status === "draft" && publicationFor(figure) === "draft")
         || (status === "attention" && (!figure.contentValid || figure.resourceCount === 0 || figure.currentIsFallback || dirty))
         || (status === "no-resources" && figure.resourceCount === 0)
         || (status === "fallback" && figure.currentIsFallback)
@@ -283,9 +297,10 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     contentList.classList.remove("is-loading");
     contentList.innerHTML = visible.map((figure) => {
       const dirty = figure.id === contentState.activeContentId && contentIsDirty();
+      const publication = publicationFor(figure);
       return `<button type="button" class="content-list-item ${figure.id === contentState.activeContentId ? "active" : ""}" data-content-id="${escapeHtml(figure.id)}">
         <span class="content-list-title"><strong>${escapeHtml(figure.name)}</strong><span>${escapeHtml(figure.style)}</span></span>
-        <span class="content-list-meta">${!figure.contentValid ? '<span class="badge bad">Invalid</span>' : ""}${!figure.germanComplete ? '<span class="badge warn">German incomplete</span>' : ""}${figure.resourceCount === 0 ? '<span class="badge muted">No resources</span>' : `<span class="badge good">${figure.resourceCount} link${figure.resourceCount === 1 ? "" : "s"}</span>`}${figure.currentIsFallback ? '<span class="badge warn">Fallback art</span>' : ""}${dirty ? '<span class="badge draft">Draft</span>' : ""}</span>
+        <span class="content-list-meta">${publication === "published" ? '<span class="badge published">Published</span>' : publication === "draft" ? '<span class="badge draft">Draft</span>' : '<span class="badge bad">Unknown state</span>'}${!figure.contentValid ? '<span class="badge bad">Invalid</span>' : ""}${!figure.germanComplete ? '<span class="badge warn">German incomplete</span>' : ""}${figure.resourceCount === 0 ? '<span class="badge muted">No resources</span>' : `<span class="badge good">${figure.resourceCount} link${figure.resourceCount === 1 ? "" : "s"}</span>`}${figure.currentIsFallback ? '<span class="badge warn">Fallback art</span>' : ""}${dirty ? '<span class="badge warn">Unsaved</span>' : ""}</span>
       </button>`;
     }).join("") || '<p class="resource-empty">No figures match these filters.</p>';
     if (!contentState.restoreAttempted && getFigures().length > 0) {
@@ -395,9 +410,12 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const updateContentControl = (control) => {
     if (!contentState.content || !control.dataset.contentPath || control.readOnly) return;
     const path = control.dataset.contentPath;
+    const publication = path === "publication";
     const endingKind = path === "basics.end.kind";
     const typeMatch = /^cardResources\.(\d+)\.type$/.exec(path);
-    if (endingKind) {
+    if (publication) {
+      contentState.content.publication = control.checked ? "published" : "draft";
+    } else if (endingKind) {
       rememberOpenSections();
       contentState.content.basics.end = control.value === "any"
         ? { kind: "any" }

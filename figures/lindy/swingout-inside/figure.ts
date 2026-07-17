@@ -3,6 +3,7 @@ import { defineFigure } from "../../define-figure";
 
 export default defineFigure({
   card,
+  "publication": "published",
   "order": 25,
   "move": {
     "id": "swingout-inside",

@@ -42,4 +42,14 @@ describe("session", () => {
     const completed = reconcileSession(recordDecision(reconciled, newMove, "star"), deck);
     expect(completed.index).toBe(deck.length);
   });
+
+  it("retains choices for temporarily unpublished stable figure IDs", () => {
+    const deck = movesForStyles(moves, ["charleston"]);
+    const session = {
+      ...createSession(["charleston"]),
+      choices: { [deck[0]?.id ?? "fixture"]: "keep" as const, "temporarily-draft": "star" as const }
+    };
+
+    expect(reconcileSession(session, deck).choices["temporarily-draft"]).toBe("star");
+  });
 });

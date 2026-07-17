@@ -88,6 +88,7 @@ const contentSummaryFor = async (figure: Awaited<ReturnType<typeof findFigure>>)
     const { content } = await readFigureContentFile(figure.definitionPath, figure.slug);
     return {
       name: content.basics.name,
+      publication: content.publication,
       contentValid: true,
       germanComplete: true,
       resourceCount: content.cardResources.length
@@ -95,6 +96,7 @@ const contentSummaryFor = async (figure: Awaited<ReturnType<typeof findFigure>>)
   } catch (error) {
     return {
       name: figure.name,
+      publication: null,
       contentValid: false,
       germanComplete: false,
       resourceCount: 0,

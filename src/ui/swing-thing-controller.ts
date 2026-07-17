@@ -431,7 +431,7 @@ export class SwingThingController {
   private showResults(): void {
     const deck = this.activeMoves();
     this.showView(this.resultsView);
-    const count = (choice: BuildChoice): number => Object.values(this.session.choices).filter((value) => value === choice).length;
+    const count = (choice: BuildChoice): number => deck.filter(({ id }) => this.session.choices[id] === choice).length;
     const keeps = count("keep");
     const stars = count("star");
     const passes = count("pass");

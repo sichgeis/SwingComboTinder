@@ -1,14 +1,27 @@
 import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { figures } from "../../figures/catalog";
+import { allFigures, figures, publishedFigureFor, publishedFiguresFrom } from "../../figures/catalog";
 import { moves } from "./catalog";
 import { parseGuideBody } from "./guide-body";
 import { countPatterns, endPositions, motionKinds, moveFamilies } from "./move";
 
 describe("move catalog", () => {
   it("preserves the complete unique catalog", () => {
+    expect(allFigures).toHaveLength(42);
     expect(moves).toHaveLength(42);
     expect(new Set(moves.map(({ id }) => id)).size).toBe(42);
+  });
+
+  it("exposes only explicitly published figures to the app catalog and lookup", () => {
+    const published = allFigures[0];
+    const draftSource = allFigures[1];
+    if (!published || !draftSource) throw new Error("Catalog fixtures are missing");
+    const draft = { ...draftSource, publication: "draft" as const };
+    const sourceCatalog = [published, draft];
+
+    expect(publishedFiguresFrom(sourceCatalog)).toEqual([published]);
+    expect(publishedFigureFor(sourceCatalog, published.move.id)).toBe(published);
+    expect(() => publishedFigureFor(sourceCatalog, draft.move.id)).toThrow(`Unknown figure: ${draft.move.id}`);
   });
 
   it("preserves each focused deck", () => {
@@ -28,6 +41,7 @@ describe("move catalog", () => {
   });
 
   it("preserves explicit unique ordering", () => {
+    expect(allFigures.every(({ publication }) => publication === "published")).toBe(true);
     expect(figures.map(({ order }) => order)).toEqual(Array.from({ length: 42 }, (_, index) => index + 1));
     expect(new Set(figures.map(({ order }) => order)).size).toBe(42);
     expect(figures.map(({ move }) => move.id)).toEqual(moves.map(({ id }) => id));

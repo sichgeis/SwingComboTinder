@@ -12,7 +12,7 @@ figures/<style>/<figure-id>/
   notes.md
 ```
 
-`figure.ts` is the typed source of truth for factual metadata, English and German card copy, and one ordered discriminated list of YouTube or generic web resources shown on the card back. Each localized guide keeps a short `description`, a sectioned `body`, and a closing `remember` cue. Body sections begin with `## Heading`; plain-text paragraphs are separated by blank lines. English and German may use different headings, section counts, and ordering. Known family, count, motion, ending-position, resource-category, and optional resource-language values are constrained by shared domain types and server-supplied Content Studio controls rather than stored as display text. `notes.md` keeps teaching-source provenance and artwork decisions out of production content. Figures with a full-resolution `generated/current.png` use it as their card source; figures without one fall back to `card.jpg`. Vite converts either source to a 600 × 900 WebP at quality 80 for the PWA. Teaching frames remain versioned source material but do not enter the production build. Of the generated files, only the promoted `generated/current.png` is versioned; candidates, metadata, and archived masters remain local.
+`figure.ts` is the typed source of truth for the required `draft` or `published` state, factual metadata, English and German card copy, and one ordered discriminated list of YouTube or generic web resources shown on the card back. Each localized guide keeps a short `description`, a sectioned `body`, and a closing `remember` cue. Body sections begin with `## Heading`; plain-text paragraphs are separated by blank lines. English and German may use different headings, section counts, and ordering. Known family, count, motion, ending-position, resource-category, and optional resource-language values are constrained by shared domain types and server-supplied Content Studio controls rather than stored as display text. `notes.md` keeps teaching-source provenance and artwork decisions out of production content. Figures with a full-resolution `generated/current.png` use it as their card source; figures without one fall back to `card.jpg`. Vite converts either source to a 600 × 900 WebP at quality 80 for the PWA. Teaching frames remain versioned source material but do not enter the production build. Of the generated files, only the promoted `generated/current.png` is versioned; candidates, metadata, and archived masters remain local.
 
 `transcripts/` contains optional research copies of complete captions retrieved for that figure. These
 Markdown files are versioned source material but are not loaded by the application. Preview or run
@@ -32,7 +32,7 @@ When transcripts are used to write or revise the bilingual card copy, follow the
 Swing Denglisch, spatial precision, compact section structure, English adaptation, remember cues,
 and review checklist.
 
-Use `task images:studio` to edit existing figure content through the local master-detail Content workspace. It provides a shared app-card preview, field validation, external-change detection, and atomic full-figure saving. Identity, style, order, directory, and artwork imports remain source-maintained fields rather than editable studio content.
+Use `task images:studio` to edit existing figure content through the local master-detail Content workspace. It provides a shared app-card preview, field validation, external-change detection, and atomic full-figure saving. “Include in production” maps the typed publication state to `published` when checked and `draft` when unchecked. Drafts remain in Content and Image Queue for ordinary copy and artwork work; only published figures enter the public app. Identity, style, order, directory, and artwork imports remain source-maintained fields rather than editable studio content.
 
 ## Reworking a figure
 
@@ -46,4 +46,4 @@ Use `task images:studio` to edit existing figure content through the local maste
 
 ## Adding a figure
 
-Copy an existing package in the appropriate style directory, assign a unique stable `id` and `order`, provide complete English/German guides, add a card image, and update its local sources and notes. The catalog discovers `figure.ts` files automatically; no central registration edit is needed.
+Copy an existing package in the appropriate style directory, immediately set `publication` to `draft`, assign a unique stable `id` and `order`, provide complete English/German guides, add a card image, and update its local sources and notes. The Studio discovers the package regardless of publication state; the public catalog includes it only after it is deliberately changed to `published`. No central registration edit is needed.

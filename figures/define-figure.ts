@@ -22,7 +22,11 @@ export interface CardWebLink {
 
 export type CardResource = CardVideoLink | CardWebLink;
 
+export const figurePublicationStatuses = ["published", "draft"] as const;
+export type FigurePublicationStatus = (typeof figurePublicationStatuses)[number];
+
 export interface FigureDefinition {
+  readonly publication: FigurePublicationStatus;
   readonly order: number;
   readonly card: string;
   readonly move: Move;

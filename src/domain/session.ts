@@ -46,7 +46,7 @@ export const undoDecision = (session: Session): Session => {
 
 export const reconcileSession = (session: Session, deck: readonly Move[]): Session => {
   const deckIds = new Set(deck.map(({ id }) => id));
-  const choices = Object.fromEntries(Object.entries(session.choices).filter(([id]) => deckIds.has(id)));
+  const choices = { ...session.choices };
   const history = session.history
     .filter(({ id }) => deckIds.has(id))
     .map((decision) => ({ ...decision, index: deck.findIndex(({ id }) => id === decision.id) }));

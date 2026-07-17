@@ -14,11 +14,19 @@ import {
   type MoveStyle
 } from "../../src/domain/move";
 import { parseGuideBody } from "../../src/domain/guide-body";
-import { videoKinds, webResourceKinds, type FigureDefinition, type WebResourceKind } from "../../figures/define-figure";
+import {
+  figurePublicationStatuses,
+  videoKinds,
+  webResourceKinds,
+  type FigureDefinition,
+  type FigurePublicationStatus,
+  type WebResourceKind
+} from "../../figures/define-figure";
 
 export const resourceLanguages = languages;
 
 export const figureMetadataOptions = {
+  publicationStatuses: figurePublicationStatuses,
   families: moveFamilies,
   countPatterns,
   motionKinds,
@@ -73,6 +81,7 @@ export interface WebResourceDto {
 export type CardResourceDto = YoutubeResourceDto | WebResourceDto;
 
 export interface FigureContentDto {
+  readonly publication: FigurePublicationStatus;
   readonly identity: FigureIdentityDto;
   readonly basics: FigureBasicsDto;
   readonly guides: {
@@ -227,6 +236,7 @@ export const validateFigureContent = (value: unknown): FigureContentDto => {
   const order = numberValue(identity.order, "identity.order", issues);
   if (!Number.isInteger(order) || order < 0) issues.push({ path: "identity.order", message: "Order must be a non-negative integer." });
   const content: FigureContentDto = {
+    publication: enumValue(source.publication, figurePublicationStatuses, "publication", issues),
     identity: {
       id: textValue(identity.id, "identity.id", issues),
       style,
@@ -252,6 +262,7 @@ export const validateFigureContent = (value: unknown): FigureContentDto => {
 };
 
 export const figureDefinitionDataFromContent = (content: FigureContentDto): Record<string, unknown> => ({
+  publication: content.publication,
   order: content.identity.order,
   move: {
     id: content.identity.id,

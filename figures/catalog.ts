@@ -15,14 +15,19 @@ const assertUnique = (values: readonly (string | number)[], label: string): void
 assertUnique(discoveredFigures.map(({ move }) => move.id), "id");
 assertUnique(discoveredFigures.map(({ order }) => order), "order");
 
-export const figures: readonly FigureDefinition[] = [...discoveredFigures].sort((left, right) => left.order - right.order);
+export const allFigures: readonly FigureDefinition[] = [...discoveredFigures].sort((left, right) => left.order - right.order);
 
-const figuresById = new Map(figures.map((figure) => [figure.move.id, figure]));
+export const publishedFiguresFrom = (definitions: readonly FigureDefinition[]): FigureDefinition[] =>
+  definitions.filter(({ publication }) => publication === "published");
 
-export const figureFor = (id: string): FigureDefinition => {
-  const figure = figuresById.get(id);
+export const figures: readonly FigureDefinition[] = publishedFiguresFrom(allFigures);
+
+export const publishedFigureFor = (definitions: readonly FigureDefinition[], id: string): FigureDefinition => {
+  const figure = publishedFiguresFrom(definitions).find(({ move }) => move.id === id);
   if (!figure) throw new Error(`Unknown figure: ${id}`);
   return figure;
 };
+
+export const figureFor = (id: string): FigureDefinition => publishedFigureFor(allFigures, id);
 
 export const moves: readonly Move[] = figures.map(({ move }) => move);

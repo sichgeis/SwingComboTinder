@@ -96,6 +96,7 @@ export const parseFigureContent = (source: string, filename: string, slug: strin
   const guides = sourceRecord(value.guides);
   const resources = Array.isArray(value.resources) ? value.resources : [];
   return validateFigureContent({
+    publication: value.publication,
     identity: {
       id: move.id,
       style: move.style,

@@ -1,7 +1,7 @@
 # Card publication state
 
-- Status: Proposed
-- Maturity: Draft; implementation is not authorized.
+- Status: Done
+- Approved: 2026-07-17
 - Goal: Let a maintainer prepare complete figure cards in the local Content Studio without releasing them in the production app until they are deliberately published.
 
 ## Context
@@ -78,7 +78,7 @@ The requested workflow is binary: a card is either available in the production a
 - Automated: enum validation, missing/unknown-state rejection, deterministic parser/serializer round trips, all-figure explicit-state audit, published-only catalog behavior, unchanged published style counts, draft card lookup exclusion, Studio summary/filter data, and `npm run check`.
 - Manual: In a local Studio, switch one card to Draft, verify badges and filters plus Content/Image Queue access, build or run the app and verify its absence, then switch it back to Published and verify its return. Do not send paid image-generation requests.
 
-## Decisions proposed for approval
+## Decisions
 
 - Use `published` and `draft`, not `published` and `hidden`.
 - Make the state explicit and required on every figure to prevent accidental publication through a default.
@@ -89,7 +89,14 @@ The requested workflow is binary: a card is either available in the production a
 ## Progress
 
 - 2026-07-17: Traced figure discovery, public catalog composition, Content Studio DTO persistence, editor filtering, preview, and Image Queue filesystem discovery. Recorded the proposed binary workflow and its production boundary.
+- 2026-07-17: User approved the specification and authorized implementation.
+- 2026-07-17: Added the required typed state, migrated all 42 figures explicitly to `published`, carried the state through validation and atomic persistence, added the Studio checkbox plus badges and filters, separated the complete source catalog from the public published catalog, and retained local choices for temporarily withdrawn stable IDs.
+
+## Validation evidence
+
+- Automated: `npm run check` passed linting, strict type checks, 21 test files with 62 tests, and the production PWA build. Tests cover missing and unknown states, deterministic draft round trips, the 42-card explicit-state audit, published-only catalog and lookup behavior, and retained local choices.
+- Browser: Temporarily saved Charleston Tuck Turn as Draft through the real Studio. Its badge and Draft filter updated, it remained present in the 42-card Image Queue, and the running public app reduced Charleston from 6 cards to 5. Republishing restored the app count to 6 and left all source figures published. No paid image request was sent.
 
 ## Next action
 
-Obtain explicit user approval for this specification, then implement and validate it as one coherent feature.
+None; use Draft while preparing a card and select “Include in production” when it is ready to release.

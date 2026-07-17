@@ -23,6 +23,7 @@ describe("figure content persistence", () => {
       const loaded = await readFigureContentFile(figure.definitionPath, figure.slug);
       expect(loaded.content.identity.id).toBe(figure.slug);
       expect(loaded.content.identity.style).toBe(figure.style);
+      expect(loaded.content.publication).toBe("published");
       expect(loaded.revision).toMatch(/^[a-f0-9]{64}$/);
     }
   });
@@ -48,6 +49,10 @@ describe("figure content persistence", () => {
   it("rejects invalid content with field-level issues", async () => {
     const source = await readFile(resolve(figuresRoot, "lindy/inside-turn/figure.ts"), "utf8");
     const content = parseFigureContent(source, "figure.ts", "inside-turn");
+    const missingPublication = JSON.parse(JSON.stringify(content)) as Record<string, unknown>;
+    delete missingPublication.publication;
+    expect(() => serializeFigureContent(missingPublication)).toThrow(ContentValidationError);
+    expect(() => serializeFigureContent({ ...content, publication: "hidden" })).toThrow(ContentValidationError);
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, name: "" } })).toThrow(ContentValidationError);
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, family: "typo" } })).toThrow(ContentValidationError);
     expect(() => serializeFigureContent({ ...content, basics: { ...content.basics, count: "seven" } })).toThrow(ContentValidationError);
@@ -65,6 +70,16 @@ describe("figure content persistence", () => {
         message: "Line 1: Guide body must begin with a ## section heading."
       });
     }
+  });
+
+  it("round trips draft publication state deterministically", async () => {
+    const source = await readFile(resolve(figuresRoot, "lindy/inside-turn/figure.ts"), "utf8");
+    const content = parseFigureContent(source, "figure.ts", "inside-turn");
+    const draft = { ...content, publication: "draft" as const };
+    const serialized = serializeFigureContent(draft);
+
+    expect(serialized).toContain('"publication": "draft"');
+    expect(parseFigureContent(serialized, "figure.ts", "inside-turn")).toEqual(draft);
   });
 
   it("normalizes ending positions into canonical order", async () => {
