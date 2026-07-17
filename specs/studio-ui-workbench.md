@@ -87,6 +87,7 @@ This iteration preserves the existing behavior and dark art-deco identity while 
 - 2026-07-17: The user approved the implementation plan and authorized the UI rework.
 - 2026-07-17: Implemented the compact application shell, calmer visual tokens and surfaces, exception-first Content library, sticky editor command bar, refined forms/resources, elevated preview inspector, keyboard search/save affordances, separated queue filters and generation composer, persistent selection summary, compact metrics, and clearer review-card actions.
 - 2026-07-17: Updated the README and Studio workflow guide for the lasting interface and keyboard behavior.
+- 2026-07-17: Renamed the mixed content/artwork Studio entry points to `task studio`, `task studio:debug`, and `npm run studio`; retained `images:plan` and `images:generate` for image-only CLI work.
 
 ## Validation
 

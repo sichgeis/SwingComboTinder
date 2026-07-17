@@ -18,7 +18,7 @@ Both the studio and CLI load `.env` from the repository root. Existing shell env
 Both entry points emit timestamped logs to stderr. The default `info` level reports configuration state, batch plans, job lifecycle, preprocessing, LiteLLM response status and request IDs, token usage, output locations, and elapsed times. Use debug logging when diagnosing a failure:
 
 ```sh
-task images:studio:debug
+task studio:debug
 task images:generate MODE=marked -- --debug
 IMAGE_STUDIO_LOG_LEVEL=debug npm run images:generate -- --mode missing --dry-run
 ```
@@ -32,7 +32,7 @@ When reporting a LiteLLM failure, include the timestamp, figure ID, HTTP status,
 ```sh
 task env
 # Edit .env, then:
-task images:studio
+task studio
 ```
 
 Open <http://127.0.0.1:4174> in a desktop browser. The Studio is a desktop-only local production tool; mobile and tablet workflows are not supported targets. The default **Content** workbench lists every figure in a resizable catalog rail and can filter by style or derived attention facts such as invalid content, missing resources, or fallback artwork. Press `/` outside an editor control to focus catalog search. Select a figure to edit typed Basics, English and German guide copy, and the ordered app-visible YouTube or web resources. Each localized guide has Description, Guide body, and Remember fields; start every body section with `## Heading` and separate plain-text paragraphs with a blank line. The Studio remembers the last selected figure for the current browser session. Unsaved values appear immediately in the shared German/English front/back card inspector. Stable IDs, style, order, directory, and artwork import remain read-only inside **Technical identity**. Teaching-source provenance remains in each figure's `notes.md` rather than production content.
@@ -75,7 +75,7 @@ task images:generate MODE=selected -- \
   --ids lindy/swingout-open,charleston/kick-throughs
 ```
 
-The Task commands delegate to the npm scripts. If Task is unavailable, use `npm run images:studio` or `npm run images:generate --` with the same CLI options.
+The Task commands delegate to the npm scripts. If Task is unavailable, use `npm run studio` or `npm run images:generate --` with the same CLI options.
 
 Add `--promote` only when the first returned candidate should immediately become the live master. Normal production runs should generate candidates first and promote them after review.
 

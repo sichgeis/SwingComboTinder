@@ -598,7 +598,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     showLoadError: (message) => {
       contentCount.textContent = "!";
       contentList.classList.remove("is-loading");
-      contentList.innerHTML = `<div class="library-error"><strong>Catalog unavailable</strong><p>${escapeHtml(message)}</p><small>If the Studio was already open during a code update, restart <code>task images:studio</code>.</small></div>`;
+      contentList.innerHTML = `<div class="library-error"><strong>Catalog unavailable</strong><p>${escapeHtml(message)}</p><small>If the Studio was already open during a code update, restart <code>task studio</code>.</small></div>`;
     }
   };
 };

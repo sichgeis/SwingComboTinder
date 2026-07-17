@@ -71,19 +71,19 @@ tasks:
     cmds:
       - npm run test -- {{.CLI_ARGS}}
 
-  images:studio:
-    desc: Start the local Content Studio and Image Queue
+  studio:
+    desc: Start the local Dance Card Studio
     deps: [install]
     cmds:
-      - npm run images:studio
+      - npm run studio
 
-  images:studio:debug:
-    desc: Start the Content Studio with detailed image-request logging
+  studio:debug:
+    desc: Start the Dance Card Studio with detailed diagnostic logging
     deps: [install]
     env:
       IMAGE_STUDIO_LOG_LEVEL: debug
     cmds:
-      - npm run images:studio
+      - npm run studio
 
   images:plan:
     desc: Preview an image batch without making API calls (MODE=missing|marked|all|selected)

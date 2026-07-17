@@ -30,8 +30,8 @@ npm run dev
 | `task check` | Run linting, strict type checks, tests, and a production build |
 | `task build` | Create the production build in `dist/` |
 | `task preview` | Build and serve the production application locally |
-| `task images:studio` | Start the local Content Studio and Image Queue |
-| `task images:studio:debug` | Start the studio with image-request traces and error stacks |
+| `task studio` | Start the local Dance Card Studio |
+| `task studio:debug` | Start the Studio with detailed diagnostic logging |
 | `task images:plan` | Preview the missing-image batch without API calls |
 | `task images:generate` | Generate the missing-image batch through LiteLLM |
 
@@ -55,14 +55,14 @@ Card artwork is generated locally with OpenAI GPT Image through a LiteLLM proxy.
 
 ```sh
 task env
-task images:studio
+task studio
 ```
 
 The studio runs at <http://127.0.0.1:4174> by default. Its desktop workbench separates Content editing from artwork production. Content provides a searchable, resizable figure library, structured bilingual copy and resource editing, explicit Draft/Published controls, keyboard search and save shortcuts, and the same front/back card presentation used by the app. Draft cards remain fully editable and available to the Image Queue but do not enter the public app catalog until “Include in production” is selected and saved. The Studio validates and saves a complete `figure.ts` atomically and detects external file changes before writing. Image Queue keeps review filters separate from the explicit generation composer, previews source frames and candidates, runs independent figure requests concurrently, and only changes live artwork when a candidate is explicitly promoted.
 
 Required settings are `LITELLM_API_KEY` and `LITELLM_BASE_URL`; `IMAGE_MODEL` names the image-capable alias configured on the proxy. See [`.env.example`](.env.example) and [`image-generation/IMAGE_STUDIO.md`](image-generation/IMAGE_STUDIO.md) for configuration, batch modes, storage, and promotion details.
 
-The image tools write timestamped diagnostic logs to the terminal. Set `IMAGE_STUDIO_LOG_LEVEL=debug`, use `task images:studio:debug`, or add `--debug` to an image-generation CLI command for request attempts, timings, paths, and complete error stacks. API keys and authorization values are redacted.
+The Studio and image-generation CLI write timestamped diagnostic logs to the terminal. Set `IMAGE_STUDIO_LOG_LEVEL=debug`, use `task studio:debug`, or add `--debug` to an image-generation CLI command for request attempts, timings, paths, and complete error stacks. API keys and authorization values are redacted.
 
 ## Figure packages
 

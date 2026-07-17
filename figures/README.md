@@ -32,7 +32,7 @@ When transcripts are used to write or revise the bilingual card copy, follow the
 Swing Denglisch, spatial precision, compact section structure, English adaptation, remember cues,
 and review checklist.
 
-Use `task images:studio` to edit existing figure content through the local master-detail Content workspace. It provides a shared app-card preview, field validation, external-change detection, and atomic full-figure saving. “Include in production” maps the typed publication state to `published` when checked and `draft` when unchecked. Drafts remain in Content and Image Queue for ordinary copy and artwork work; only published figures enter the public app. Identity, style, order, directory, and artwork imports remain source-maintained fields rather than editable studio content.
+Use `task studio` to edit existing figure content through the local Dance Card Studio. It provides a shared app-card preview, field validation, external-change detection, and atomic full-figure saving. “Include in production” maps the typed publication state to `published` when checked and `draft` when unchecked. Drafts remain in Content and Image Queue for ordinary copy and artwork work; only published figures enter the public app. Identity, style, order, directory, and artwork imports remain source-maintained fields rather than editable studio content.
 
 ## Reworking a figure
 

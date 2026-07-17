@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "images:studio": "tsx tools/image-studio/server.ts",
+    "studio": "tsx tools/image-studio/server.ts",
     "images:generate": "tsx tools/image-studio/cli.ts",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
