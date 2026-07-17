@@ -613,7 +613,7 @@ const handleRequest = async (
     response.end(await readFile(appStylesPath));
     return;
   }
-  if (request.method === "GET" && ["/", "/app.js", "/content-workspace.js", "/refresh-coordinator.js", "/styles.css"].includes(url.pathname)) {
+  if (request.method === "GET" && ["/", "/app.js", "/content-workspace.js", "/image-review-state.js", "/refresh-coordinator.js", "/styles.css"].includes(url.pathname)) {
     await serveStatic(response, url.pathname);
     return;
   }

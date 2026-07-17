@@ -21,19 +21,20 @@
 
 - A pose upload or swap updates the pose dialog, Image Queue card, and active Content preview without reloading the page.
 - Promotion updates current artwork everywhere immediately; notes, approval, and transcript changes remain synchronized through the same refresh path.
+- Approving a card consumes its current **new** marker and collapses it; later candidates or rework expand it again.
 - Concurrent mutation response and server-sent event refreshes cannot leave an older catalog snapshot rendered last.
 - Focused synchronization tests and `task check` pass.
 
 ## Validation
 
-- `task check` passes with 22 Python maintenance tests, 25 application test files and 80 tests plus the production PWA build.
-- `node --check` passes for `app.js`, `content-workspace.js`, and `refresh-coordinator.js`.
-- Focused tests prove a same-path atomic image replacement changes its media URL and overlapping refreshes produce one final pass containing every pending figure.
+- `task check` passes with 22 Python maintenance tests, 26 application test files and 82 tests plus the production PWA build.
+- `node --check` passes for the Studio browser modules.
+- Focused tests prove a same-path atomic image replacement changes its media URL, overlapping refreshes produce one final pass containing every pending figure, and approval consumes the active **new** marker without hiding later candidates or rework.
 - A real 42-card Studio API run returned `cache-control: no-store` and versioned Lindy Circle pose/current URLs. No mutation or paid image request was performed.
 
 ## Progress
 
-Implemented versioned mutable-media URLs, no-store API/static responses, ordered/coalesced catalog refreshes, figure-scoped live synchronization, draft-safe Content refresh behavior, and transcript mutation events.
+Implemented versioned mutable-media URLs, no-store API/static responses, ordered/coalesced catalog refreshes, figure-scoped live synchronization, draft-safe Content refresh behavior, transcript mutation events, and approval-driven **new** marker consumption.
 
 ## Next action
 

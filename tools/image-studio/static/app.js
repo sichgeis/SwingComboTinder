@@ -1,4 +1,5 @@
 import { createContentWorkspace } from "./content-workspace.js";
+import { applyImageApproval, shouldCollapseImageReview } from "./image-review-state.js";
 import { createRefreshCoordinator } from "./refresh-coordinator.js";
 
 const NEW_CANDIDATES_STORAGE_KEY = "dance-card-image-studio:new-candidates";
@@ -275,7 +276,7 @@ const render = () => {
     const job = state.jobs.get(figure.id);
     const newCandidateCount = state.newCandidates.get(figure.id) || 0;
     const classes = ["figure-card", figure.imageApproved ? "approved" : "", newCandidateCount ? "has-new-candidates" : "", job?.state === "running" ? "running" : "", job?.state === "failed" ? "failed" : ""].filter(Boolean).join(" ");
-    const cardBody = figure.imageApproved && !figure.marked && newCandidateCount === 0 ? `
+    const cardBody = shouldCollapseImageReview(figure, newCandidateCount) ? `
       <div class="approved-summary">
         <span>This move has an image you approved.</span>
         <div><button type="button" class="secondary" data-action="swap-pose">${escapeHtml(poseAction(figure, true))}</button><button type="button" class="secondary" data-action="image-approval">Reopen</button></div>
@@ -439,6 +440,9 @@ grid.addEventListener("click", async (event) => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id, approved })
       });
+      applyImageApproval(figure, state.newCandidates, approved);
+      persistNewCandidates();
+      render();
       runStatus.className = "success";
       runStatus.textContent = approved
         ? `Approved the image for ${figure.name}.`
