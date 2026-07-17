@@ -15,8 +15,19 @@ figures/<style>/<figure-id>/
 `figure.ts` is the typed source of truth for the required `draft` or `published` state, factual metadata, English and German card copy, and one ordered discriminated list of YouTube or generic web resources shown on the card back. Each localized guide keeps a short `description`, a sectioned `body`, and a closing `remember` cue. Body sections begin with `## Heading`; plain-text paragraphs are separated by blank lines. English and German may use different headings, section counts, and ordering. Known family, count, motion, ending-position, resource-category, and optional resource-language values are constrained by shared domain types and server-supplied Content Studio controls rather than stored as display text. `notes.md` keeps teaching-source provenance and artwork decisions out of production content. Figures with a full-resolution `generated/current.png` use it as their card source; figures without one fall back to `card.jpg`. Vite converts either source to a 600 × 900 WebP at quality 80 for the PWA. Teaching frames remain versioned source material but do not enter the production build. Of the generated files, only the promoted `generated/current.png` is versioned; candidates, metadata, and archived masters remain local.
 
 `transcripts/` contains optional research copies of complete captions retrieved for that figure. These
-Markdown files are versioned source material but are not loaded by the application. Preview or run
-the idempotent sibling-project import with:
+Markdown files are versioned source material but are not loaded by the application. Download a
+newly researched YouTube source directly through the free keyless provider with:
+
+```sh
+task transcripts:download FIGURE=lindy/lindy-circle URL='https://youtu.be/P083vG0JKB8'
+```
+
+The downloader validates the figure package, caches provider responses locally, writes auditable
+timestamped Markdown, and skips a video ID that is already present. Pass `OVERWRITE=1` only when a
+known transcript should be refreshed. Full CLI usage, including multiple URLs and source metadata
+overrides, is documented in [`tools/transcripts/README.md`](../tools/transcripts/README.md).
+
+The earlier sibling-project batch output can still be previewed or imported with:
 
 ```sh
 task transcripts:plan

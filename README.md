@@ -34,6 +34,7 @@ npm run dev
 | `task studio:debug` | Start the Studio with detailed diagnostic logging |
 | `task images:plan` | Preview the missing-image batch without API calls |
 | `task images:generate` | Generate the missing-image batch through LiteLLM |
+| `task transcripts:download FIGURE=… URL=…` | Download free hosted captions into a figure package |
 
 Arguments after `--` are forwarded to Vite, Vitest, or the image CLI. Image tasks also accept Task variables:
 
@@ -43,6 +44,7 @@ task test -- --reporter=verbose
 task images:plan MODE=marked -- --style lindy
 task images:generate MODE=all CONCURRENCY=3 -- --quality medium --count 2
 task images:generate MODE=marked -- --debug
+task transcripts:download FIGURE=lindy/lindy-circle URL='https://youtu.be/P083vG0JKB8'
 ```
 
 ## Development workflow
@@ -77,6 +79,12 @@ notes.md
 ```
 
 `figure.ts` contains an explicit `draft` or `published` state, factual typed metadata, localized copy, and one ordered list of app-visible YouTube or web resources. Family, count, motion, resource categories, and optional resource language use shared semantic codes; endings are either `any` or a validated list of known positions. Each language owns an independently sectioned guide body. Editorial teaching-source provenance and artwork decisions live in `notes.md`, while optional research transcripts can support copy revisions without entering the app. A figure can use `generated/current.png` as its full-resolution card source or fall back to `card.jpg`. Vite discovers all figure definitions automatically, orders published figures by their explicit `order`, and emits the selected artwork as a hashed 600 × 900 WebP at quality 80. Teaching frames and transcripts remain versioned source material. Generation runs, metadata, and archived masters stay local; only a promoted `generated/current.png` is committed so clean checkouts can reproduce the production build.
+
+Research can add a complete available YouTube caption transcript directly to a figure without an
+API key or paid provider. The downloader uses a local ignored cache followed by the free hosted
+caption endpoint, validates the target package, and skips a video already present there. See
+[`tools/transcripts/README.md`](tools/transcripts/README.md) for single- and multi-URL commands,
+metadata overrides, and overwrite behavior.
 
 See [`figures/README.md`](figures/README.md) for the add and rework workflow and the
 [`card-back style guide`](figures/CARD_BACK_STYLE_GUIDE.md) for transcript-based bilingual copy.

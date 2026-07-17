@@ -2,6 +2,18 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## URL-driven transcript downloader
+
+- Status: Done
+- Approved: 2026-07-17
+- Goal: Download complete available YouTube captions directly into a selected figure package through a repository-native, keyless maintenance command.
+- Scope: Validated figure targeting; one or more YouTube URLs; local cache plus the free hosted `youtube-transcript.ai` caption endpoint; public no-key video metadata; deterministic, timestamped Markdown output; safe duplicate and overwrite behavior; tests and workflow documentation.
+- Non-goals: Do not search or rank videos, crawl channels, add a research manifest or GUI, use paid providers or API keys, transcribe audio, add dependencies, or load transcripts into the app.
+- Specification: [`specs/url-driven-transcript-downloader.md`](specs/url-driven-transcript-downloader.md)
+- Progress: Added the repository-native Python downloader, keyless hosted caption and oEmbed clients, ignored local caches, validated direct figure routing, complete timestamped Markdown rendering, deterministic video-ID filenames, legacy duplicate detection, explicit refresh/overwrite behavior, multi-URL failure isolation, Task entry point, and maintenance documentation.
+- Validation: `task check` passes with 19 Python transcript tests, 21 application test files and 62 tests, lint, strict type checks, and the production PWA build. The real Task command detected and skipped the existing `P083vG0JKB8` Lindy Circle transcript by its embedded video ID without making a remote request. CLI help and Task discovery were also verified. No live hosted caption request was sent during validation.
+- Next action: None; use the downloader during the next teaching-video research task.
+
 ## Studio UI workbench
 
 - Status: Done

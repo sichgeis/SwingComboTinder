@@ -4,6 +4,7 @@ coverage/
 .task/
 __pycache__/
 *.pyc
+tools/transcripts/.cache/
 .DS_Store
 .env
 .env.local

@@ -4,6 +4,7 @@ vars:
   MODE: '{{default "missing" .MODE}}'
   CONCURRENCY: '{{default "3" .CONCURRENCY}}'
   TRANSCRIPT_SOURCE: '{{default "../swing-yt-transcript-downloader/swing_transcripts_full" .SOURCE}}'
+  TRANSCRIPT_LANGUAGE: '{{default "en" .LANGUAGE}}'
 
 tasks:
   default:
@@ -112,3 +113,16 @@ tasks:
         python3 tools/transcripts/import_transcripts.py
         --source {{shellQuote .TRANSCRIPT_SOURCE}}
         {{if .OVERWRITE}}--overwrite{{end}}
+
+  transcripts:download:
+    desc: Download free hosted YouTube captions directly into one figure package
+    requires:
+      vars: [FIGURE, URL]
+    cmds:
+      - >-
+        python3 tools/transcripts/download_transcripts.py
+        --figure {{shellQuote .FIGURE}}
+        --language {{shellQuote .TRANSCRIPT_LANGUAGE}}
+        {{if .OVERWRITE}}--overwrite{{end}}
+        {{shellQuote .URL}}
+        {{.CLI_ARGS}}
