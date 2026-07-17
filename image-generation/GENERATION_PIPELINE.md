@@ -6,7 +6,7 @@ The implemented local UI and batch commands are documented in [`IMAGE_STUDIO.md`
 
 ## Request layout
 
-Send a multipart request through the configured LiteLLM proxy to `POST /v1/images/edits`, with four ordered `image` fields:
+Send a multipart request through the selected direct OpenAI or LiteLLM connection to `POST /v1/images/edits`, with four ordered `image` fields:
 
 1. The move's `figures/<style>/<move>/teaching-frames/selected.png` — authoritative for pose and composition.
 2. `references/01-swingout-open.png` — style only.
@@ -35,9 +35,10 @@ Rules:
 ## API defaults
 
 ```text
-endpoint: <LITELLM_BASE_URL>/v1/images/edits
-authorization: Bearer <LITELLM_API_KEY>
-model: <IMAGE_MODEL proxy alias>
+provider: <IMAGE_API_PROVIDER: openai|litellm>
+endpoint: <selected provider base URL>/v1/images/edits
+authorization: Bearer <selected provider API key>
+model: <IMAGE_MODEL direct model or proxy alias>
 size: 1024x1536
 quality: medium
 output_format: png

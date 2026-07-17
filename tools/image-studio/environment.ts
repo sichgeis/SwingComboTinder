@@ -3,11 +3,17 @@ import { resolve } from "node:path";
 
 import { repositoryRoot } from "./paths";
 import { logLevels, type LogLevel } from "./logger";
-import { imageQualities, type ImageQuality } from "./types";
+import {
+  imageApiProviders,
+  imageQualities,
+  type ImageApiProvider,
+  type ImageQuality
+} from "./types";
 
 export interface ImageEnvironment {
-  readonly litellmApiKey: string | undefined;
-  readonly litellmBaseUrl: string | undefined;
+  readonly imageApiProvider: ImageApiProvider;
+  readonly imageApiKey: string | undefined;
+  readonly imageApiBaseUrl: string;
   readonly model: string;
   readonly imageSize: string;
   readonly imageQuality: ImageQuality;
@@ -16,10 +22,36 @@ export interface ImageEnvironment {
   readonly logLevel: LogLevel;
 }
 
-const normalizeLiteLLMBaseUrl = (value: string | undefined): string | undefined => {
+const configuredValue = (value: string | undefined): string | undefined => {
   if (value === undefined || value.trim() === "") return undefined;
-  const normalized = value.trim().replace(/\/+$/, "");
+  return value.trim();
+};
+
+const normalizeImageApiBaseUrl = (value: string): string => {
+  const normalized = value.replace(/\/+$/, "");
   return normalized.endsWith("/v1") ? normalized.slice(0, -3) : normalized;
+};
+
+const imageApiConfiguration = (): Pick<ImageEnvironment, "imageApiProvider" | "imageApiKey" | "imageApiBaseUrl"> => {
+  const explicitProvider = configuredValue(process.env.IMAGE_API_PROVIDER)?.toLowerCase();
+  if (explicitProvider !== undefined && !imageApiProviders.includes(explicitProvider as ImageApiProvider)) {
+    throw new Error("IMAGE_API_PROVIDER must be openai or litellm.");
+  }
+  const liteLlmConfigured = configuredValue(process.env.LITELLM_API_KEY) !== undefined
+    || configuredValue(process.env.LITELLM_BASE_URL) !== undefined;
+  const provider = (explicitProvider ?? (liteLlmConfigured ? "litellm" : "openai")) as ImageApiProvider;
+  if (provider === "litellm") {
+    return {
+      imageApiProvider: provider,
+      imageApiKey: configuredValue(process.env.LITELLM_API_KEY),
+      imageApiBaseUrl: normalizeImageApiBaseUrl(configuredValue(process.env.LITELLM_BASE_URL) ?? "")
+    };
+  }
+  return {
+    imageApiProvider: provider,
+    imageApiKey: configuredValue(process.env.OPENAI_API_KEY),
+    imageApiBaseUrl: normalizeImageApiBaseUrl(configuredValue(process.env.OPENAI_BASE_URL) ?? "https://api.openai.com")
+  };
 };
 
 const positiveNumber = (value: string | undefined, fallback: number, name: string): number => {
@@ -57,6 +89,7 @@ export const loadEnvironment = (path = resolve(repositoryRoot, ".env")): void =>
 };
 
 export const getImageEnvironment = (): ImageEnvironment => {
+  const api = imageApiConfiguration();
   const quality = process.env.IMAGE_QUALITY ?? "medium";
   if (!imageQualities.includes(quality as ImageQuality)) {
     throw new Error("IMAGE_QUALITY must be low, medium, or high.");
@@ -71,8 +104,7 @@ export const getImageEnvironment = (): ImageEnvironment => {
   }
 
   return {
-    litellmApiKey: process.env.LITELLM_API_KEY,
-    litellmBaseUrl: normalizeLiteLLMBaseUrl(process.env.LITELLM_BASE_URL),
+    ...api,
     model: process.env.IMAGE_MODEL ?? "gpt-image-2",
     imageSize: imageSize(process.env.IMAGE_SIZE),
     imageQuality: quality as ImageQuality,

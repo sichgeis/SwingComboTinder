@@ -30,7 +30,7 @@ interface CliOptions {
 
 const logger = createLogger("image-cli");
 
-const HELP = `Generate Swing Thing card candidates with OpenAI GPT Image through LiteLLM.
+const HELP = `Generate Swing Thing card candidates with OpenAI GPT Image directly or through LiteLLM.
 
 Usage:
   npm run images:generate -- [options]
@@ -43,7 +43,7 @@ Options:
   --quality <low|medium|high>           Output quality (default: medium)
   --count <1-4>                         Candidates per figure (default: 1)
   --concurrency <1-6>                   Parallel figure requests (default: 3)
-  --model <model>                       LiteLLM model alias (default: IMAGE_MODEL)
+  --model <model>                       Image model or proxy alias (default: IMAGE_MODEL)
   --size <widthxheight>                 Output size (default: IMAGE_SIZE)
   --dry-run                             Print the plan without API calls
   --promote                             Promote the first candidate after each success
@@ -118,7 +118,8 @@ const main = async (): Promise<void> => {
     concurrency: options.concurrency,
     dryRun: options.dryRun,
     promote: options.promote,
-    proxyConfigured: Boolean(environment.litellmApiKey && environment.litellmBaseUrl),
+    imageApiProvider: environment.imageApiProvider,
+    imageApiConfigured: Boolean(environment.imageApiKey && environment.imageApiBaseUrl),
     timeoutMs: environment.requestTimeoutMs,
     logLevel: environment.logLevel
   });
@@ -173,8 +174,9 @@ const main = async (): Promise<void> => {
         count: options.count,
         timeoutMs: environment.requestTimeoutMs
       }, {
-        apiKey: environment.litellmApiKey,
-        baseUrl: environment.litellmBaseUrl
+        apiKey: environment.imageApiKey,
+        baseUrl: environment.imageApiBaseUrl,
+        provider: environment.imageApiProvider
       });
       console.log(
         `Created ${result.candidates.length} candidate(s) for ${figure.id} in ${(result.durationMs / 1000).toFixed(1)}s.`
@@ -183,7 +185,7 @@ const main = async (): Promise<void> => {
         runId: result.runId,
         candidates: result.candidates.length,
         requestId: result.requestId,
-        proxyDurationMs: result.durationMs,
+        apiDurationMs: result.durationMs,
         totalDurationMs: Date.now() - startedAt,
         usage: result.usage
       });

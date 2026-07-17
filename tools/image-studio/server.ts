@@ -193,6 +193,7 @@ const runGeneration = async (request: RunRequest): Promise<void> => {
     quality: request.quality,
     count: request.count,
     concurrency: request.concurrency,
+    imageApiProvider: environment.imageApiProvider,
     model,
     size: environment.imageSize
   });
@@ -224,8 +225,9 @@ const runGeneration = async (request: RunRequest): Promise<void> => {
           count: request.count,
           timeoutMs: environment.requestTimeoutMs
         }, {
-          apiKey: environment.litellmApiKey,
-          baseUrl: environment.litellmBaseUrl
+          apiKey: environment.imageApiKey,
+          baseUrl: environment.imageApiBaseUrl,
+          provider: environment.imageApiProvider
         });
         event("job-completed", {
           id: figure.id,
@@ -359,7 +361,8 @@ const handleRequest = async (
       model,
       imageSize: environment.imageSize,
       imageQuality: environment.imageQuality,
-      proxyConfigured: Boolean(environment.litellmApiKey && environment.litellmBaseUrl),
+      imageApiProvider: environment.imageApiProvider,
+      imageApiConfigured: Boolean(environment.imageApiKey && environment.imageApiBaseUrl),
       runActive
     });
     return;
@@ -573,14 +576,19 @@ server.listen(port, "127.0.0.1", () => {
     quality: environment.imageQuality,
     timeoutMs: environment.requestTimeoutMs,
     logLevel: environment.logLevel,
-    proxyConfigured: Boolean(environment.litellmApiKey && environment.litellmBaseUrl)
+    imageApiProvider: environment.imageApiProvider,
+    imageApiConfigured: Boolean(environment.imageApiKey && environment.imageApiBaseUrl)
   });
   console.log(`Swing Thing Content Studio: http://127.0.0.1:${port}`);
-  if (!environment.litellmApiKey || !environment.litellmBaseUrl) {
-    logger.warn("proxy-not-configured", {
-      proxyKeyConfigured: Boolean(environment.litellmApiKey),
-      baseUrlConfigured: Boolean(environment.litellmBaseUrl)
+  if (!environment.imageApiKey || !environment.imageApiBaseUrl) {
+    logger.warn("image-api-not-configured", {
+      provider: environment.imageApiProvider,
+      credentialConfigured: Boolean(environment.imageApiKey),
+      baseUrlConfigured: Boolean(environment.imageApiBaseUrl)
     });
-    console.log("LiteLLM proxy credentials are not set; browsing and dry planning still work.");
+    const required = environment.imageApiProvider === "openai"
+      ? "OPENAI_API_KEY"
+      : "LITELLM_API_KEY and LITELLM_BASE_URL";
+    console.log(`${required} are not set; browsing and dry planning still work.`);
   }
 });

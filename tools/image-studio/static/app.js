@@ -503,7 +503,8 @@ for (const type of ["run-started", "job-started", "job-blocked", "job-completed"
 Promise.all([request("/api/config"), loadFigures()])
   .then(([config]) => {
     form.elements.quality.value = config.imageQuality;
-    setConnection(config.proxyConfigured ? `${config.model} via LiteLLM` : "LiteLLM configuration missing", config.proxyConfigured ? "ready" : "warning");
+    const provider = config.imageApiProvider === "litellm" ? "LiteLLM" : "OpenAI";
+    setConnection(config.imageApiConfigured ? `${config.model} via ${provider}` : `${provider} configuration missing`, config.imageApiConfigured ? "ready" : "warning");
     state.runActive = config.runActive;
     render();
   })

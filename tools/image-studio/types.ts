@@ -4,6 +4,9 @@ export type GenerationMode = (typeof generationModes)[number];
 export const imageQualities = ["low", "medium", "high"] as const;
 export type ImageQuality = (typeof imageQualities)[number];
 
+export const imageApiProviders = ["openai", "litellm"] as const;
+export type ImageApiProvider = (typeof imageApiProviders)[number];
+
 export interface CandidateImage {
   readonly absolutePath: string;
   readonly relativePath: string;
@@ -60,9 +63,10 @@ export interface GenerationOptions {
   readonly timeoutMs: number;
 }
 
-export interface LiteLLMConnection {
+export interface ImageApiConnection {
   readonly apiKey: string | undefined;
-  readonly baseUrl: string | undefined;
+  readonly baseUrl: string;
+  readonly provider: ImageApiProvider;
 }
 
 export interface TokenUsage {

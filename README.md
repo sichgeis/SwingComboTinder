@@ -33,7 +33,7 @@ npm run dev
 | `task studio` | Start the local Dance Card Studio |
 | `task studio:debug` | Start the Studio with detailed diagnostic logging |
 | `task images:plan` | Preview the missing-image batch without API calls |
-| `task images:generate` | Generate the missing-image batch through LiteLLM |
+| `task images:generate` | Generate the missing-image batch through OpenAI or LiteLLM |
 | `task transcripts:download FIGURE=… URL=…` | Download free hosted captions into a figure package |
 
 Arguments after `--` are forwarded to Vite, Vitest, or the image CLI. Image tasks also accept Task variables:
@@ -53,7 +53,7 @@ Current feature status, validation evidence, and the next action live in [`FEATU
 
 ## Content and image production
 
-Card artwork is generated locally with OpenAI GPT Image through a LiteLLM proxy. Create the ignored `.env` file, replace its placeholder values, and start the Dance Card Studio:
+Card artwork is generated locally with OpenAI GPT Image, either through the direct OpenAI API or a LiteLLM proxy. Create the ignored `.env` file, replace its placeholder values, and start the Dance Card Studio:
 
 ```sh
 task env
@@ -62,7 +62,7 @@ task studio
 
 The studio runs at <http://127.0.0.1:4174> by default. Its desktop workbench separates Content editing from artwork production. Content provides a searchable, resizable figure library, structured bilingual copy and resource editing, explicit Draft/Published controls, keyboard search and save shortcuts, and the same front/back card presentation used by the app. **New card** creates a complete unpublished figure package with provisional bilingual copy and local placeholder art, then opens it for editing. Draft cards remain fully editable and available to the Image Queue but do not enter the public app catalog until “Include in production” is selected and saved. The Studio validates and saves a complete `figure.ts` atomically and detects external file changes before writing. Image Queue keeps review filters separate from the explicit generation composer, previews source frames and candidates, lets figures with alternate PNG teaching frames swap the selected generation pose, runs independent figure requests concurrently, and only changes live artwork when a candidate is explicitly promoted.
 
-Required settings are `LITELLM_API_KEY` and `LITELLM_BASE_URL`; `IMAGE_MODEL` names the image-capable alias configured on the proxy. See [`.env.example`](.env.example) and [`image-generation/IMAGE_STUDIO.md`](image-generation/IMAGE_STUDIO.md) for configuration, batch modes, storage, and promotion details.
+For direct OpenAI, keep `IMAGE_API_PROVIDER=openai` and set `OPENAI_API_KEY`; the base URL defaults to `https://api.openai.com`. For LiteLLM, select `litellm` and set `LITELLM_API_KEY` plus `LITELLM_BASE_URL`. Existing LiteLLM-only `.env` files remain supported. `IMAGE_MODEL` is either the direct OpenAI model name or the image-capable proxy alias. See [`.env.example`](.env.example) and [`image-generation/IMAGE_STUDIO.md`](image-generation/IMAGE_STUDIO.md) for configuration, batch modes, storage, and promotion details.
 
 The Studio and image-generation CLI write timestamped diagnostic logs to the terminal. Set `IMAGE_STUDIO_LOG_LEVEL=debug`, use `task studio:debug`, or add `--debug` to an image-generation CLI command for request attempts, timings, paths, and complete error stacks. API keys and authorization values are redacted.
 

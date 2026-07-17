@@ -19,7 +19,7 @@ afterEach(async () => {
 });
 
 describe("generateFigure", () => {
-  it("sends the teaching frame and style references through LiteLLM", async () => {
+  it("uses the direct OpenAI and legacy LiteLLM multipart image fields", async () => {
     process.env.IMAGE_STUDIO_LOG_LEVEL = "error";
     const directory = await mkdtemp(resolve(tmpdir(), "image-studio-generate-"));
     temporaryDirectories.push(directory);
@@ -53,13 +53,16 @@ describe("generateFigure", () => {
       candidates: []
     };
     const generatedBytes = Buffer.from("generated-image");
-    const fetchMock = vi.fn((_url: string | URL | Request, init?: RequestInit) => {
+    const fetchMock = vi.fn((url: string | URL | Request, init?: RequestInit) => {
       expect(init?.method).toBe("POST");
-      expect(init?.headers).toEqual({ authorization: "Bearer proxy-key" });
+      expect(init?.headers).toEqual({ authorization: "Bearer openai-key" });
       expect(init?.body).toBeInstanceOf(FormData);
       const form = init?.body as FormData;
-      expect(form.getAll("image")).toHaveLength(4);
-      expect(form.get("model")).toBe("proxy-image-alias");
+      const requestUrl = typeof url === "string" ? url : url instanceof URL ? url.toString() : url.url;
+      const directOpenAi = requestUrl.includes("api.openai.test");
+      expect(form.getAll(directOpenAi ? "image[]" : "image")).toHaveLength(4);
+      expect(form.getAll(directOpenAi ? "image" : "image[]")).toHaveLength(0);
+      expect(form.get("model")).toBe("gpt-image-2");
       expect(form.get("n")).toBe("1");
       expect(form.get("size")).toBe("1024x1536");
       expect(form.get("quality")).toBe("medium");
@@ -82,17 +85,17 @@ describe("generateFigure", () => {
     const result = await generateFigure(
       figure,
       {
-        model: "proxy-image-alias",
+        model: "gpt-image-2",
         quality: "medium",
         size: "1024x1536",
         count: 1,
         timeoutMs: 1_000
       },
-      { apiKey: "proxy-key", baseUrl: "https://litellm.example.test" }
+      { apiKey: "openai-key", baseUrl: "https://api.openai.test", provider: "openai" }
     );
 
     expect(fetchMock).toHaveBeenCalledWith(
-      "https://litellm.example.test/v1/images/edits",
+      "https://api.openai.test/v1/images/edits",
       expect.any(Object)
     );
     expect(await readFile(result.candidates[0]!.absolutePath)).toEqual(generatedBytes);
@@ -104,5 +107,33 @@ describe("generateFigure", () => {
       outputTokens: 5,
       totalTokens: 9
     });
+
+    await generateFigure(
+      figure,
+      {
+        model: "gpt-image-2",
+        quality: "medium",
+        size: "1024x1536",
+        count: 1,
+        timeoutMs: 1_000
+      },
+      { apiKey: "openai-key", baseUrl: "https://litellm.example.test", provider: "litellm" }
+    );
+    expect(fetchMock).toHaveBeenLastCalledWith(
+      "https://litellm.example.test/v1/images/edits",
+      expect.any(Object)
+    );
+
+    await expect(generateFigure(
+      figure,
+      {
+        model: "gpt-image-2",
+        quality: "medium",
+        size: "1024x1536",
+        count: 1,
+        timeoutMs: 1_000
+      },
+      { apiKey: undefined, baseUrl: "https://api.openai.com", provider: "openai" }
+    )).rejects.toThrow("OPENAI_API_KEY must be set");
   });
 });

@@ -1,21 +1,21 @@
 # Swing Thing Dance Card Studio
 
-The repository includes a local Dance Card Studio for maintaining figure copy, resources, and artwork, plus a CLI for generating card-image candidates through a LiteLLM proxy backed by OpenAI's Image API. The browser studio and CLI share the same figure discovery, prompt assembly, request, concurrency, candidate storage, and promotion code.
+The repository includes a local Dance Card Studio for maintaining figure copy, resources, and artwork, plus a CLI for generating card-image candidates through OpenAI's Image API directly or through a LiteLLM proxy. The browser studio and CLI share the same figure discovery, prompt assembly, request, concurrency, candidate storage, and promotion code.
 
 ## Authentication
 
-Copy the example configuration and add your LiteLLM virtual key and proxy URL. The browser never receives either credential.
+Copy the example configuration and add your OpenAI API key. The browser never receives credentials.
 
 ```sh
 cp .env.example .env
-# Edit .env and set LITELLM_API_KEY and LITELLM_BASE_URL.
+# Edit .env and set OPENAI_API_KEY.
 ```
 
-Both the studio and CLI load `.env` from the repository root. Existing shell environment variables take precedence. `IMAGE_MODEL` is the image-capable alias exposed by the proxy. The file also supports `IMAGE_SIZE`, `IMAGE_QUALITY`, `REQUEST_TIMEOUT_SECONDS`, `IMAGE_STUDIO_PORT`, and `IMAGE_STUDIO_LOG_LEVEL`; see [`.env.example`](../.env.example). Never commit `.env`.
+Both the studio and CLI load `.env` from the repository root. Existing shell environment variables take precedence. Fresh configuration uses `IMAGE_API_PROVIDER=openai`, `OPENAI_API_KEY`, and the default `https://api.openai.com` base URL; `OPENAI_BASE_URL` can override it when needed. For LiteLLM, use `IMAGE_API_PROVIDER=litellm`, `LITELLM_API_KEY`, and `LITELLM_BASE_URL`. A legacy configuration with LiteLLM variables and no provider continues to select LiteLLM, even if an ambient OpenAI key also exists; set `IMAGE_API_PROVIDER=openai` to deliberately switch it. `IMAGE_MODEL` is the direct model name or proxy alias. The file also supports `IMAGE_SIZE`, `IMAGE_QUALITY`, `REQUEST_TIMEOUT_SECONDS`, `IMAGE_STUDIO_PORT`, and `IMAGE_STUDIO_LOG_LEVEL`; see [`.env.example`](../.env.example). Never commit `.env`.
 
 ## Diagnostic logging
 
-Both entry points emit timestamped logs to stderr. The default `info` level reports configuration state, batch plans, job lifecycle, preprocessing, LiteLLM response status and request IDs, token usage, output locations, and elapsed times. Use debug logging when diagnosing a failure:
+Both entry points emit timestamped logs to stderr. The default `info` level reports the selected provider, configuration state, batch plans, job lifecycle, preprocessing, API response status and request IDs, token usage, output locations, and elapsed times. Use debug logging when diagnosing a failure:
 
 ```sh
 task studio:debug
@@ -23,9 +23,9 @@ task images:generate MODE=marked -- --debug
 IMAGE_STUDIO_LOG_LEVEL=debug npm run images:generate -- --mode missing --dry-run
 ```
 
-Supported levels are `error`, `warn`, `info`, and `debug`. Set `IMAGE_STUDIO_LOG_LEVEL` in `.env` for a persistent choice. Debug adds inbound studio requests, proxy attempts, retry decisions, prepared input sizes, candidate writes, and complete nested error stacks. Credentials and authorization-shaped fields are redacted, prompts and image payloads are never printed, and signed query strings are removed from logged image URLs.
+Supported levels are `error`, `warn`, `info`, and `debug`. Set `IMAGE_STUDIO_LOG_LEVEL` in `.env` for a persistent choice. Debug adds inbound studio requests, API attempts, retry decisions, prepared input sizes, candidate writes, and complete nested error stacks. Credentials and authorization-shaped fields are redacted, prompts and image payloads are never printed, and signed query strings are removed from logged image URLs.
 
-When reporting a LiteLLM failure, include the timestamp, figure ID, HTTP status, proxy `requestId`, and the final error block. These fields make it possible to correlate a local job with proxy-side logs without sharing credentials.
+When reporting an image API failure, include the provider, timestamp, figure ID, HTTP status, `requestId`, and the final error block. These fields make it possible to correlate a local job with OpenAI or proxy logs without sharing credentials.
 
 ## Content workspace
 

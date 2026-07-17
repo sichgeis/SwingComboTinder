@@ -12,7 +12,7 @@ import type {
   FigureRecord,
   GeneratedCandidateSet,
   GenerationOptions,
-  LiteLLMConnection,
+  ImageApiConnection,
   TokenUsage
 } from "./types";
 
@@ -24,21 +24,21 @@ interface InputMetadata {
   readonly height?: number;
 }
 
-interface LiteLLMImageResult {
+interface ImageApiResult {
   readonly b64_json?: string;
   readonly url?: string;
 }
 
-interface LiteLLMUsage {
+interface ImageApiUsage {
   readonly input_tokens: number;
   readonly input_tokens_details: { readonly image_tokens: number; readonly text_tokens: number };
   readonly output_tokens: number;
   readonly total_tokens: number;
 }
 
-interface LiteLLMResponse {
-  readonly data: readonly LiteLLMImageResult[];
-  readonly usage?: LiteLLMUsage;
+interface ImageApiResponse {
+  readonly data: readonly ImageApiResult[];
+  readonly usage?: ImageApiUsage;
 }
 
 const hashFile = async (path: string): Promise<string> =>
@@ -75,17 +75,17 @@ const safeUrl = (value: string): string => {
   }
 };
 
-const parseLiteLLMResponse = (value: unknown): LiteLLMResponse => {
+const parseImageApiResponse = (value: unknown): ImageApiResponse => {
   if (typeof value !== "object" || value === null) {
-    throw new Error("LiteLLM returned an unexpected response shape.");
+    throw new Error("The image API returned an unexpected response shape.");
   }
   const response = value as Record<string, unknown>;
   if (!Array.isArray(response.data)) {
-    throw new Error("LiteLLM returned an unexpected response shape.");
+    throw new Error("The image API returned an unexpected response shape.");
   }
   const data = response.data.map((item) => {
     if (typeof item !== "object" || item === null) {
-      throw new Error("LiteLLM returned an invalid image result.");
+      throw new Error("The image API returned an invalid image result.");
     }
     const result = item as Record<string, unknown>;
     return {
@@ -96,7 +96,7 @@ const parseLiteLLMResponse = (value: unknown): LiteLLMResponse => {
   return {
     data,
     ...(typeof response.usage === "object" && response.usage !== null
-      ? { usage: response.usage as LiteLLMUsage }
+      ? { usage: response.usage as ImageApiUsage }
       : {})
   };
 };
@@ -110,7 +110,7 @@ const postWithRetries = async (
 ): Promise<Response> => {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const startedAt = Date.now();
-    logger.debug("proxy-request-attempt", { attempt: attempt + 1, timeoutMs });
+    logger.debug("image-api-request-attempt", { attempt: attempt + 1, timeoutMs });
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -119,7 +119,7 @@ const postWithRetries = async (
         signal: AbortSignal.timeout(timeoutMs)
       });
       const retryable = response.status === 429 || response.status >= 500;
-      logger.info("proxy-response", {
+      logger.info("image-api-response", {
         attempt: attempt + 1,
         status: response.status,
         statusText: response.statusText,
@@ -130,32 +130,32 @@ const postWithRetries = async (
       });
       if (!retryable || attempt === 2) return response;
     } catch (error) {
-      logger.warn("proxy-request-error", {
+      logger.warn("image-api-request-error", {
         attempt: attempt + 1,
         durationMs: Date.now() - startedAt,
         willRetry: attempt < 2,
         error
       });
       if (attempt === 2) {
-        throw new Error(`Could not reach LiteLLM proxy: ${String(error)}`, { cause: error });
+        throw new Error(`Could not reach the image API: ${String(error)}`, { cause: error });
       }
     }
     const retryDelayMs = 250 * 2 ** attempt;
-    logger.warn("proxy-request-retrying", { attempt: attempt + 1, retryDelayMs });
+    logger.warn("image-api-request-retrying", { attempt: attempt + 1, retryDelayMs });
     await new Promise((resolveDelay) => setTimeout(resolveDelay, retryDelayMs));
   }
-  throw new Error("Could not reach LiteLLM proxy.");
+  throw new Error("Could not reach the image API.");
 };
 
 const imageBytes = async (
-  image: LiteLLMImageResult,
+  image: ImageApiResult,
   timeoutMs: number,
   index: number,
   logger: Logger
 ): Promise<Buffer> => {
   if (image.b64_json) {
     const decoded = Buffer.from(image.b64_json, "base64");
-    if (decoded.length === 0) throw new Error("LiteLLM returned invalid base64 image data.");
+    if (decoded.length === 0) throw new Error("The image API returned invalid base64 image data.");
     logger.debug("candidate-decoded", { candidate: index + 1, source: "base64", bytes: decoded.length });
     return decoded;
   }
@@ -167,7 +167,7 @@ const imageBytes = async (
       timeoutMs
     });
     const response = await fetch(image.url, { signal: AbortSignal.timeout(timeoutMs) });
-    if (!response.ok) throw new Error(`Could not download LiteLLM image result: HTTP ${response.status}.`);
+    if (!response.ok) throw new Error(`Could not download image API result: HTTP ${response.status}.`);
     const downloaded = Buffer.from(await response.arrayBuffer());
     logger.info("candidate-downloaded", {
       candidate: index + 1,
@@ -177,7 +177,7 @@ const imageBytes = async (
     });
     return downloaded;
   }
-  throw new Error("A LiteLLM image result contained neither b64_json nor url.");
+  throw new Error("An image API result contained neither b64_json nor url.");
 };
 
 const createRunId = (): string => {
@@ -204,15 +204,18 @@ const normalizeUsage = (usage: {
 export const generateFigure = async (
   figure: FigureRecord,
   options: GenerationOptions,
-  connection: LiteLLMConnection
+  connection: ImageApiConnection
 ): Promise<GeneratedCandidateSet> => {
   const logger = createLogger("image-generation", { figureId: figure.id });
   if (!connection.apiKey || !connection.baseUrl) {
     logger.error("configuration-missing", {
-      proxyKeyConfigured: Boolean(connection.apiKey),
+      provider: connection.provider,
+      credentialConfigured: Boolean(connection.apiKey),
       baseUrlConfigured: Boolean(connection.baseUrl)
     });
-    throw new Error("LITELLM_API_KEY and LITELLM_BASE_URL must be set in .env or the shell.");
+    throw new Error(connection.provider === "openai"
+      ? "OPENAI_API_KEY must be set in .env or the shell."
+      : "LITELLM_API_KEY and LITELLM_BASE_URL must be set in .env or the shell.");
   }
   if (!figure.hasPose) throw new Error(`${figure.id} has no teaching-frames/selected.png.`);
   if (options.count < 1 || options.count > 4) throw new Error("Candidate count must be 1–4.");
@@ -224,6 +227,7 @@ export const generateFigure = async (
     quality: options.quality,
     candidateCount: options.count,
     timeoutMs: options.timeoutMs,
+    provider: connection.provider,
     endpoint: safeUrl(`${connection.baseUrl}/v1/images/edits`)
   });
   const prompt = buildPrompt(figure.generationNote);
@@ -241,12 +245,13 @@ export const generateFigure = async (
     durationMs: Date.now() - preparationStartedAt
   });
   const request = new FormData();
+  const imageField = connection.provider === "openai" ? "image[]" : "image";
   preparedInputs.forEach((buffer, index) => {
     const filename =
       index === 0
         ? "01-teaching-frame.webp"
         : `${String(index + 1).padStart(2, "0")}-style-reference.webp`;
-    request.append("image", new Blob([new Uint8Array(buffer)], { type: "image/webp" }), filename);
+    request.append(imageField, new Blob([new Uint8Array(buffer)], { type: "image/webp" }), filename);
   });
   request.set("model", options.model);
   request.set("prompt", prompt);
@@ -255,7 +260,7 @@ export const generateFigure = async (
   request.set("quality", options.quality);
 
   const startedAt = Date.now();
-  const proxyResponse = await postWithRetries(
+  const apiResponse = await postWithRetries(
     `${connection.baseUrl}/v1/images/edits`,
     connection.apiKey,
     request,
@@ -263,23 +268,23 @@ export const generateFigure = async (
     logger
   );
   const durationMs = Date.now() - startedAt;
-  const requestId = proxyResponse.headers.get("x-request-id");
-  if (!proxyResponse.ok) {
-    const responseBody = (await proxyResponse.text()).slice(0, 2000);
-    logger.error("proxy-response-failed", {
-      status: proxyResponse.status,
-      statusText: proxyResponse.statusText,
+  const requestId = apiResponse.headers.get("x-request-id");
+  if (!apiResponse.ok) {
+    const responseBody = (await apiResponse.text()).slice(0, 2000);
+    logger.error("image-api-response-failed", {
+      status: apiResponse.status,
+      statusText: apiResponse.statusText,
       requestId,
       durationMs,
       responseBody
     });
     throw new Error(
-      `LiteLLM returned HTTP ${proxyResponse.status}: ${responseBody}`
+      `${connection.provider === "openai" ? "OpenAI" : "LiteLLM"} returned HTTP ${apiResponse.status}: ${responseBody}`
     );
   }
-  const response = parseLiteLLMResponse(await proxyResponse.json());
-  if (response.data.length === 0) throw new Error("LiteLLM returned no image candidates.");
-  logger.info("proxy-response-parsed", {
+  const response = parseImageApiResponse(await apiResponse.json());
+  if (response.data.length === 0) throw new Error("The image API returned no image candidates.");
+  logger.info("image-api-response-parsed", {
     candidates: response.data.length,
     requestId,
     durationMs,
@@ -316,6 +321,7 @@ export const generateFigure = async (
     figureId: figure.id,
     runId,
     createdAt,
+    provider: connection.provider,
     model: options.model,
     size: options.size,
     quality: options.quality,
@@ -334,7 +340,7 @@ export const generateFigure = async (
     runId,
     candidates: candidates.length,
     requestId,
-    proxyDurationMs: durationMs,
+    apiDurationMs: durationMs,
     totalDurationMs: Date.now() - operationStartedAt,
     runDirectory: relative(repositoryRoot, runDirectory).split("\\").join("/"),
     metadataPath: relative(repositoryRoot, metadataPath).split("\\").join("/")

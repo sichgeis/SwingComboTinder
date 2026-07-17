@@ -7,6 +7,9 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getImageEnvironment, loadEnvironment } from "./environment";
 
 const variableNames = [
+  "IMAGE_API_PROVIDER",
+  "OPENAI_API_KEY",
+  "OPENAI_BASE_URL",
   "LITELLM_API_KEY",
   "LITELLM_BASE_URL",
   "IMAGE_MODEL",
@@ -41,9 +44,10 @@ const writeEnvironment = async (content: string): Promise<string> => {
 };
 
 describe("image studio environment", () => {
-  it("loads the supported settings from an env file", async () => {
-    const path = await writeEnvironment(`LITELLM_API_KEY=test-key
-LITELLM_BASE_URL=https://litellm.example.test/v1/
+  it("loads a direct OpenAI configuration and normalizes its base URL", async () => {
+    const path = await writeEnvironment(`IMAGE_API_PROVIDER=openai
+OPENAI_API_KEY=test-key
+OPENAI_BASE_URL=https://api.openai.test/v1/
 IMAGE_MODEL=test-image-model
 IMAGE_SIZE=1024x1536
 IMAGE_QUALITY=high
@@ -55,8 +59,9 @@ IMAGE_STUDIO_LOG_LEVEL=debug
     loadEnvironment(path);
 
     expect(getImageEnvironment()).toEqual({
-      litellmApiKey: "test-key",
-      litellmBaseUrl: "https://litellm.example.test",
+      imageApiProvider: "openai",
+      imageApiKey: "test-key",
+      imageApiBaseUrl: "https://api.openai.test",
       model: "test-image-model",
       imageSize: "1024x1536",
       imageQuality: "high",
@@ -64,6 +69,54 @@ IMAGE_STUDIO_LOG_LEVEL=debug
       studioPort: 4321,
       logLevel: "debug"
     });
+  });
+
+  it("defaults direct OpenAI to the public API base URL", () => {
+    process.env.OPENAI_API_KEY = "direct-key";
+    expect(getImageEnvironment()).toMatchObject({
+      imageApiProvider: "openai",
+      imageApiKey: "direct-key",
+      imageApiBaseUrl: "https://api.openai.com"
+    });
+  });
+
+  it("infers and preserves a legacy LiteLLM configuration", async () => {
+    loadEnvironment(await writeEnvironment(`LITELLM_API_KEY=legacy-key
+LITELLM_BASE_URL=https://litellm.example.test/v1/
+`));
+    expect(getImageEnvironment()).toMatchObject({
+      imageApiProvider: "litellm",
+      imageApiKey: "legacy-key",
+      imageApiBaseUrl: "https://litellm.example.test"
+    });
+  });
+
+  it("keeps legacy LiteLLM precedence when both configurations are present without a provider", () => {
+    process.env.OPENAI_API_KEY = "openai-key";
+    process.env.LITELLM_API_KEY = "litellm-key";
+    process.env.LITELLM_BASE_URL = "https://litellm.example.test";
+    expect(getImageEnvironment()).toMatchObject({
+      imageApiProvider: "litellm",
+      imageApiKey: "litellm-key",
+      imageApiBaseUrl: "https://litellm.example.test"
+    });
+  });
+
+  it("honors an explicit provider when both configurations are present", () => {
+    process.env.IMAGE_API_PROVIDER = "litellm";
+    process.env.OPENAI_API_KEY = "openai-key";
+    process.env.LITELLM_API_KEY = "litellm-key";
+    process.env.LITELLM_BASE_URL = "https://litellm.example.test";
+    expect(getImageEnvironment()).toMatchObject({
+      imageApiProvider: "litellm",
+      imageApiKey: "litellm-key",
+      imageApiBaseUrl: "https://litellm.example.test"
+    });
+  });
+
+  it("rejects an unknown provider", () => {
+    process.env.IMAGE_API_PROVIDER = "other";
+    expect(() => getImageEnvironment()).toThrow(/must be openai or litellm/);
   });
 
   it("preserves an existing shell variable", async () => {

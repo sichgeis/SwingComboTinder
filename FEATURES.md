@@ -2,6 +2,18 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Direct OpenAI image provider
+
+- Status: Done
+- Approved: 2026-07-17
+- Goal: Use the OpenAI Image API directly from the Studio and CLI while retaining the existing LiteLLM route.
+- Scope: Explicit provider selection; standard OpenAI key and default base URL; legacy LiteLLM inference; provider-aware status/errors/logging; `.env.example`, tests, and workflow documentation.
+- Non-goals: Do not add an SDK, change prompts/models, send a paid validation request, expose credentials, remove LiteLLM, or add provider failover.
+- Specification: [`specs/direct-openai-image-provider.md`](specs/direct-openai-image-provider.md)
+- Progress: Added explicit OpenAI/LiteLLM selection, standard direct OpenAI variables and default URL, backward-compatible LiteLLM precedence, provider-specific multipart field names, provider-aware Studio/CLI status and errors, and updated configuration/workflow documentation.
+- Validation: `npm run check` passes with 22 test files and 73 tests plus the production PWA build; browser modules pass `node --check`. Focused tests cover direct OpenAI URL normalization/defaults, explicit and inferred LiteLLM, mixed-provider resolution, missing OpenAI credentials, and both multipart request contracts. An isolated Studio reported `gpt-image-2` via configured provider `openai` through `/api/config`; no image request was sent.
+- Next action: None; copy `.env.example`, set `OPENAI_API_KEY`, and use the existing Studio or CLI generation flow.
+
 ## Studio teaching-pose selection
 
 - Status: Done
