@@ -26,6 +26,10 @@ a Black woman and a white woman, both adults, in practical 1940s workwear-inspir
 - [YouTube source 3](https://www.youtube.com/watch?v=m5VxNV9_Rnk)
   - Editorial note: Reference catalog candidate (Exact named swing tutorial). Key frame: Show the back-to-back or wrapped phase, with connected arms forming the recognizable rolling shape.
 
+## Generation note
+
+Both dancers' hands touched in the air.
+
 ## Working notes
 
 Add pose corrections, generation decisions, and future rework requests here. Teaching-source provenance is recorded above.

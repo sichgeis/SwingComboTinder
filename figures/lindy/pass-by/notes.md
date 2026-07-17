@@ -3,7 +3,7 @@
 ## Artwork status
 
 - [x] Card artwork installed
-- [x] Image approved
+- [ ] Image approved
 - [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`

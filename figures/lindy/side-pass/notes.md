@@ -3,7 +3,7 @@
 ## Artwork status
 
 - [x] Card artwork installed
-- [x] Image approved
+- [ ] Image approved
 - [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
@@ -25,6 +25,10 @@ two East Asian women, both adults, in contrasting 1940s-inspired separates
   - Editorial note: Artwork reference selection.
 - [YouTube source 3](https://www.youtube.com/watch?v=kFoi6PTiuok)
   - Editorial note: Reference catalog candidate (Exact side-pass/change-place tutorial). Key frame: Capture the moment one partner clears the other’s side, creating two opposing travel diagonals.
+
+## Generation note
+
+
 
 ## Working notes
 

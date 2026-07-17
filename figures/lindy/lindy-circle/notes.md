@@ -4,7 +4,7 @@
 
 - [x] Card artwork installed
 - [x] Image approved
-- [x] Needs rework
+- [ ] Needs rework
 - Production card: `card.jpg`
 - Full-resolution source: `generated/current.png`
 - Migrated status: Reworked into a compact shared circular travel; previous wide-stance version preserved as `02_lindy-circle-v1-wide-stance.png`
@@ -25,6 +25,10 @@ an older Black couple, both adults, in stylish late-1980s jazz-club clothing wit
   - Editorial note: Artwork reference selection: historic Black Lindy Hop footage.
 - [YouTube source 3](https://www.youtube.com/watch?v=P083vG0JKB8)
   - Editorial note: Reference catalog candidate (Exact named tutorial). Key frame: Show the middle of the shared rotation in closed position, with the circular pathway readable.
+
+## Generation note
+
+
 
 ## Working notes
 

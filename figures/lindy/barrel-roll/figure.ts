@@ -31,5 +31,12 @@ export default defineFigure({
       "remember": "Der Bogen reist mit – niemand wird um einen stehenden Arm gedreht."
     }
   },
-  "resources": []
+  "resources": [
+    {
+      "type": "youtube",
+      "videoId": "XQsgQrXe-YA",
+      "title": "Barrel Turns - for Lindy Hop & Swing Dance",
+      "kind": "tutorial"
+    }
+  ]
 });
