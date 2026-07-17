@@ -11,6 +11,13 @@ export interface CandidateImage {
   readonly runId: string;
 }
 
+export interface TeachingPoseOption {
+  readonly absolutePath: string;
+  readonly relativePath: string;
+  readonly filename: string;
+  readonly selected: boolean;
+}
+
 export interface FigureRecord {
   readonly id: string;
   readonly style: string;
@@ -30,6 +37,7 @@ export interface FigureRecord {
   readonly poseDirection: string;
   readonly characterDirection: string;
   readonly generationNote: string;
+  readonly poseOptions: readonly TeachingPoseOption[];
   readonly candidates: readonly CandidateImage[];
 }
 

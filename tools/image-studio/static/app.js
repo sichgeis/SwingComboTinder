@@ -53,6 +53,12 @@ const imageDialogTitle = document.querySelector("#image-dialog-title");
 const imageDialogMeta = document.querySelector("#image-dialog-meta");
 const imageDialogContent = document.querySelector("#image-dialog-content");
 const imageDialogClose = document.querySelector("#image-dialog-close");
+const poseDialog = document.querySelector("#pose-dialog");
+const poseDialogTitle = document.querySelector("#pose-dialog-title");
+const poseDialogMeta = document.querySelector("#pose-dialog-meta");
+const poseDialogContent = document.querySelector("#pose-dialog-content");
+const poseDialogClose = document.querySelector("#pose-dialog-close");
+let activePoseFigureId = null;
 const contentWorkspace = document.querySelector("#content-workspace");
 const imageWorkspace = document.querySelector("#image-workspace");
 const styleLabels = {
@@ -103,11 +109,24 @@ const showWorkspace = (workspace) => {
   });
 };
 
-const imageCell = (label, url, emptyText, figureName) => `
+const imageCell = (label, url, emptyText, figureName, footer = "") => `
   <div class="image-cell">
     <h3>${label}</h3>
     ${url ? `<button class="image-zoom" type="button" data-image-url="${escapeHtml(url)}" data-image-label="${escapeHtml(`${figureName} · ${label}`)}" aria-label="Magnify ${escapeHtml(label)} for ${escapeHtml(figureName)}"><img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" loading="lazy"></button>` : `<div class="empty-image">${escapeHtml(emptyText)}</div>`}
+    ${footer ? `<div class="image-cell-footer">${footer}</div>` : ""}
   </div>`;
+
+const openPoseDialog = (figure) => {
+  activePoseFigureId = figure.id;
+  poseDialogTitle.textContent = `${figure.name} · Teaching poses`;
+  poseDialogMeta.className = "";
+  poseDialogMeta.textContent = "The selected pose is used by future image generation. Swapping preserves the previous selection as an alternative.";
+  poseDialogContent.innerHTML = figure.poseOptions.map((pose) => `<article class="pose-option ${pose.selected ? "selected" : ""}">
+    <button class="image-zoom" type="button" data-image-url="${escapeHtml(pose.url)}" data-image-label="${escapeHtml(`${figure.name} · ${pose.filename}`)}"><img src="${escapeHtml(pose.url)}" alt="${escapeHtml(pose.filename)}"></button>
+    <div><strong>${escapeHtml(pose.filename)}</strong>${pose.selected ? '<span class="badge good">Current</span>' : `<button type="button" class="secondary" data-pose-path="${escapeHtml(pose.path)}">Use this pose</button>`}</div>
+  </article>`).join("");
+  poseDialog.showModal();
+};
 
 const formatCandidateDate = (value) => new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
@@ -231,10 +250,10 @@ const render = () => {
     const cardBody = figure.imageApproved && !figure.marked && newCandidateCount === 0 ? `
       <div class="approved-summary">
         <span>This move has an image you approved.</span>
-        <button type="button" class="secondary" data-action="image-approval">Reopen</button>
+        <div>${figure.poseOptions.length > 1 ? `<button type="button" class="secondary" data-action="swap-pose">Swap teaching pose</button>` : ""}<button type="button" class="secondary" data-action="image-approval">Reopen</button></div>
       </div>` : `
       <div class="comparison">
-        ${imageCell("Teaching pose", figure.poseUrl, "Add teaching-frames/selected.png", figure.name)}
+        ${imageCell("Teaching pose", figure.poseUrl, "Add teaching-frames/selected.png", figure.name, figure.poseOptions.length > 1 ? `<button type="button" class="secondary" data-action="swap-pose">Swap pose · ${figure.poseOptions.length - 1} alternate${figure.poseOptions.length === 2 ? "" : "s"}</button>` : "")}
         ${imageCell(figure.currentIsFallback ? "Fallback card" : "Current master", figure.currentUrl, "No current artwork", figure.name)}
         ${imageCell("Latest candidate", latest?.url, "Generate a candidate", figure.name)}
       </div>
@@ -365,7 +384,9 @@ grid.addEventListener("click", async (event) => {
   const figure = state.figures.find((item) => item.id === id);
   try {
     button.disabled = true;
-    if (button.dataset.action === "generate") {
+    if (button.dataset.action === "swap-pose") {
+      openPoseDialog(figure);
+    } else if (button.dataset.action === "generate") {
       await startRun({ mode: "selected", ids: [id] });
     } else if (button.dataset.action === "prompt") {
       promptContent.textContent = "Loading…";
@@ -415,6 +436,35 @@ grid.addEventListener("click", async (event) => {
   } catch (error) {
     runStatus.className = "error";
     runStatus.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+poseDialogClose.addEventListener("click", () => poseDialog.close());
+poseDialogContent.addEventListener("click", async (event) => {
+  const imageButton = event.target.closest("button[data-image-url]");
+  if (imageButton) {
+    openImageDialog(imageButton.dataset.imageUrl, imageButton.dataset.imageLabel);
+    return;
+  }
+  const button = event.target.closest("button[data-pose-path]");
+  if (!button || !activePoseFigureId) return;
+  button.disabled = true;
+  const figure = state.figures.find(({ id }) => id === activePoseFigureId);
+  try {
+    await request("/api/teaching-pose", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ id: activePoseFigureId, path: button.dataset.posePath })
+    });
+    poseDialog.close();
+    runStatus.className = "success";
+    runStatus.textContent = `Changed the teaching pose for ${figure?.name || activePoseFigureId}.`;
+    await loadFigures();
+  } catch (error) {
+    poseDialogMeta.textContent = error.message;
+    poseDialogMeta.className = "error";
   } finally {
     button.disabled = false;
   }

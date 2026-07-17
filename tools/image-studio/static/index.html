@@ -39,7 +39,10 @@
             <p class="eyebrow">Catalog</p>
             <h2>Dance cards</h2>
           </div>
-          <span id="content-count" class="content-count" aria-label="Visible figures">0</span>
+          <div class="library-heading-actions">
+            <button id="create-card" type="button" class="secondary">New card</button>
+            <span id="content-count" class="content-count" aria-label="Visible figures">0</span>
+          </div>
         </div>
         <div class="library-filters" aria-label="Filter dance cards">
           <label class="search-control">
@@ -221,6 +224,34 @@
         <button class="quiet" aria-label="Close">Close</button>
       </form>
       <pre id="prompt-content"></pre>
+    </dialog>
+
+    <dialog id="pose-dialog" class="pose-dialog" aria-labelledby="pose-dialog-title">
+      <header class="dialog-header">
+        <div>
+          <p class="eyebrow">Generation reference</p>
+          <h2 id="pose-dialog-title">Teaching poses</h2>
+          <p id="pose-dialog-meta">Choose an alternate pose.</p>
+        </div>
+        <button id="pose-dialog-close" type="button" class="quiet" aria-label="Close teaching poses">Close</button>
+      </header>
+      <div id="pose-dialog-content" class="pose-option-grid"></div>
+    </dialog>
+
+    <dialog id="create-card-dialog" class="create-card-dialog" aria-labelledby="create-card-title">
+      <form id="create-card-form">
+        <header class="dialog-header">
+          <div><p class="eyebrow">New draft package</p><h2 id="create-card-title">Create dance card</h2></div>
+          <button id="create-card-close" type="button" class="quiet" aria-label="Close new card dialog">Close</button>
+        </header>
+        <div class="create-card-fields">
+          <label data-create-field="name"><span>Canonical name</span><input name="name" required maxlength="100" autocomplete="off"><small class="field-error"></small></label>
+          <label data-create-field="style"><span>Dance style</span><select name="style"><option value="lindy">Lindy Hop</option><option value="charleston">Charleston</option><option value="shag">Collegiate Shag</option></select><small class="field-error"></small></label>
+          <label data-create-field="slug"><span>Directory slug and stable ID</span><input name="slug" required maxlength="80" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" autocomplete="off"><small class="field-hint">Lowercase letters, numbers, and hyphens.</small><small class="field-error"></small></label>
+          <p id="create-card-message" class="content-message" role="status"></p>
+        </div>
+        <footer class="create-card-actions"><button id="create-card-cancel" type="button" class="quiet">Cancel</button><button type="submit">Create draft</button></footer>
+      </form>
     </dialog>
 
     <dialog id="image-dialog" class="image-dialog" aria-labelledby="image-dialog-title">

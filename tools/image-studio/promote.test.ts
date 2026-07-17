@@ -40,6 +40,7 @@ describe("promoteCandidate", () => {
       notesPath: resolve(directory, "notes.md"),
       definitionPath: resolve(directory, "figure.ts"),
       posePath: resolve(directory, "teaching-frames/selected.png"),
+      poseOptions: [],
       currentPath: resolve(generated, "current.png"),
       fallbackPath: resolve(directory, "card.jpg"),
       hasPose: true,

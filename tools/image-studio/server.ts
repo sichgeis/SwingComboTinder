@@ -21,7 +21,7 @@ import { mapWithConcurrency } from "./pool";
 import { planGeneration } from "./plan";
 import { promoteCandidate, setImageApproved, setNeedsRework } from "./promote";
 import { buildPrompt, MAX_GENERATION_NOTE_LENGTH } from "./prompt";
-import { discoverFigures, findFigure, setGenerationNote } from "./repository";
+import { discoverFigures, findFigure, setGenerationNote, swapTeachingPose } from "./repository";
 import {
   generationModes,
   imageQualities,
@@ -30,6 +30,7 @@ import {
   type SelectionOptions
 } from "./types";
 import { renderCardMarkup } from "../../src/ui/card-presentation";
+import { createFigurePackage, FigureCreationError } from "./create-figure";
 
 const staticRoot = resolve(dirname(fileURLToPath(import.meta.url)), "static");
 const appStylesPath = resolve(repositoryRoot, "src/styles/app.css");
@@ -121,6 +122,12 @@ const serializeFigures = async (): Promise<unknown> =>
       characterDirection: figure.characterDirection,
       generationNote: figure.generationNote,
       poseUrl: figure.hasPose ? mediaUrl(figure.posePath) : null,
+      poseOptions: figure.poseOptions.map((option) => ({
+        path: option.relativePath,
+        filename: option.filename,
+        selected: option.selected,
+        url: mediaUrl(option.absolutePath)
+      })),
       currentUrl: figure.hasCurrent
         ? mediaUrl(figure.currentPath)
         : figure.hasFallback
@@ -361,6 +368,18 @@ const handleRequest = async (
     sendJson(response, 200, await serializeFigures());
     return;
   }
+  if (request.method === "POST" && url.pathname === "/api/figures") {
+    const created = await createFigurePackage(await readJson(request));
+    requestLogger.info("figure-created", { figureId: created.id });
+    event("figure-updated", { id: created.id });
+    sendJson(response, 201, {
+      id: created.id,
+      content: created.loaded.content,
+      revision: created.loaded.revision,
+      metadataOptions: figureMetadataOptions
+    });
+    return;
+  }
   if (request.method === "GET" && url.pathname === "/api/figure-content") {
     await serveFigureContent(response, url.searchParams.get("id"));
     return;
@@ -472,6 +491,20 @@ const handleRequest = async (
     sendJson(response, 200, { saved: true, note: values.note.trim() });
     return;
   }
+  if (request.method === "POST" && url.pathname === "/api/teaching-pose") {
+    const body = await readJson(request);
+    if (typeof body !== "object" || body === null) throw new Error("Expected a JSON object.");
+    const values = body as Record<string, unknown>;
+    if (typeof values.id !== "string" || typeof values.path !== "string") {
+      throw new Error("Teaching pose selection requires figure id and alternate path.");
+    }
+    const figure = await findFigure(values.id);
+    await swapTeachingPose(figure, values.path);
+    requestLogger.info("teaching-pose-swapped", { figureId: values.id, alternatePath: values.path });
+    event("figure-updated", { id: values.id });
+    sendJson(response, 200, { swapped: true });
+    return;
+  }
   if (request.method === "GET" && url.pathname === "/media") {
     await serveMedia(response, url.searchParams.get("path"));
     return;
@@ -516,7 +549,7 @@ const server = createServer((request, response) => {
       const status = error instanceof ContentConflictError ? 409 : error instanceof ContentValidationError ? 422 : 400;
       sendJson(response, status, {
         error: error instanceof Error ? error.message : String(error),
-        ...(error instanceof ContentValidationError ? { issues: error.issues } : {})
+        ...(error instanceof ContentValidationError || error instanceof FigureCreationError ? { issues: error.issues } : {})
       });
     } else {
       response.end();

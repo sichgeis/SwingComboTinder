@@ -39,6 +39,7 @@ describe("generateFigure", () => {
       notesPath: resolve(directory, "notes.md"),
       definitionPath: resolve(directory, "definition.md"),
       posePath,
+      poseOptions: [{ absolutePath: posePath, relativePath: "teaching-frames/selected.png", filename: "selected.png", selected: true }],
       currentPath: resolve(directory, "current.png"),
       fallbackPath: resolve(directory, "fallback.png"),
       hasPose: true,

@@ -2,6 +2,30 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Studio teaching-pose selection
+
+- Status: Done
+- Approved: 2026-07-17
+- Goal: Choose an existing alternate PNG teaching pose from Image Queue while keeping `teaching-frames/selected.png` as the generation contract and preserving the previous selection.
+- Scope: Discover direct PNG alternatives, compare them in a pose dialog, atomically exchange a chosen alternate with `selected.png`, validate paths, refresh Studio state, test, and document the workflow.
+- Non-goals: Do not upload/edit/delete frames, change current artwork or approval state, trigger generation, rewrite notes, or support non-PNG alternatives.
+- Specification: [`specs/studio-teaching-pose-selection.md`](specs/studio-teaching-pose-selection.md)
+- Progress: Image Queue discovers direct PNG pose options, exposes a visual chooser on both active and approved cards, validates the requested alternate, and atomically exchanges it with `selected.png` with recovery on failure.
+- Validation: `npm run check` passes with 22 test files and 68 tests plus the production PWA build; both dependency-free Studio modules pass `node --check`. The real 42-card Studio showed all three Texas Tommy poses, swapped `alternative.png` into the generation slot, and restored both original SHA-256 hashes by repeating the UI swap without browser errors or an image request.
+- Next action: None; use Swap teaching pose when a figure package contains alternate PNG frames.
+
+## Studio card creation
+
+- Status: Done
+- Approved: 2026-07-17
+- Goal: Create a new valid draft figure package from Content and open it immediately for ordinary editing.
+- Scope: New card dialog; validated name/style/globally unique slug; next global order; atomic draft package with provisional bilingual content, notes, empty production directories, and a self-contained placeholder card; tests and documentation.
+- Non-goals: Do not auto-publish, generate paid artwork, clone/import/rename/delete packages, infer final copy, add templates, or retain a validation-only card.
+- Specification: [`specs/studio-card-creation.md`](specs/studio-card-creation.md)
+- Progress: Content now creates an atomic valid draft package from a name, style, and suggested/editable slug; assigns the next global order; writes provisional bilingual content, notes, production directories, and named placeholder art; and opens the saved draft in the existing editor.
+- Validation: `npm run check` passes with 22 test files and 68 tests plus the production PWA build; focused tests cover scaffold contents, 600 × 900 JPEG metadata, global ordering and ID uniqueness, validation, and failure cleanup. The real Studio created and opened an unpublished draft with a live preview, exposed its fallback/rework state in Image Queue, and reported no browser errors; the validation-only package was removed.
+- Next action: None; use New card for the next figure and replace its provisional copy and artwork before publishing.
+
 ## URL-driven transcript downloader
 
 - Status: Done

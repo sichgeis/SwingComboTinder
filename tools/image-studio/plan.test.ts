@@ -17,6 +17,7 @@ const figure = (
     notesPath: `/tmp/${id}/notes.md`,
     definitionPath: `/tmp/${id}/figure.ts`,
     posePath: `/tmp/${id}/teaching-frames/selected.png`,
+    poseOptions: [],
     currentPath: `/tmp/${id}/generated/current.png`,
     fallbackPath: `/tmp/${id}/card.jpg`,
     hasPose: options.hasPose ?? true,

@@ -1,9 +1,10 @@
-import { access, readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { access, readdir, readFile, rename, stat, unlink, writeFile } from "node:fs/promises";
 import { relative, resolve } from "node:path";
 
 import { figuresRoot, repositoryRoot } from "./paths";
 import { MAX_GENERATION_NOTE_LENGTH } from "./prompt";
-import type { CandidateImage, FigureRecord } from "./types";
+import type { CandidateImage, FigureRecord, TeachingPoseOption } from "./types";
 
 const exists = async (path: string): Promise<boolean> => {
   try {
@@ -69,6 +70,21 @@ const discoverCandidates = async (directory: string): Promise<readonly Candidate
   return candidates.sort((left, right) => right.createdAt.localeCompare(left.createdAt));
 };
 
+const discoverTeachingPoses = async (directory: string): Promise<readonly TeachingPoseOption[]> => {
+  const root = resolve(directory, "teaching-frames");
+  if (!(await exists(root))) return [];
+  const entries = await readdir(root, { withFileTypes: true });
+  return entries
+    .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".png"))
+    .map((entry) => ({
+      absolutePath: resolve(root, entry.name),
+      relativePath: `teaching-frames/${entry.name}`,
+      filename: entry.name,
+      selected: entry.name === "selected.png"
+    }))
+    .sort((left, right) => Number(right.selected) - Number(left.selected) || left.filename.localeCompare(right.filename));
+};
+
 export const discoverFigures = async (): Promise<readonly FigureRecord[]> => {
   const styles = await readdir(figuresRoot, { withFileTypes: true });
   const figures: FigureRecord[] = [];
@@ -88,6 +104,7 @@ export const discoverFigures = async (): Promise<readonly FigureRecord[]> => {
       const markdown = await readFile(notesPath, "utf8");
       const name = /^#\s+(.+)$/m.exec(markdown)?.[1]?.trim() ?? moveEntry.name;
       const posePath = resolve(directory, "teaching-frames/selected.png");
+      const poseOptions = await discoverTeachingPoses(directory);
       const currentPath = resolve(directory, "generated/current.png");
       const fallbackPath = resolve(directory, "card.jpg");
       figures.push({
@@ -101,7 +118,7 @@ export const discoverFigures = async (): Promise<readonly FigureRecord[]> => {
         posePath,
         currentPath,
         fallbackPath,
-        hasPose: await exists(posePath),
+        hasPose: poseOptions.some(({ selected }) => selected),
         hasCurrent: await exists(currentPath),
         hasFallback: await exists(fallbackPath),
         marked: /^- \[[xX]\] Needs rework\s*$/m.test(markdown),
@@ -109,12 +126,48 @@ export const discoverFigures = async (): Promise<readonly FigureRecord[]> => {
         poseDirection: readSection(markdown, "Pose direction"),
         characterDirection: readSection(markdown, "Character direction"),
         generationNote: readSection(markdown, "Generation note"),
+        poseOptions,
         candidates: await discoverCandidates(directory)
       });
     }
   }
 
   return figures.sort((left, right) => left.id.localeCompare(right.id));
+};
+
+const atomicReplace = async (path: string, content: Buffer): Promise<void> => {
+  const temporary = `${path}.${randomUUID()}.swap-tmp`;
+  try {
+    await writeFile(temporary, content, { flag: "wx" });
+    await rename(temporary, path);
+  } finally {
+    await unlink(temporary).catch(() => undefined);
+  }
+};
+
+export const swapTeachingPose = async (figure: FigureRecord, relativePath: string): Promise<void> => {
+  const selected = figure.poseOptions.find((option) => option.selected);
+  const alternative = figure.poseOptions.find((option) => !option.selected && option.relativePath === relativePath);
+  if (!selected) throw new Error(`${figure.id} has no teaching-frames/selected.png.`);
+  if (!alternative) throw new Error("Choose a known alternate PNG teaching pose for this figure.");
+
+  const [selectedContent, alternativeContent] = await Promise.all([
+    readFile(selected.absolutePath),
+    readFile(alternative.absolutePath)
+  ]);
+  try {
+    await atomicReplace(selected.absolutePath, alternativeContent);
+    await atomicReplace(alternative.absolutePath, selectedContent);
+  } catch (error) {
+    const restored = await Promise.allSettled([
+      atomicReplace(selected.absolutePath, selectedContent),
+      atomicReplace(alternative.absolutePath, alternativeContent)
+    ]);
+    if (restored.some((result) => result.status === "rejected")) {
+      throw new Error(`Teaching pose swap failed and could not be fully restored: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    throw error;
+  }
 };
 
 export const setGenerationNote = async (figure: FigureRecord, note: string): Promise<void> => {

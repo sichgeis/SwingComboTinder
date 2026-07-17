@@ -145,6 +145,8 @@ main { padding: .8rem clamp(1rem, 2.2vw, 2.25rem) 3rem; }
   border-radius: var(--radius-lg);
 }
 .library-heading, .preview-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.library-heading-actions { display: flex; align-items: center; gap: .45rem; }
+.library-heading-actions button { padding: .42rem .58rem; font-size: .64rem; white-space: nowrap; }
 .library-heading h2, .preview-heading h2, .command-heading h2, .composer-heading h2 { margin: .18rem 0 0; font-size: 1.18rem; line-height: 1.05; }
 .content-count { min-width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 999px; color: var(--text-soft); background: var(--surface-raised); font-size: .72rem; font-variant-numeric: tabular-nums; }
 .library-filters { display: grid; gap: .55rem; }
@@ -402,6 +404,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .generation-note-footer button { padding: .36rem .55rem; font-size: .64rem; }
 .approved-summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .78rem .85rem; color: var(--mint); background: var(--mint-wash); font-size: .7rem; }
 .approved-summary button { flex: none; padding: .36rem .55rem; font-size: .63rem; }
+.approved-summary > div { display: flex; gap: .35rem; }
 .card-actions { display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .72rem .75rem; }
 .action-tools, .action-decisions { display: flex; align-items: center; gap: .3rem; }
 .action-decisions { margin-left: auto; }
@@ -411,6 +414,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .card-actions .mark-action.danger { color: var(--red); }
 .job-message { min-height: 0; margin: 0; padding: 0 .8rem; color: var(--amber); font-size: .68rem; }
 .job-message:not(:empty) { padding-bottom: .75rem; }
+.image-cell-footer { padding: .48rem; border-top: 1px solid var(--line); }
+.image-cell-footer button { width: 100%; padding: .34rem .45rem; font-size: .6rem; }
 .queue-empty { grid-column: 1 / -1; min-height: 16rem; display: grid; place-items: center; align-content: center; padding: 3rem 1rem; border: 1px dashed var(--line); border-radius: var(--radius-lg); color: var(--muted); background: #08172080; text-align: center; }
 .queue-empty strong { color: var(--text); font: 700 1.3rem/1.1 Georgia, serif; }
 .queue-empty p { margin: .5rem 0 0; }
@@ -421,6 +426,23 @@ dialog::backdrop { background: #01070bd9; backdrop-filter: blur(5px); }
 .dialog-header, .image-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .8rem 1rem; border-bottom: 1px solid var(--line); background: var(--surface); }
 .dialog-header h2, .image-dialog-header h2 { margin: .15rem 0 0; font-size: 1rem; }
 .dialog-header button, .image-dialog-header button { padding: .42rem .6rem; }
+.dialog-header p:last-child { margin: .18rem 0 0; color: var(--muted); font-size: .68rem; }
+.dialog-header p.error { color: var(--red); }
+.pose-dialog { width: min(960px, 92vw); }
+.pose-option-grid { max-height: calc(88vh - 5rem); display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; padding: 1rem; overflow: auto; }
+.pose-option { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.pose-option.selected { border-color: var(--mint); }
+.pose-option > .image-zoom img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; }
+.pose-option > div { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .55rem; }
+.pose-option strong { min-width: 0; overflow: hidden; font-size: .66rem; text-overflow: ellipsis; white-space: nowrap; }
+.pose-option button.secondary { flex: none; padding: .34rem .45rem; font-size: .59rem; }
+.create-card-dialog { width: min(560px, 92vw); }
+.create-card-fields { display: grid; gap: .8rem; padding: 1rem; }
+.create-card-fields label { display: grid; gap: .32rem; color: var(--muted); font-size: .67rem; font-weight: 700; }
+.create-card-fields label.has-error input, .create-card-fields label.has-error select { border-color: var(--red); }
+.create-card-fields .field-error { min-height: .8rem; color: var(--red); font-weight: 500; }
+.create-card-fields .field-hint { color: var(--faint); font-weight: 500; }
+.create-card-actions { display: flex; justify-content: flex-end; gap: .5rem; padding: .75rem 1rem; border-top: 1px solid var(--line); background: var(--surface); }
 pre { max-height: calc(88vh - 4rem); margin: 0; padding: 1rem; overflow: auto; color: var(--text-soft); line-height: 1.55; white-space: pre-wrap; }
 .image-dialog { width: min(96vw, 112rem); height: 96vh; max-width: none; max-height: none; }
 .image-dialog-header p:last-child { margin: .18rem 0 0; color: var(--muted); font-size: .68rem; }

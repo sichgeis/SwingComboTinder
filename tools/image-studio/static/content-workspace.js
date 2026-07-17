@@ -29,6 +29,12 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const contentStatus = document.querySelector("#content-status");
   const contentList = document.querySelector("#content-list");
   const contentCount = document.querySelector("#content-count");
+  const createCardButton = document.querySelector("#create-card");
+  const createCardDialog = document.querySelector("#create-card-dialog");
+  const createCardForm = document.querySelector("#create-card-form");
+  const createCardClose = document.querySelector("#create-card-close");
+  const createCardCancel = document.querySelector("#create-card-cancel");
+  const createCardMessage = document.querySelector("#create-card-message");
   const contentEmpty = document.querySelector("#content-empty");
   const contentForm = document.querySelector("#content-form");
   const contentIdentity = document.querySelector("#content-identity");
@@ -44,6 +50,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const cardPreview = document.querySelector("#card-preview");
   const storedLibraryWidth = Number(localStorage.getItem(LIBRARY_WIDTH_KEY));
   let preferredLibraryWidth = Number.isFinite(storedLibraryWidth) && storedLibraryWidth > 0 ? storedLibraryWidth : DEFAULT_LIBRARY_WIDTH;
+  let createSlugTouched = false;
 
   const availableLibraryWidth = () => Math.max(
     MIN_LIBRARY_WIDTH,
@@ -381,9 +388,9 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     contentState.previewTimer = setTimeout(requestPreview, 180);
   };
 
-  const loadFigureContent = async (id) => {
+  const loadFigureContent = async (id, discardConfirmed = false) => {
     if (id === contentState.activeContentId) return;
-    if (contentIsDirty() && !confirm("Discard unsaved changes and open another figure?")) return;
+    if (!discardConfirmed && contentIsDirty() && !confirm("Discard unsaved changes and open another figure?")) return;
     contentMessage.className = "content-message";
     contentMessage.textContent = "Loading figure…";
     try {
@@ -417,6 +424,80 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   contentList.addEventListener("click", (event) => {
     const button = event.target.closest("[data-content-id]");
     if (button) void loadFigureContent(button.dataset.contentId);
+  });
+
+  const slugify = (value) => value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80)
+    .replace(/-+$/g, "");
+
+  const clearCreateIssues = () => {
+    createCardForm.querySelectorAll("[data-create-field]").forEach((field) => {
+      field.classList.remove("has-error");
+      field.querySelector(".field-error").textContent = "";
+    });
+  };
+
+  const applyCreateIssues = (issues = []) => {
+    clearCreateIssues();
+    for (const issue of issues) {
+      const field = createCardForm.querySelector(`[data-create-field="${CSS.escape(issue.path)}"]`);
+      if (!field) continue;
+      field.classList.add("has-error");
+      field.querySelector(".field-error").textContent = issue.message;
+    }
+  };
+
+  const closeCreateDialog = () => createCardDialog.close();
+  createCardButton.addEventListener("click", () => {
+    createCardForm.reset();
+    createSlugTouched = false;
+    clearCreateIssues();
+    createCardMessage.className = "content-message";
+    createCardMessage.textContent = "";
+    createCardDialog.showModal();
+    createCardForm.elements.name.focus();
+  });
+  createCardClose.addEventListener("click", closeCreateDialog);
+  createCardCancel.addEventListener("click", closeCreateDialog);
+  createCardForm.elements.name.addEventListener("input", () => {
+    if (!createSlugTouched) createCardForm.elements.slug.value = slugify(createCardForm.elements.name.value);
+  });
+  createCardForm.elements.slug.addEventListener("input", () => {
+    createSlugTouched = true;
+  });
+  createCardForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (contentIsDirty() && !confirm("Discard unsaved changes and create a new card?")) return;
+    const submit = event.submitter;
+    submit.disabled = true;
+    applyCreateIssues([]);
+    createCardMessage.className = "content-message";
+    createCardMessage.textContent = "Creating an atomic draft package…";
+    try {
+      const created = await request("/api/figures", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: createCardForm.elements.name.value,
+          style: createCardForm.elements.style.value,
+          slug: createCardForm.elements.slug.value
+        })
+      });
+      createCardDialog.close();
+      await onSaved();
+      await loadFigureContent(created.id, true);
+    } catch (error) {
+      createCardMessage.className = "content-message error";
+      createCardMessage.textContent = error.message;
+      applyCreateIssues(error.issues || []);
+    } finally {
+      submit.disabled = false;
+    }
   });
   const updateContentControl = (control) => {
     if (!contentState.content || !control.dataset.contentPath || control.readOnly) return;
