@@ -429,7 +429,18 @@ dialog::backdrop { background: #01070bd9; backdrop-filter: blur(5px); }
 .dialog-header p:last-child { margin: .18rem 0 0; color: var(--muted); font-size: .68rem; }
 .dialog-header p.error { color: var(--red); }
 .pose-dialog { width: min(960px, 92vw); }
-.pose-option-grid { max-height: calc(88vh - 5rem); display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; padding: 1rem; overflow: auto; }
+.pose-dialog-body { max-height: calc(88vh - 5rem); overflow: auto; }
+.pose-upload-zone { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 1rem 1rem 0; padding: .9rem 1rem; border: 1px dashed var(--line-strong); border-radius: var(--radius-md); background: var(--surface); transition: border-color .15s ease, background .15s ease; }
+.pose-upload-zone.is-dragging { border-color: var(--mint); background: var(--mint-wash); }
+.pose-upload-zone.is-uploading { opacity: .65; }
+.pose-upload-zone strong { font: 700 .82rem/1.2 Georgia, serif; }
+.pose-upload-zone p { margin: .25rem 0 0; color: var(--muted); font-size: .66rem; }
+.pose-upload-zone button { flex: none; }
+.pose-upload-status { min-height: .9rem; margin: .45rem 1rem 0; color: var(--muted); font-size: .66rem; }
+.pose-upload-status.success { color: var(--mint); }
+.pose-upload-status.error { color: var(--red); }
+.pose-option-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; padding: .55rem 1rem 1rem; }
+.pose-option-empty { grid-column: 1 / -1; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius-md); color: var(--muted); text-align: center; background: var(--surface); }
 .pose-option { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
 .pose-option.selected { border-color: var(--mint); }
 .pose-option > .image-zoom img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; }

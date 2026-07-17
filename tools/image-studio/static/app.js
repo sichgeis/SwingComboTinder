@@ -58,7 +58,12 @@ const poseDialogTitle = document.querySelector("#pose-dialog-title");
 const poseDialogMeta = document.querySelector("#pose-dialog-meta");
 const poseDialogContent = document.querySelector("#pose-dialog-content");
 const poseDialogClose = document.querySelector("#pose-dialog-close");
+const poseUploadZone = document.querySelector("#pose-upload-zone");
+const poseUploadStatus = document.querySelector("#pose-upload-status");
+const poseFileButton = document.querySelector("#pose-file-button");
+const poseFileInput = document.querySelector("#pose-file-input");
 let activePoseFigureId = null;
+let poseUploadActive = false;
 const contentWorkspace = document.querySelector("#content-workspace");
 const imageWorkspace = document.querySelector("#image-workspace");
 const styleLabels = {
@@ -116,16 +121,31 @@ const imageCell = (label, url, emptyText, figureName, footer = "") => `
     ${footer ? `<div class="image-cell-footer">${footer}</div>` : ""}
   </div>`;
 
-const openPoseDialog = (figure) => {
+const renderPoseDialog = (figure, message = "", tone = "") => {
   activePoseFigureId = figure.id;
   poseDialogTitle.textContent = `${figure.name} · Teaching poses`;
   poseDialogMeta.className = "";
-  poseDialogMeta.textContent = "The selected pose is used by future image generation. Swapping preserves the previous selection as an alternative.";
-  poseDialogContent.innerHTML = figure.poseOptions.map((pose) => `<article class="pose-option ${pose.selected ? "selected" : ""}">
+  poseDialogMeta.textContent = figure.hasPose
+    ? "The current pose is used by future image generation. New uploads become alternatives until selected."
+    : "The first uploaded pose becomes the current generation reference.";
+  poseUploadStatus.className = `pose-upload-status ${tone}`;
+  poseUploadStatus.textContent = message;
+  poseDialogContent.innerHTML = figure.poseOptions.length ? figure.poseOptions.map((pose) => `<article class="pose-option ${pose.selected ? "selected" : ""}">
     <button class="image-zoom" type="button" data-image-url="${escapeHtml(pose.url)}" data-image-label="${escapeHtml(`${figure.name} · ${pose.filename}`)}"><img src="${escapeHtml(pose.url)}" alt="${escapeHtml(pose.filename)}"></button>
     <div><strong>${escapeHtml(pose.filename)}</strong>${pose.selected ? '<span class="badge good">Current</span>' : `<button type="button" class="secondary" data-pose-path="${escapeHtml(pose.path)}">Use this pose</button>`}</div>
-  </article>`).join("");
+  </article>`).join("") : '<div class="pose-option-empty">No teaching pose yet. Add the first image above.</div>';
+};
+
+const openPoseDialog = (figure) => {
+  renderPoseDialog(figure);
   poseDialog.showModal();
+};
+
+const poseAction = (figure, long = false) => {
+  if (!figure.hasPose) return long ? "Add teaching pose" : "Add pose";
+  const alternates = figure.poseOptions.length - 1;
+  if (long) return alternates ? `Teaching poses · ${alternates} alternate${alternates === 1 ? "" : "s"}` : "Teaching poses";
+  return alternates ? `Poses · ${alternates} alternate${alternates === 1 ? "" : "s"}` : "Teaching poses";
 };
 
 const formatCandidateDate = (value) => new Intl.DateTimeFormat(undefined, {
@@ -250,10 +270,10 @@ const render = () => {
     const cardBody = figure.imageApproved && !figure.marked && newCandidateCount === 0 ? `
       <div class="approved-summary">
         <span>This move has an image you approved.</span>
-        <div>${figure.poseOptions.length > 1 ? `<button type="button" class="secondary" data-action="swap-pose">Swap teaching pose</button>` : ""}<button type="button" class="secondary" data-action="image-approval">Reopen</button></div>
+        <div><button type="button" class="secondary" data-action="swap-pose">${escapeHtml(poseAction(figure, true))}</button><button type="button" class="secondary" data-action="image-approval">Reopen</button></div>
       </div>` : `
       <div class="comparison">
-        ${imageCell("Teaching pose", figure.poseUrl, "Add teaching-frames/selected.png", figure.name, figure.poseOptions.length > 1 ? `<button type="button" class="secondary" data-action="swap-pose">Swap pose · ${figure.poseOptions.length - 1} alternate${figure.poseOptions.length === 2 ? "" : "s"}</button>` : "")}
+        ${imageCell("Teaching pose", figure.poseUrl, "Add a teaching pose", figure.name, `<button type="button" class="secondary" data-action="swap-pose">${escapeHtml(poseAction(figure))}</button>`)}
         ${imageCell(figure.currentIsFallback ? "Fallback card" : "Current master", figure.currentUrl, "No current artwork", figure.name)}
         ${imageCell("Latest candidate", latest?.url, "Generate a candidate", figure.name)}
       </div>
@@ -441,7 +461,85 @@ grid.addEventListener("click", async (event) => {
   }
 });
 
+const uploadTeachingPose = async (file, source = "upload") => {
+  if (!activePoseFigureId || poseUploadActive) return;
+  if (!file || !["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+    poseUploadStatus.className = "pose-upload-status error";
+    poseUploadStatus.textContent = "Choose a PNG, JPEG, or WebP image.";
+    return;
+  }
+  if (file.size > 20 * 1024 * 1024) {
+    poseUploadStatus.className = "pose-upload-status error";
+    poseUploadStatus.textContent = "Teaching poses must be no larger than 20 MB.";
+    return;
+  }
+
+  const id = activePoseFigureId;
+  poseUploadActive = true;
+  poseUploadZone.classList.add("is-uploading");
+  poseFileButton.disabled = true;
+  poseUploadStatus.className = "pose-upload-status";
+  poseUploadStatus.textContent = source === "paste" ? "Adding pasted screenshot…" : "Adding teaching pose…";
+  try {
+    const result = await request(`/api/teaching-pose-upload?id=${encodeURIComponent(id)}`, {
+      method: "POST",
+      headers: {
+        "content-type": file.type,
+        "x-file-name": encodeURIComponent(source === "paste" ? "clipboard-screenshot.png" : (file.name || "uploaded-pose"))
+      },
+      body: file
+    });
+    await loadFigures();
+    const refreshed = state.figures.find((figure) => figure.id === id);
+    if (!refreshed) throw new Error("The updated figure is no longer available.");
+    renderPoseDialog(
+      refreshed,
+      result.added.selected
+        ? "Added as the current teaching pose."
+        : `Added ${result.added.filename} as an alternative.`,
+      "success"
+    );
+  } catch (error) {
+    poseUploadStatus.className = "pose-upload-status error";
+    poseUploadStatus.textContent = error.message;
+  } finally {
+    poseUploadActive = false;
+    poseUploadZone.classList.remove("is-uploading", "is-dragging");
+    poseFileButton.disabled = false;
+    poseFileInput.value = "";
+  }
+};
+
 poseDialogClose.addEventListener("click", () => poseDialog.close());
+poseDialog.addEventListener("close", () => {
+  activePoseFigureId = null;
+  poseUploadZone.classList.remove("is-dragging");
+  poseFileInput.value = "";
+});
+poseFileButton.addEventListener("click", () => poseFileInput.click());
+poseFileInput.addEventListener("change", () => void uploadTeachingPose(poseFileInput.files?.[0]));
+for (const eventName of ["dragenter", "dragover"]) {
+  poseUploadZone.addEventListener(eventName, (event) => {
+    event.preventDefault();
+    if (!poseUploadActive) poseUploadZone.classList.add("is-dragging");
+  });
+}
+for (const eventName of ["dragleave", "dragend"]) {
+  poseUploadZone.addEventListener(eventName, () => poseUploadZone.classList.remove("is-dragging"));
+}
+poseUploadZone.addEventListener("drop", (event) => {
+  event.preventDefault();
+  poseUploadZone.classList.remove("is-dragging");
+  void uploadTeachingPose([...event.dataTransfer.files].find((file) => file.type.startsWith("image/")));
+});
+document.addEventListener("paste", (event) => {
+  if (!poseDialog.open || poseUploadActive) return;
+  const item = [...(event.clipboardData?.items ?? [])].find((entry) => entry.type.startsWith("image/"));
+  const file = item?.getAsFile();
+  if (!file) return;
+  event.preventDefault();
+  void uploadTeachingPose(file, "paste");
+});
 poseDialogContent.addEventListener("click", async (event) => {
   const imageButton = event.target.closest("button[data-image-url]");
   if (imageButton) {

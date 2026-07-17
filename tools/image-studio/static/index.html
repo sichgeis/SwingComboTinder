@@ -235,7 +235,18 @@
         </div>
         <button id="pose-dialog-close" type="button" class="quiet" aria-label="Close teaching poses">Close</button>
       </header>
-      <div id="pose-dialog-content" class="pose-option-grid"></div>
+      <div class="pose-dialog-body">
+        <section id="pose-upload-zone" class="pose-upload-zone" aria-labelledby="pose-upload-title">
+          <div>
+            <strong id="pose-upload-title">Add a teaching pose</strong>
+            <p>Drop a PNG, JPEG, or WebP here, or paste a copied screenshot while this dialog is open.</p>
+          </div>
+          <button id="pose-file-button" type="button" class="secondary">Choose image</button>
+          <input id="pose-file-input" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+        </section>
+        <p id="pose-upload-status" class="pose-upload-status" role="status"></p>
+        <div id="pose-dialog-content" class="pose-option-grid"></div>
+      </div>
     </dialog>
 
     <dialog id="create-card-dialog" class="create-card-dialog" aria-labelledby="create-card-title">

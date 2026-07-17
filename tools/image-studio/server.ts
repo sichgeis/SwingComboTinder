@@ -21,7 +21,14 @@ import { mapWithConcurrency } from "./pool";
 import { planGeneration } from "./plan";
 import { promoteCandidate, setImageApproved, setNeedsRework } from "./promote";
 import { buildPrompt, MAX_GENERATION_NOTE_LENGTH } from "./prompt";
-import { discoverFigures, findFigure, setGenerationNote, swapTeachingPose } from "./repository";
+import {
+  addTeachingPose,
+  discoverFigures,
+  findFigure,
+  MAX_TEACHING_POSE_UPLOAD_BYTES,
+  setGenerationNote,
+  swapTeachingPose
+} from "./repository";
 import {
   generationModes,
   imageQualities,
@@ -73,6 +80,34 @@ const readJson = async (request: IncomingMessage): Promise<unknown> => {
     chunks.push(buffer);
   }
   return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+};
+
+const readImage = async (request: IncomingMessage): Promise<Buffer> => {
+  const declaredSize = Number(request.headers["content-length"] ?? 0);
+  if (Number.isFinite(declaredSize) && declaredSize > MAX_TEACHING_POSE_UPLOAD_BYTES) {
+    throw new Error("Teaching poses must be no larger than 20 MB.");
+  }
+  const chunks: Buffer[] = [];
+  let size = 0;
+  for await (const chunk of request) {
+    const buffer = typeof chunk === "string" ? Buffer.from(chunk) : Buffer.from(chunk as Uint8Array);
+    size += buffer.length;
+    if (size > MAX_TEACHING_POSE_UPLOAD_BYTES) {
+      throw new Error("Teaching poses must be no larger than 20 MB.");
+    }
+    chunks.push(buffer);
+  }
+  return Buffer.concat(chunks);
+};
+
+const uploadedFilename = (header: string | readonly string[] | undefined): string => {
+  const value = typeof header === "string" ? header : header?.[0];
+  if (!value) return "uploaded-pose";
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return "uploaded-pose";
+  }
 };
 
 const event = (type: string, payload: Record<string, unknown> = {}): void => {
@@ -506,6 +541,21 @@ const handleRequest = async (
     requestLogger.info("teaching-pose-swapped", { figureId: values.id, alternatePath: values.path });
     event("figure-updated", { id: values.id });
     sendJson(response, 200, { swapped: true });
+    return;
+  }
+  if (request.method === "POST" && url.pathname === "/api/teaching-pose-upload") {
+    const id = url.searchParams.get("id");
+    if (!id) throw new Error("Teaching pose upload requires a figure id.");
+    const contentType = request.headers["content-type"] ?? "";
+    const added = await addTeachingPose(
+      await findFigure(id),
+      await readImage(request),
+      uploadedFilename(request.headers["x-file-name"]),
+      contentType
+    );
+    requestLogger.info("teaching-pose-uploaded", { figureId: id, filename: added.filename, selected: added.selected });
+    event("figure-updated", { id });
+    sendJson(response, 201, { added });
     return;
   }
   if (request.method === "GET" && url.pathname === "/media") {

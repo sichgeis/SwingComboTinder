@@ -1,10 +1,16 @@
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readdir, readFile, unlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
+import sharp from "sharp";
 
-import { discoverFigures, swapTeachingPose } from "./repository";
+import {
+  addTeachingPose,
+  discoverFigures,
+  MAX_TEACHING_POSE_UPLOAD_BYTES,
+  swapTeachingPose
+} from "./repository";
 import type { FigureRecord } from "./types";
 
 const poseFixture = async (): Promise<{ readonly figure: FigureRecord; readonly selected: string; readonly alternative: string }> => {
@@ -78,5 +84,58 @@ describe("discoverFigures", () => {
     await expect(swapTeachingPose(figure, "../outside.png")).rejects.toThrow("known alternate PNG");
     expect(await readFile(selected, "utf8")).toBe("selected-pixels");
     expect(await readFile(alternative, "utf8")).toBe("alternate-pixels");
+  });
+
+  it("normalizes an uploaded image to a safely named PNG alternative", async () => {
+    const { figure, selected } = await poseFixture();
+    const jpeg = await sharp({
+      create: { width: 40, height: 60, channels: 3, background: "#bada55" }
+    }).jpeg().toBuffer();
+
+    const added = await addTeachingPose(figure, jpeg, "../../Copied Screenshot.JPG", "image/jpeg");
+
+    expect(added).toMatchObject({ selected: false });
+    expect(added.filename).toMatch(/^copied-screenshot-\d{14}-[a-f0-9]{8}\.png$/);
+    expect(added.relativePath).toBe(`teaching-frames/${added.filename}`);
+    expect(await readFile(selected, "utf8")).toBe("selected-pixels");
+    expect(await sharp(resolve(figure.directory, added.relativePath)).metadata()).toMatchObject({
+      format: "png",
+      width: 40,
+      height: 60
+    });
+  });
+
+  it("installs the first uploaded image as selected.png", async () => {
+    const { figure, selected } = await poseFixture();
+    await unlink(selected);
+    const webp = await sharp({
+      create: { width: 30, height: 45, channels: 4, background: "#123456" }
+    }).webp().toBuffer();
+
+    const added = await addTeachingPose(figure, webp, "first.webp", "image/webp");
+
+    expect(added).toEqual({
+      relativePath: "teaching-frames/selected.png",
+      filename: "selected.png",
+      selected: true
+    });
+    expect(await sharp(selected).metadata()).toMatchObject({ format: "png", width: 30, height: 45 });
+  });
+
+  it("rejects unsupported or unreadable uploads without creating a pose", async () => {
+    const { figure } = await poseFixture();
+    const teachingFrames = resolve(figure.directory, "teaching-frames");
+
+    await expect(addTeachingPose(figure, Buffer.from("not-an-image"), "pose.gif", "image/gif"))
+      .rejects.toThrow("PNG, JPEG, or WebP");
+    await expect(addTeachingPose(figure, Buffer.from("not-an-image"), "pose.png", "image/png"))
+      .rejects.toThrow("not a readable");
+    await expect(addTeachingPose(
+      figure,
+      Buffer.alloc(MAX_TEACHING_POSE_UPLOAD_BYTES + 1),
+      "huge.png",
+      "image/png"
+    )).rejects.toThrow("no larger than 20 MB");
+    expect((await readdir(teachingFrames)).sort()).toEqual(["alternative.png", "selected.png"]);
   });
 });

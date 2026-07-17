@@ -2,6 +2,18 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Studio teaching-pose upload
+
+- Status: Done
+- Approved: 2026-07-17
+- Goal: Add a teaching-pose image from a file, drag and drop, or clipboard paste without leaving the Dance Card Studio.
+- Scope: Universal pose-manager action; picker/drop/paste ingestion; PNG/JPEG/WebP validation and PNG normalization; safe first-pose or alternative persistence; immediate refresh; tests and documentation.
+- Non-goals: Do not crop/edit/delete/rename/bulk-upload poses, accept URLs/video/SVG/GIF, replace an existing selection silently, trigger generation, or change card workflow state.
+- Specification: [`specs/studio-teaching-pose-upload.md`](specs/studio-teaching-pose-upload.md)
+- Progress: Added bounded server-side PNG normalization, exclusive first-pose installation, safe uniquely named alternatives, a universal pose manager, picker/drop/paste ingestion, immediate refresh, focused coverage, and workflow documentation.
+- Validation: `npm run check` passes with 22 test files and 76 tests plus the production PWA build; browser syntax checking passes. The real 42-card Studio accepted a clipboard PNG and file-picked WebP as normalized Texas Tommy alternatives, preserved the selected pose, refreshed the dialog, and logged no browser errors; temporary validation images were removed and no generation request was sent.
+- Next action: None; use Teaching poses whenever a figure needs a new generation reference.
+
 ## Direct OpenAI image provider
 
 - Status: Done

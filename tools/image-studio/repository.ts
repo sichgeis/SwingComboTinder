@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { access, readdir, readFile, rename, stat, unlink, writeFile } from "node:fs/promises";
-import { relative, resolve } from "node:path";
+import { access, link, mkdir, readdir, readFile, rename, stat, unlink, writeFile } from "node:fs/promises";
+import { basename, extname, relative, resolve } from "node:path";
+
+import sharp from "sharp";
 
 import { figuresRoot, repositoryRoot } from "./paths";
 import { MAX_GENERATION_NOTE_LENGTH } from "./prompt";
@@ -13,6 +15,52 @@ const exists = async (path: string): Promise<boolean> => {
   } catch {
     return false;
   }
+};
+
+export const MAX_TEACHING_POSE_UPLOAD_BYTES = 20 * 1024 * 1024;
+const MAX_TEACHING_POSE_PIXELS = 40_000_000;
+const teachingPoseContentTypes = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+export interface AddedTeachingPose {
+  readonly relativePath: string;
+  readonly filename: string;
+  readonly selected: boolean;
+}
+
+const safePoseStem = (filename: string): string => {
+  const stem = basename(filename, extname(filename))
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+  return stem || "uploaded-pose";
+};
+
+const normalizeTeachingPose = async (content: Buffer, contentType: string): Promise<Buffer> => {
+  const normalizedContentType = contentType.split(";", 1)[0]?.trim().toLowerCase() ?? "";
+  if (!teachingPoseContentTypes.has(normalizedContentType)) {
+    throw new Error("Teaching poses must be PNG, JPEG, or WebP images.");
+  }
+  if (content.length === 0) throw new Error("The uploaded teaching pose is empty.");
+  if (content.length > MAX_TEACHING_POSE_UPLOAD_BYTES) {
+    throw new Error("Teaching poses must be no larger than 20 MB.");
+  }
+
+  const input = sharp(content, { animated: false, limitInputPixels: MAX_TEACHING_POSE_PIXELS });
+  const metadata = await input.metadata().catch(() => {
+    throw new Error("The uploaded file is not a readable PNG, JPEG, or WebP image.");
+  });
+  if (!metadata.width || !metadata.height || !["jpeg", "png", "webp"].includes(metadata.format ?? "")) {
+    throw new Error("The uploaded file is not a readable PNG, JPEG, or WebP image.");
+  }
+  if (metadata.width * metadata.height > MAX_TEACHING_POSE_PIXELS) {
+    throw new Error("Teaching poses must contain no more than 40 megapixels.");
+  }
+  return input.rotate().png().toBuffer().catch(() => {
+    throw new Error("The uploaded file is not a readable PNG, JPEG, or WebP image.");
+  });
 };
 
 const readSection = (markdown: string, heading: string): string => {
@@ -168,6 +216,35 @@ export const swapTeachingPose = async (figure: FigureRecord, relativePath: strin
     }
     throw error;
   }
+};
+
+export const addTeachingPose = async (
+  figure: FigureRecord,
+  content: Buffer,
+  filename: string,
+  contentType: string
+): Promise<AddedTeachingPose> => {
+  const normalized = await normalizeTeachingPose(content, contentType);
+  const teachingFrames = resolve(figure.directory, "teaching-frames");
+  await mkdir(teachingFrames, { recursive: true });
+  const hasSelectedPose = await exists(resolve(teachingFrames, "selected.png"));
+  const suffix = `${new Date().toISOString().replace(/\D/g, "").slice(0, 14)}-${randomUUID().slice(0, 8)}`;
+  const outputFilename = hasSelectedPose ? `${safePoseStem(filename)}-${suffix}.png` : "selected.png";
+  const outputPath = resolve(teachingFrames, outputFilename);
+  const temporary = resolve(teachingFrames, `.${randomUUID()}.upload-tmp`);
+
+  try {
+    await writeFile(temporary, normalized, { flag: "wx" });
+    await link(temporary, outputPath);
+  } finally {
+    await unlink(temporary).catch(() => undefined);
+  }
+
+  return {
+    relativePath: `teaching-frames/${outputFilename}`,
+    filename: outputFilename,
+    selected: !hasSelectedPose
+  };
 };
 
 export const setGenerationNote = async (figure: FigureRecord, note: string): Promise<void> => {
