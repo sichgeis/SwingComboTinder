@@ -245,13 +245,12 @@ export const generateFigure = async (
     durationMs: Date.now() - preparationStartedAt
   });
   const request = new FormData();
-  const imageField = connection.provider === "openai" ? "image[]" : "image";
   preparedInputs.forEach((buffer, index) => {
     const filename =
       index === 0
         ? "01-teaching-frame.webp"
         : `${String(index + 1).padStart(2, "0")}-style-reference.webp`;
-    request.append(imageField, new Blob([new Uint8Array(buffer)], { type: "image/webp" }), filename);
+    request.append("image[]", new Blob([new Uint8Array(buffer)], { type: "image/webp" }), filename);
   });
   request.set("model", options.model);
   request.set("prompt", prompt);

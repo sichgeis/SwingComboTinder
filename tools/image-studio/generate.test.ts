@@ -19,7 +19,7 @@ afterEach(async () => {
 });
 
 describe("generateFigure", () => {
-  it("uses the direct OpenAI and legacy LiteLLM multipart image fields", async () => {
+  it("uses the shared multi-image multipart field for OpenAI and LiteLLM", async () => {
     process.env.IMAGE_STUDIO_LOG_LEVEL = "error";
     const directory = await mkdtemp(resolve(tmpdir(), "image-studio-generate-"));
     temporaryDirectories.push(directory);
@@ -53,15 +53,32 @@ describe("generateFigure", () => {
       candidates: []
     };
     const generatedBytes = Buffer.from("generated-image");
-    const fetchMock = vi.fn((url: string | URL | Request, init?: RequestInit) => {
+    const fetchMock = vi.fn((_url: string | URL | Request, init?: RequestInit) => {
       expect(init?.method).toBe("POST");
       expect(init?.headers).toEqual({ authorization: "Bearer openai-key" });
       expect(init?.body).toBeInstanceOf(FormData);
       const form = init?.body as FormData;
-      const requestUrl = typeof url === "string" ? url : url instanceof URL ? url.toString() : url.url;
-      const directOpenAi = requestUrl.includes("api.openai.test");
-      expect(form.getAll(directOpenAi ? "image[]" : "image")).toHaveLength(4);
-      expect(form.getAll(directOpenAi ? "image" : "image[]")).toHaveLength(0);
+      if (form.getAll("image").length > 0) {
+        return Promise.resolve(new Response(
+          JSON.stringify({
+            error: {
+              message: "Duplicate parameter: 'image'.",
+              type: "invalid_request_error",
+              param: "image",
+              code: "duplicate_parameter"
+            }
+          }),
+          { status: 400, headers: { "content-type": "application/json" } }
+        ));
+      }
+      const images = form.getAll("image[]");
+      expect(images).toHaveLength(4);
+      expect(images.map((image) => image instanceof File ? image.name : "")).toEqual([
+        "01-teaching-frame.webp",
+        "02-style-reference.webp",
+        "03-style-reference.webp",
+        "04-style-reference.webp"
+      ]);
       expect(form.get("model")).toBe("gpt-image-2");
       expect(form.get("n")).toBe("1");
       expect(form.get("size")).toBe("1024x1536");

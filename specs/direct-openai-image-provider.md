@@ -33,7 +33,7 @@ The generator already sends an OpenAI-compatible multipart request to `/v1/image
 
 ## Validation
 
-- Automated: `npm run check` passes with 22 test files and 73 tests plus the production PWA build. Both dependency-free Studio browser modules pass `node --check`. Environment tests cover direct OpenAI defaults and normalization, explicit/inferred LiteLLM, legacy precedence with mixed variables, explicit resolution, and invalid providers. Generation tests verify OpenAI `image[]`, LiteLLM `image`, shared response handling, and direct missing-key guidance.
+- Automated: `task check` passes with 22 Python maintenance tests, 23 application test files and 78 tests plus the production PWA build. Environment tests cover direct OpenAI defaults and normalization, explicit/inferred LiteLLM, legacy precedence with mixed variables, explicit resolution, and invalid providers. Generation tests verify the shared four-image `image[]` encoding, teaching-frame-first ordering and filenames, shared response handling, and direct missing-key guidance.
 - Manual: With a dummy key and no outbound generation, an isolated Studio on port 4177 logged `imageApiProvider: "openai"` and `imageApiConfigured: true`; `/api/config` returned the same provider and model `gpt-image-2`. CLI help describes direct OpenAI and LiteLLM. No paid image request was sent.
 
 ## Decisions
@@ -43,7 +43,7 @@ The generator already sends an OpenAI-compatible multipart request to `/v1/image
 
 ## Progress
 
-- Verified the official direct endpoint and authentication contract; implemented provider-aware configuration, OpenAI's documented `image[]` multipart encoding, the preserved LiteLLM `image` encoding, status/errors/logging, tests, and durable documentation.
+- Verified the official direct endpoint and authentication contract; implemented provider-aware configuration, the shared OpenAI-compatible `image[]` multipart encoding, status/errors/logging, tests, and durable documentation. Corrected LiteLLM generation after its multipart parser rejected repeated singular `image` fields as duplicate parameters.
 
 ## Next action
 

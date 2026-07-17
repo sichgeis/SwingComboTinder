@@ -13,6 +13,8 @@ cp .env.example .env
 
 Both the studio and CLI load `.env` from the repository root. Existing shell environment variables take precedence. Fresh configuration uses `IMAGE_API_PROVIDER=openai`, `OPENAI_API_KEY`, and the default `https://api.openai.com` base URL; `OPENAI_BASE_URL` can override it when needed. For LiteLLM, use `IMAGE_API_PROVIDER=litellm`, `LITELLM_API_KEY`, and `LITELLM_BASE_URL`. A legacy configuration with LiteLLM variables and no provider continues to select LiteLLM, even if an ambient OpenAI key also exists; set `IMAGE_API_PROVIDER=openai` to deliberately switch it. `IMAGE_MODEL` is the direct model name or proxy alias. The file also supports `IMAGE_SIZE`, `IMAGE_QUALITY`, `REQUEST_TIMEOUT_SECONDS`, `IMAGE_STUDIO_PORT`, and `IMAGE_STUDIO_LOG_LEVEL`; see [`.env.example`](../.env.example). Never commit `.env`.
 
+Both providers receive the teaching pose and three style references through the OpenAI-compatible multi-image `image[]` multipart field. LiteLLM installations must expose an OpenAI-compatible `/v1/images/edits` route; repeated singular `image` fields are not used because LiteLLM rejects them as duplicate parameters.
+
 ## Diagnostic logging
 
 Both entry points emit timestamped logs to stderr. The default `info` level reports the selected provider, configuration state, batch plans, job lifecycle, preprocessing, API response status and request IDs, token usage, output locations, and elapsed times. Use debug logging when diagnosing a failure:
