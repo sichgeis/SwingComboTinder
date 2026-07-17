@@ -1,4 +1,5 @@
 import { createContentWorkspace } from "./content-workspace.js";
+import { createRefreshCoordinator } from "./refresh-coordinator.js";
 
 const NEW_CANDIDATES_STORAGE_KEY = "dance-card-image-studio:new-candidates";
 
@@ -98,7 +99,14 @@ const contentEditor = createContentWorkspace({
   request,
   escapeHtml,
   getFigures: () => state.figures,
-  onSaved: () => loadFigures()
+  onSaved: (id) => loadFigures(id)
+});
+
+const loadFigures = createRefreshCoordinator(async (changedIds) => {
+  state.figures = await request("/api/figures");
+  render();
+  contentEditor.renderFigureList();
+  await contentEditor.synchronizeFigures(changedIds);
 });
 
 const showWorkspace = (workspace) => {
@@ -316,12 +324,6 @@ const render = () => {
   }).join("") || '<div class="queue-empty"><strong>Nothing needs attention here.</strong><p>Choose another view or style to inspect more figures.</p></div>';
 };
 
-const loadFigures = async () => {
-  state.figures = await request("/api/figures");
-  render();
-  contentEditor.renderFigureList();
-};
-
 const startRun = async (override) => {
   const data = new FormData(form);
   const mode = override?.mode || data.get("mode");
@@ -422,14 +424,14 @@ grid.addEventListener("click", async (event) => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id, path: candidate.path })
       });
-      await loadFigures();
+      await loadFigures(id);
     } else if (button.dataset.action === "mark") {
       await request("/api/mark", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ id, marked: !figure.marked })
       });
-      await loadFigures();
+      await loadFigures(id);
     } else if (button.dataset.action === "image-approval") {
       const approved = !figure.imageApproved;
       await request("/api/image-approval", {
@@ -441,7 +443,7 @@ grid.addEventListener("click", async (event) => {
       runStatus.textContent = approved
         ? `Approved the image for ${figure.name}.`
         : `Reopened ${figure.name} for image review.`;
-      await loadFigures();
+      await loadFigures(id);
     } else if (button.dataset.action === "save-note") {
       const note = button.closest(".generation-note-editor").querySelector("textarea[data-generation-note]").value;
       await request("/api/generation-note", {
@@ -451,7 +453,7 @@ grid.addEventListener("click", async (event) => {
       });
       runStatus.className = "success";
       runStatus.textContent = `Saved generation note for ${figure.name}.`;
-      await loadFigures();
+      await loadFigures(id);
     }
   } catch (error) {
     runStatus.className = "error";
@@ -489,7 +491,7 @@ const uploadTeachingPose = async (file, source = "upload") => {
       },
       body: file
     });
-    await loadFigures();
+    await loadFigures(id);
     const refreshed = state.figures.find((figure) => figure.id === id);
     if (!refreshed) throw new Error("The updated figure is no longer available.");
     renderPoseDialog(
@@ -549,17 +551,18 @@ poseDialogContent.addEventListener("click", async (event) => {
   const button = event.target.closest("button[data-pose-path]");
   if (!button || !activePoseFigureId) return;
   button.disabled = true;
-  const figure = state.figures.find(({ id }) => id === activePoseFigureId);
+  const id = activePoseFigureId;
+  const figure = state.figures.find((item) => item.id === id);
   try {
     await request("/api/teaching-pose", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ id: activePoseFigureId, path: button.dataset.posePath })
+      body: JSON.stringify({ id, path: button.dataset.posePath })
     });
     poseDialog.close();
     runStatus.className = "success";
-    runStatus.textContent = `Changed the teaching pose for ${figure?.name || activePoseFigureId}.`;
-    await loadFigures();
+    runStatus.textContent = `Changed the teaching pose for ${figure?.name || id}.`;
+    await loadFigures(id);
   } catch (error) {
     poseDialogMeta.textContent = error.message;
     poseDialogMeta.className = "error";
@@ -590,9 +593,9 @@ for (const type of ["run-started", "job-started", "job-blocked", "job-completed"
       state.runActive = false;
       runStatus.className = type === "run-failed" ? "error" : "";
       runStatus.textContent = type === "run-failed" ? update.message : "Generation run finished.";
-      await loadFigures();
+      await loadFigures("*");
     } else if (type === "figure-updated") {
-      await loadFigures();
+      await loadFigures(update.id);
     }
     render();
   });

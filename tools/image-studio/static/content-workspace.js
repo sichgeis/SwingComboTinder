@@ -404,6 +404,26 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     contentState.previewTimer = setTimeout(requestPreview, 180);
   };
 
+  const applyLoadedFigure = (id, loaded, resetSections = true) => {
+    contentState.activeContentId = id;
+    sessionStorage.setItem(LAST_FIGURE_KEY, id);
+    contentState.content = loaded.content;
+    contentState.metadataOptions = loaded.metadataOptions;
+    contentState.originalContent = JSON.stringify(loaded.content);
+    contentState.contentRevision = loaded.revision;
+    contentState.contentIssues = [];
+    contentState.transcripts = loaded.transcripts || [];
+    if (resetSections) contentState.openSections = new Set(["Basics"]);
+    contentState.previewMarkup = "";
+    contentEmpty.hidden = true;
+    contentForm.hidden = false;
+    previewPanel.hidden = false;
+    contentWorkspace.classList.add("has-selection");
+    contentMessage.textContent = "";
+    renderContentFields();
+    updateContentHeader();
+  };
+
   const loadFigureContent = async (id, discardConfirmed = false) => {
     if (id === contentState.activeContentId) return;
     if (!discardConfirmed && contentIsDirty() && !confirm("Discard unsaved changes and open another figure?")) return;
@@ -411,23 +431,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     contentMessage.textContent = "Loading figure…";
     try {
       const loaded = await request(`/api/figure-content?id=${encodeURIComponent(id)}`);
-      contentState.activeContentId = id;
-      sessionStorage.setItem(LAST_FIGURE_KEY, id);
-      contentState.content = loaded.content;
-      contentState.metadataOptions = loaded.metadataOptions;
-      contentState.originalContent = JSON.stringify(loaded.content);
-      contentState.contentRevision = loaded.revision;
-      contentState.contentIssues = [];
-      contentState.transcripts = loaded.transcripts || [];
-      contentState.openSections = new Set(["Basics"]);
-      contentState.previewMarkup = "";
-      contentEmpty.hidden = true;
-      contentForm.hidden = false;
-      previewPanel.hidden = false;
-      contentWorkspace.classList.add("has-selection");
-      contentMessage.textContent = "";
-      renderContentFields();
-      updateContentHeader();
+      applyLoadedFigure(id, loaded);
       await requestPreview();
     } catch (error) {
       contentMessage.className = "content-message error";
@@ -506,7 +510,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
         })
       });
       createCardDialog.close();
-      await onSaved();
+      await onSaved(created.id);
       await loadFigureContent(created.id, true);
     } catch (error) {
       createCardMessage.className = "content-message error";
@@ -688,7 +692,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       contentMessage.textContent = "Figure saved atomically.";
       renderContentFields();
       updateContentHeader();
-      await onSaved();
+      await onSaved(contentState.activeContentId);
       await requestPreview();
       if (advance && nextId) await loadFigureContent(nextId);
     } catch (error) {
@@ -739,6 +743,22 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   return {
     hasUnsavedChanges: contentIsDirty,
     renderFigureList: renderContentList,
+    synchronizeFigures: async (changedIds) => {
+      const id = contentState.activeContentId;
+      if (!id || (!changedIds.includes("*") && !changedIds.includes(id))) return;
+      if (contentIsDirty()) {
+        await requestPreview();
+        return;
+      }
+      const loaded = await request(`/api/figure-content?id=${encodeURIComponent(id)}`);
+      if (contentState.activeContentId !== id) return;
+      if (contentIsDirty()) {
+        await requestPreview();
+        return;
+      }
+      applyLoadedFigure(id, loaded, false);
+      await requestPreview();
+    },
     showLoadError: (message) => {
       contentCount.textContent = "!";
       contentList.classList.remove("is-loading");

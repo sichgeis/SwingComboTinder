@@ -16,6 +16,7 @@ import {
 } from "./content";
 import { generateFigure } from "./generate";
 import { createLogger, type Logger } from "./logger";
+import { versionedMediaUrl } from "./media";
 import { figuresRoot, repositoryRoot } from "./paths";
 import { mapWithConcurrency } from "./pool";
 import { planGeneration } from "./plan";
@@ -68,7 +69,10 @@ interface RunRequest {
 }
 
 const sendJson = (response: ServerResponse, status: number, payload: unknown): void => {
-  response.writeHead(status, { "content-type": "application/json; charset=utf-8" });
+  response.writeHead(status, {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store"
+  });
   response.end(JSON.stringify(payload));
 };
 
@@ -118,9 +122,6 @@ const event = (type: string, payload: Record<string, unknown> = {}): void => {
   for (const client of clients) client.write(message);
 };
 
-const mediaUrl = (path: string): string =>
-  `/media?path=${encodeURIComponent(relative(repositoryRoot, path).split("\\").join("/"))}`;
-
 const contentSummaryFor = async (figure: Awaited<ReturnType<typeof findFigure>>): Promise<Record<string, unknown>> => {
   try {
     const { content } = await readFigureContentFile(figure.definitionPath, figure.slug);
@@ -146,6 +147,17 @@ const contentSummaryFor = async (figure: Awaited<ReturnType<typeof findFigure>>)
 const serializeFigures = async (): Promise<unknown> =>
   Promise.all((await discoverFigures()).map(async (figure) => {
     const contentSummary = await contentSummaryFor(figure);
+    const poseOptions = await Promise.all(figure.poseOptions.map(async (option) => ({
+      path: option.relativePath,
+      filename: option.filename,
+      selected: option.selected,
+      url: await versionedMediaUrl(option.absolutePath)
+    })));
+    const currentUrl = figure.hasCurrent
+      ? await versionedMediaUrl(figure.currentPath)
+      : figure.hasFallback
+        ? await versionedMediaUrl(figure.fallbackPath)
+        : null;
     return {
       id: figure.id,
       style: figure.style,
@@ -158,25 +170,16 @@ const serializeFigures = async (): Promise<unknown> =>
       poseDirection: figure.poseDirection,
       characterDirection: figure.characterDirection,
       generationNote: figure.generationNote,
-      poseUrl: figure.hasPose ? mediaUrl(figure.posePath) : null,
-      poseOptions: figure.poseOptions.map((option) => ({
-        path: option.relativePath,
-        filename: option.filename,
-        selected: option.selected,
-        url: mediaUrl(option.absolutePath)
-      })),
-      currentUrl: figure.hasCurrent
-        ? mediaUrl(figure.currentPath)
-        : figure.hasFallback
-          ? mediaUrl(figure.fallbackPath)
-          : null,
+      poseUrl: poseOptions.find((option) => option.selected)?.url ?? null,
+      poseOptions,
+      currentUrl,
       currentIsFallback: !figure.hasCurrent && figure.hasFallback,
-      candidates: figure.candidates.map((candidate) => ({
+      candidates: await Promise.all(figure.candidates.map(async (candidate) => ({
         path: relative(figure.directory, candidate.absolutePath).split("\\").join("/"),
-        url: mediaUrl(candidate.absolutePath),
+        url: await versionedMediaUrl(candidate.absolutePath),
         createdAt: candidate.createdAt,
         runId: candidate.runId
-      }))
+      })))
     };
   }));
 
@@ -311,7 +314,10 @@ const serveStatic = async (response: ServerResponse, path: string): Promise<void
     ".js": "text/javascript; charset=utf-8"
   };
   const content = await readFile(absolutePath);
-  response.writeHead(200, { "content-type": contentTypes[extname(absolutePath)] ?? "application/octet-stream" });
+  response.writeHead(200, {
+    "content-type": contentTypes[extname(absolutePath)] ?? "application/octet-stream",
+    "cache-control": "no-store"
+  });
   response.end(content);
 };
 
@@ -333,8 +339,12 @@ const serveMedia = async (response: ServerResponse, path: string | null): Promis
   response.end(await readFile(absolutePath));
 };
 
-const figureImageUrl = (figure: Awaited<ReturnType<typeof findFigure>>): string =>
-  figure.hasCurrent ? mediaUrl(figure.currentPath) : figure.hasFallback ? mediaUrl(figure.fallbackPath) : "";
+const figureImageUrl = async (figure: Awaited<ReturnType<typeof findFigure>>): Promise<string> =>
+  figure.hasCurrent
+    ? versionedMediaUrl(figure.currentPath)
+    : figure.hasFallback
+      ? versionedMediaUrl(figure.fallbackPath)
+      : "";
 
 const serveFigureContent = async (response: ServerResponse, id: string | null): Promise<void> => {
   if (!id) throw new Error("Missing figure ID.");
@@ -342,7 +352,7 @@ const serveFigureContent = async (response: ServerResponse, id: string | null): 
   const loaded = await readFigureContentFile(figure.definitionPath, figure.slug);
   sendJson(response, 200, {
     ...loaded,
-    imageUrl: figureImageUrl(figure),
+    imageUrl: await figureImageUrl(figure),
     metadataOptions: figureMetadataOptions,
     transcripts: await listTranscriptFiles(figure)
   });
@@ -369,7 +379,7 @@ const saveFigureContent = async (
   );
   requestLogger.info("figure-content-saved", { figureId: values.id, revision: saved.revision });
   event("figure-updated", { id: values.id });
-  sendJson(response, 200, { ...saved, imageUrl: figureImageUrl(figure) });
+  sendJson(response, 200, { ...saved, imageUrl: await figureImageUrl(figure) });
 };
 
 const serveFigurePreview = async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
@@ -381,7 +391,7 @@ const serveFigurePreview = async (request: IncomingMessage, response: ServerResp
   }
   const figure = await findFigure(values.id);
   const content = validateFigureContent(values.content);
-  const imageUrl = figureImageUrl(figure);
+  const imageUrl = await figureImageUrl(figure);
   sendJson(response, 200, {
     markup: renderCardMarkup({
       figure: figureDefinitionFromContent(content, imageUrl),
@@ -456,6 +466,7 @@ const handleRequest = async (
         filename: result.filename,
         status: result.status
       });
+      event("figure-updated", { id: values.id });
       sendJson(response, result.status === "written" ? 201 : 200, {
         result,
         transcripts: await listTranscriptFiles(figure)
@@ -602,7 +613,7 @@ const handleRequest = async (
     response.end(await readFile(appStylesPath));
     return;
   }
-  if (request.method === "GET" && ["/", "/app.js", "/content-workspace.js", "/styles.css"].includes(url.pathname)) {
+  if (request.method === "GET" && ["/", "/app.js", "/content-workspace.js", "/refresh-coordinator.js", "/styles.css"].includes(url.pathname)) {
     await serveStatic(response, url.pathname);
     return;
   }

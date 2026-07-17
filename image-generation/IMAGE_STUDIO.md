@@ -53,6 +53,8 @@ Choose **Teaching poses** (or **Add pose** when one is missing) to manage a figu
 
 Choosing **Use this pose** on an alternative exchanges it with `selected.png`: future generation reads the chosen image, while the previous selection remains in the alternative slot and can be restored by repeating the swap. Uploading or selecting a pose does not generate artwork or change the current card, approval, rework marker, publication state, or notes.
 
+Completed Studio mutations synchronize through one ordered refresh path. Mutable teaching poses and promoted masters receive a new versioned media URL whenever their pixels change, so the pose dialog, Image Queue, and active Content preview update without reloading the page. A clean active Content figure reloads external changes; an unsaved draft is preserved and only its live preview is rebuilt against the newest artwork.
+
 Starting a generation run clears the previous run's review markers. Each figure that successfully receives new candidates is highlighted with a **new** pill showing the candidate count. These markers remain after the run finishes and across studio refreshes in the same browser tab, making the latest run's review set easy to find. Failed and blocked figures are not marked; the next generation run replaces the marker set.
 
 Generation never replaces live artwork. Use **Promote latest** for the newest option or **Promote** beside any entry in **All candidates**. Promotion archives an existing `generated/current.png`, installs the selected candidate atomically, switches a fallback `figure.ts` import to the generated master, and clears the rework checkbox.
