@@ -43,6 +43,7 @@ const connection = document.querySelector("#connection");
 const form = document.querySelector("#run-form");
 const runButton = document.querySelector("#run-button");
 const generationPlan = document.querySelector("#generation-plan");
+const selectionCount = document.querySelector("#selection-count");
 const selectVisibleButton = document.querySelector("#select-visible");
 const clearSelectionButton = document.querySelector("#clear-selection");
 const promptDialog = document.querySelector("#prompt-dialog");
@@ -54,6 +55,11 @@ const imageDialogContent = document.querySelector("#image-dialog-content");
 const imageDialogClose = document.querySelector("#image-dialog-close");
 const contentWorkspace = document.querySelector("#content-workspace");
 const imageWorkspace = document.querySelector("#image-workspace");
+const styleLabels = {
+  lindy: "Lindy Hop",
+  charleston: "Charleston",
+  shag: "Collegiate Shag"
+};
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
@@ -157,13 +163,11 @@ imageDialog.addEventListener("close", () => {
 const tagsFor = (figure, job, newCandidateCount) => {
   const tags = [];
   if (newCandidateCount) tags.push(`<span class="tag new">${newCandidateCount} new</span>`);
-  tags.push(`<span class="tag">${escapeHtml(figure.style)}</span>`);
-  tags.push(figure.hasPose ? '<span class="tag good">pose ready</span>' : '<span class="tag bad">no pose</span>');
-  if (!figure.hasCurrent) tags.push('<span class="tag warn">missing master</span>');
-  if (figure.marked) tags.push('<span class="tag warn">rework</span>');
-  if (figure.imageApproved) tags.push('<span class="tag approved">image approved</span>');
-  if (figure.candidates.length) tags.push(`<span class="tag good">${figure.candidates.length} candidate${figure.candidates.length === 1 ? "" : "s"}</span>`);
+  if (!figure.hasPose) tags.push('<span class="tag bad">Missing pose</span>');
+  if (!figure.hasCurrent) tags.push(`<span class="tag warn">${figure.currentIsFallback ? "Fallback art" : "Missing master"}</span>`);
+  if (figure.marked) tags.push('<span class="tag warn">Rework</span>');
   if (job) tags.push(`<span class="tag ${job.state === "failed" ? "bad" : "warn"}">${escapeHtml(job.state)}</span>`);
+  if (figure.imageApproved && tags.length === 0) tags.push('<span class="tag approved">Approved</span>');
   return tags.join("");
 };
 
@@ -202,13 +206,14 @@ const render = () => {
   const approved = state.figures.filter((figure) => figure.imageApproved).length;
   const blocked = state.figures.filter((figure) => !figure.hasPose).length;
   summary.innerHTML = [
-    [visible.length, "shown"],
-    [state.newCandidates.size, "new"],
-    [marked, "rework"],
-    [missing, "missing masters"],
-    [blocked, "missing poses"],
-    [approved, "approved"]
-  ].map(([value, label]) => `<span class="metric"><strong>${value}</strong><small>${label}</small></span>`).join("");
+    [visible.length, "shown", ""],
+    [state.newCandidates.size, "new", state.newCandidates.size ? "attention" : ""],
+    [marked, "rework", marked ? "attention" : ""],
+    [missing, "missing masters", missing ? "bad" : ""],
+    [blocked, "missing poses", blocked ? "bad" : ""],
+    [approved, "approved", approved ? "good" : ""]
+  ].map(([value, label, tone]) => `<span class="metric ${tone}"><strong>${value}</strong><small>${label}</small></span>`).join("");
+  selectionCount.textContent = `${state.selected.size} selected`;
   const targets = generationTargets();
   const candidates = Number(form.elements.count.value);
   generationPlan.textContent = targets.length === 0
@@ -248,18 +253,22 @@ const render = () => {
         </div>
       </details>
       <div class="card-actions">
-        <button type="button" data-action="generate" ${figure.hasPose && !state.runActive ? "" : "disabled"}>Generate</button>
-        <button type="button" class="secondary" data-action="prompt" ${figure.hasPose ? "" : "disabled"}>Prompt</button>
-        <button type="button" class="secondary" data-action="promote" ${latest ? "" : "disabled"}>Promote latest</button>
-        <button type="button" class="secondary ${figure.marked ? "danger" : ""}" data-action="mark">${figure.marked ? "Clear rework" : "Mark rework"}</button>
-        <button type="button" class="secondary approve-action" data-action="image-approval">Approve image</button>
+        <div class="action-tools">
+          <button type="button" class="secondary" data-action="generate" ${figure.hasPose && !state.runActive ? "" : "disabled"}>Generate</button>
+          <button type="button" class="quiet" data-action="prompt" ${figure.hasPose ? "" : "disabled"}>View prompt</button>
+          <button type="button" class="quiet mark-action ${figure.marked ? "danger" : ""}" data-action="mark">${figure.marked ? "Clear rework" : "Mark rework"}</button>
+        </div>
+        <div class="action-decisions">
+          <button type="button" class="secondary promote-action" data-action="promote" ${latest ? "" : "disabled"}>Promote latest</button>
+          <button type="button" class="secondary approve-action" data-action="image-approval">Approve image</button>
+        </div>
       </div>
       <p class="job-message">${escapeHtml(job?.message || "")}</p>`;
     return `<article class="${classes}" data-id="${escapeHtml(figure.id)}">
       <header class="card-header">
         <label class="select-title">
           <input class="figure-select" type="checkbox" ${state.selected.has(figure.id) ? "checked" : ""}>
-          <span><h2>${escapeHtml(figure.name)}</h2><span class="figure-id">${escapeHtml(figure.id)}</span></span>
+          <span><h2>${escapeHtml(figure.name)}</h2><span class="figure-id">${escapeHtml(styleLabels[figure.style] || figure.style)} · ${escapeHtml(figure.id)}</span></span>
         </label>
         <div class="tags">${tagsFor(figure, job, newCandidateCount)}</div>
       </header>

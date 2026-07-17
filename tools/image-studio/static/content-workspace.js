@@ -40,10 +40,8 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const contentMessage = document.querySelector("#content-message");
   const contentFields = document.querySelector("#content-fields");
   const previewPanel = document.querySelector("#preview-panel");
-  const previewPaneButton = document.querySelector("#preview-pane-button");
   const previewStatus = document.querySelector("#preview-status");
   const cardPreview = document.querySelector("#card-preview");
-  const mobileFigurePicker = document.querySelector("#mobile-figure-picker");
   const storedLibraryWidth = Number(localStorage.getItem(LIBRARY_WIDTH_KEY));
   let preferredLibraryWidth = Number.isFinite(storedLibraryWidth) && storedLibraryWidth > 0 ? storedLibraryWidth : DEFAULT_LIBRARY_WIDTH;
 
@@ -108,6 +106,17 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
 
   const contentIsDirty = () => Boolean(contentState.content) && JSON.stringify(contentState.content) !== contentState.originalContent;
 
+  const setStateLabel = (element, message, stateName = "") => {
+    element.className = `${element === previewStatus ? "preview-status" : "dirty-state"} ${stateName}`.trim();
+    element.replaceChildren();
+    const dot = document.createElement("span");
+    dot.className = "state-dot";
+    dot.setAttribute("aria-hidden", "true");
+    const label = document.createElement("span");
+    label.textContent = message;
+    element.append(dot, label);
+  };
+
   const contentField = (label, path, value, options = {}) => {
     const tag = options.textarea ? "textarea" : "input";
     const attributes = [
@@ -126,6 +135,12 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   };
 
   const selectField = (label, path, value, choices, options = {}) => `<label class="content-field ${options.full ? "full" : ""}" data-field-path="${escapeHtml(path)}"><span>${escapeHtml(label)}</span><select data-content-path="${escapeHtml(path)}">${choices.map(({ value: optionValue, label: optionLabel }) => `<option value="${escapeHtml(optionValue)}" ${value === optionValue ? "selected" : ""}>${escapeHtml(optionLabel)}</option>`).join("")}</select><small class="field-error"></small></label>`;
+
+  const styleLabels = {
+    lindy: "Lindy Hop",
+    charleston: "Charleston",
+    shag: "Collegiate Shag"
+  };
 
   const metadataChoiceLabels = {
     six: "6 count",
@@ -185,6 +200,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     return `<div class="resource-section">
       <div class="resource-heading"><h3>App-visible resources</h3><div><button type="button" data-content-action="add-youtube-resource">Add YouTube</button> <button type="button" data-content-action="add-web-resource">Add web link</button></div></div>
       ${resources.length === 0 ? '<p class="resource-empty">No app-visible resources. This is valid.</p>' : resources.map((resource, index) => `<div class="resource-row">
+        <div class="resource-row-heading"><strong>Resource ${String(index + 1).padStart(2, "0")}</strong><span>${resource.type === "youtube" ? "YouTube" : "Web link"}</span></div>
         ${selectField("Resource type", `cardResources.${index}.type`, resource.type, [{ value: "youtube", label: "YouTube" }, { value: "web", label: "Web resource" }])}
         ${resource.type === "youtube"
           ? `${contentField("YouTube video ID", `cardResources.${index}.videoId`, resource.videoId)}${contentField("Title", `cardResources.${index}.title`, resource.title)}${selectField("Category", `cardResources.${index}.kind`, resource.kind, videoKinds)}`
@@ -258,11 +274,10 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     contentTitle.textContent = contentState.content.basics.name || "Untitled figure";
     contentIdentity.textContent = `${contentState.content.identity.style} · ${contentState.content.identity.id}`;
     const issueCount = contentState.contentIssues.length;
-    contentDirty.textContent = issueCount > 0
+    const stateMessage = issueCount > 0
       ? `${issueCount} validation issue${issueCount === 1 ? "" : "s"}`
-      : dirty ? "Unsaved draft" : "Saved source";
-    contentDirty.classList.toggle("dirty", dirty);
-    contentDirty.classList.toggle("invalid", issueCount > 0);
+      : dirty ? "Unsaved changes" : "Saved source";
+    setStateLabel(contentDirty, stateMessage, issueCount > 0 ? "invalid" : dirty ? "dirty" : "saved");
     contentSave.disabled = !dirty || issueCount > 0;
     contentSaveNext.disabled = !dirty || issueCount > 0;
     contentRevert.disabled = !dirty;
@@ -294,15 +309,19 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const renderContentList = () => {
     const visible = visibleFigures();
     contentCount.textContent = String(visible.length);
+    contentCount.setAttribute("aria-label", `${visible.length} visible figure${visible.length === 1 ? "" : "s"}`);
     contentList.classList.remove("is-loading");
     contentList.innerHTML = visible.map((figure) => {
       const dirty = figure.id === contentState.activeContentId && contentIsDirty();
       const publication = publicationFor(figure);
+      const resourceFact = figure.resourceCount === 0
+        ? '<span class="badge muted">No resources</span>'
+        : `<span class="content-list-fact">${figure.resourceCount} link${figure.resourceCount === 1 ? "" : "s"}</span>`;
       return `<button type="button" class="content-list-item ${figure.id === contentState.activeContentId ? "active" : ""}" data-content-id="${escapeHtml(figure.id)}">
-        <span class="content-list-title"><strong>${escapeHtml(figure.name)}</strong><span>${escapeHtml(figure.style)}</span></span>
-        <span class="content-list-meta">${publication === "published" ? '<span class="badge published">Published</span>' : publication === "draft" ? '<span class="badge draft">Draft</span>' : '<span class="badge bad">Unknown state</span>'}${!figure.contentValid ? '<span class="badge bad">Invalid</span>' : ""}${!figure.germanComplete ? '<span class="badge warn">German incomplete</span>' : ""}${figure.resourceCount === 0 ? '<span class="badge muted">No resources</span>' : `<span class="badge good">${figure.resourceCount} link${figure.resourceCount === 1 ? "" : "s"}</span>`}${figure.currentIsFallback ? '<span class="badge warn">Fallback art</span>' : ""}${dirty ? '<span class="badge warn">Unsaved</span>' : ""}</span>
+        <span class="content-list-title"><strong>${escapeHtml(figure.name)}</strong><span>${escapeHtml(styleLabels[figure.style] || figure.style)}</span></span>
+        <span class="content-list-meta">${resourceFact}${publication === "draft" ? '<span class="badge draft">Draft</span>' : publication !== "published" ? '<span class="badge bad">Unknown state</span>' : ""}${!figure.contentValid ? '<span class="badge bad">Invalid</span>' : ""}${!figure.germanComplete ? '<span class="badge warn">German incomplete</span>' : ""}${figure.currentIsFallback ? '<span class="badge warn">Fallback art</span>' : ""}${dirty ? '<span class="badge warn">Unsaved</span>' : ""}</span>
       </button>`;
-    }).join("") || '<p class="resource-empty">No figures match these filters.</p>';
+    }).join("") || '<p class="resource-empty">No dance cards match these filters.</p>';
     if (!contentState.restoreAttempted && getFigures().length > 0) {
       contentState.restoreAttempted = true;
       const remembered = sessionStorage.getItem(LAST_FIGURE_KEY);
@@ -334,7 +353,7 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
   const requestPreview = async () => {
     if (!contentState.content || !contentState.activeContentId) return;
     const requestNumber = ++contentState.previewRequest;
-    previewStatus.textContent = "Updating…";
+    setStateLabel(previewStatus, "Updating…", "updating");
     try {
       const result = await request("/api/preview", {
         method: "POST",
@@ -347,13 +366,13 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       contentState.previewMarkup = result.markup;
       applyContentIssues([]);
       updateContentHeader();
-      previewStatus.textContent = "Live";
+      setStateLabel(previewStatus, "Live", "live");
       previewDocument();
     } catch (error) {
       if (requestNumber !== contentState.previewRequest) return;
       applyContentIssues(error.issues || []);
       updateContentHeader();
-      previewStatus.textContent = error.issues?.length ? `${error.issues.length} issue${error.issues.length === 1 ? "" : "s"}` : "Preview unavailable";
+      setStateLabel(previewStatus, error.issues?.length ? `${error.issues.length} issue${error.issues.length === 1 ? "" : "s"}` : "Preview unavailable", "error");
     }
   };
 
@@ -381,9 +400,6 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
       contentEmpty.hidden = true;
       contentForm.hidden = false;
       previewPanel.hidden = false;
-      previewPaneButton.disabled = false;
-      mobileFigurePicker.disabled = false;
-      mobileFigurePicker.textContent = loaded.content.basics.name;
       contentWorkspace.classList.add("has-selection");
       contentMessage.textContent = "";
       renderContentFields();
@@ -402,11 +418,6 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     const button = event.target.closest("[data-content-id]");
     if (button) void loadFigureContent(button.dataset.contentId);
   });
-  mobileFigurePicker.addEventListener("click", () => {
-    contentWorkspace.classList.remove("has-selection");
-    document.querySelector(".figure-library")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-
   const updateContentControl = (control) => {
     if (!contentState.content || !control.dataset.contentPath || control.readOnly) return;
     const path = control.dataset.contentPath;
@@ -559,16 +570,20 @@ export const createContentWorkspace = ({ request, escapeHtml, getFigures, onSave
     });
   });
 
-  document.querySelectorAll("[data-content-pane]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const preview = button.dataset.contentPane === "preview";
-      contentWorkspace.classList.toggle("mobile-preview", preview);
-      document.querySelectorAll("[data-content-pane]").forEach((paneButton) => {
-        const active = paneButton === button;
-        paneButton.classList.toggle("active", active);
-        paneButton.setAttribute("aria-pressed", String(active));
-      });
-    });
+  document.addEventListener("keydown", (event) => {
+    if (contentWorkspace.hidden) return;
+    const target = event.target;
+    const editing = target instanceof HTMLElement && (target.matches("input, textarea, select") || target.isContentEditable);
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
+      event.preventDefault();
+      if (contentIsDirty() && !contentSave.disabled) contentForm.requestSubmit(contentSave);
+      return;
+    }
+    if (event.key === "/" && !editing && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      event.preventDefault();
+      contentSearch.focus();
+      contentSearch.select();
+    }
   });
 
   window.addEventListener("beforeunload", (event) => {

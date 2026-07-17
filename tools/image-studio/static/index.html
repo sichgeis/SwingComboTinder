@@ -11,88 +11,113 @@
     <header class="studio-shell">
       <div class="studio-brand">
         <span class="brand-mark" aria-hidden="true">ST</span>
-        <div><p class="eyebrow">Swing Thing · local production</p><h1>Content Studio</h1></div>
+        <div class="brand-copy">
+          <p class="eyebrow">Swing Thing</p>
+          <h1>Dance Card Studio</h1>
+        </div>
       </div>
       <nav class="workspace-tabs" aria-label="Studio workspace">
-        <button type="button" class="workspace-tab active" data-workspace="content" aria-pressed="true">Content</button>
-        <button type="button" class="workspace-tab" data-workspace="images" aria-pressed="false">Image Queue</button>
+        <button type="button" class="workspace-tab active" data-workspace="content" aria-pressed="true">
+          <span class="tab-kicker">Edit</span>
+          <span>Content</span>
+        </button>
+        <button type="button" class="workspace-tab" data-workspace="images" aria-pressed="false">
+          <span class="tab-kicker">Produce</span>
+          <span>Image Queue</span>
+        </button>
       </nav>
-      <div id="connection" class="connection"><span class="status-dot" aria-hidden="true"></span><span>Connecting…</span></div>
+      <div id="connection" class="connection" role="status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Connecting…</span>
+      </div>
     </header>
 
     <main id="content-workspace" class="content-workspace">
       <aside class="figure-library" aria-label="Figure library">
         <div class="library-heading">
-          <div><p class="eyebrow">Figure library</p><h2>Choose a figure</h2></div>
-          <span id="content-count" class="content-count">0</span>
+          <div>
+            <p class="eyebrow">Catalog</p>
+            <h2>Dance cards</h2>
+          </div>
+          <span id="content-count" class="content-count" aria-label="Visible figures">0</span>
         </div>
-        <label class="library-control">Search
-          <input id="content-search" type="search" placeholder="Name or ID">
-        </label>
-        <label class="library-control">Dance style
-          <select id="content-style">
-            <option value="">All styles</option>
-            <option value="lindy">Lindy Hop</option>
-            <option value="charleston">Charleston</option>
-            <option value="shag">Collegiate Shag</option>
-          </select>
-        </label>
-        <label class="library-control">Show
-          <select id="content-status">
-            <option value="all">All figures</option>
-            <option value="published">Published</option>
-            <option value="draft">Drafts</option>
-            <option value="attention">Needs attention</option>
-            <option value="no-resources">No resources</option>
-            <option value="fallback">Fallback artwork</option>
-            <option value="invalid">Invalid content</option>
-          </select>
-        </label>
-        <div id="content-list" class="content-list is-loading" aria-live="polite"><p class="library-state">Loading figure catalog…</p></div>
+        <div class="library-filters" aria-label="Filter dance cards">
+          <label class="search-control">
+            <span class="visually-hidden">Search</span>
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="content-search" type="search" placeholder="Search name or ID" autocomplete="off">
+            <kbd>/</kbd>
+          </label>
+          <div class="filter-grid">
+            <label class="library-control">Dance style
+              <select id="content-style">
+                <option value="">All styles</option>
+                <option value="lindy">Lindy Hop</option>
+                <option value="charleston">Charleston</option>
+                <option value="shag">Collegiate Shag</option>
+              </select>
+            </label>
+            <label class="library-control">Status
+              <select id="content-status">
+                <option value="all">All figures</option>
+                <option value="published">Published</option>
+                <option value="draft">Drafts</option>
+                <option value="attention">Needs attention</option>
+                <option value="no-resources">No resources</option>
+                <option value="fallback">Fallback artwork</option>
+                <option value="invalid">Invalid content</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div id="content-list" class="content-list is-loading" aria-live="polite">
+          <div class="library-state"><span class="spinner" aria-hidden="true"></span><span>Loading catalog…</span></div>
+        </div>
         <div id="library-resizer" class="library-resizer" role="separator" aria-label="Resize figure library" aria-orientation="vertical" aria-valuemin="240" aria-valuemax="480" aria-valuenow="320" tabindex="0" title="Drag to resize · Double-click to reset"></div>
       </aside>
 
-      <nav class="content-pane-tabs" aria-label="Content view">
-        <button id="mobile-figure-picker" type="button" class="figure-picker" disabled>Choose figure</button>
-        <button type="button" class="active" data-content-pane="editor" aria-pressed="true">Editor</button>
-        <button id="preview-pane-button" type="button" data-content-pane="preview" aria-pressed="false" disabled>Preview</button>
-      </nav>
-
       <section class="content-editor-panel">
         <div id="content-empty" class="content-empty">
-          <p class="eyebrow">Editorial workspace</p>
-          <h2>Select a figure to edit its complete card content.</h2>
-          <p>Changes stay local until the complete figure validates and is saved.</p>
+          <div class="empty-mark" aria-hidden="true">ST</div>
+          <p class="eyebrow">Editorial workbench</p>
+          <h2>Choose a dance card to begin.</h2>
+          <p>Edit the complete bilingual guide, check the real app card, and save the validated source in one place.</p>
+          <p class="empty-hint"><kbd>/</kbd> searches the catalog</p>
         </div>
         <form id="content-form" class="content-form" hidden novalidate>
           <header class="editor-heading">
-            <div>
+            <div class="editor-context">
               <p id="content-identity" class="eyebrow"></p>
-              <h2 id="content-title"></h2>
-              <p id="content-dirty" class="dirty-state">Saved source</p>
+              <div class="editor-title-row">
+                <h2 id="content-title"></h2>
+                <p id="content-dirty" class="dirty-state"><span class="state-dot" aria-hidden="true"></span><span>Saved source</span></p>
+              </div>
             </div>
-            <div class="editor-actions">
-              <button id="content-revert" type="button" class="secondary">Revert</button>
-              <button id="content-save-next" type="submit" class="secondary" data-save-next="true">Save + next</button>
-              <button id="content-save" type="submit">Save</button>
+            <div class="editor-actions" aria-label="Figure actions">
+              <button id="content-revert" type="button" class="quiet danger">Revert</button>
+              <button id="content-save" type="submit">Save <kbd>⌘S</kbd></button>
+              <button id="content-save-next" type="submit" class="secondary" data-save-next="true">Save + next <span aria-hidden="true">→</span></button>
             </div>
           </header>
           <div id="content-message" class="content-message" aria-live="polite"></div>
-          <div id="content-fields"></div>
+          <div id="content-fields" class="content-fields"></div>
         </form>
       </section>
 
       <aside id="preview-panel" class="preview-panel" hidden>
         <div class="preview-heading">
-          <div><p class="eyebrow">Live app card</p><h2>Preview</h2></div>
-          <span id="preview-status">Ready</span>
+          <div>
+            <p class="eyebrow">App card</p>
+            <h2>Live preview</h2>
+          </div>
+          <span id="preview-status" class="preview-status"><span class="state-dot" aria-hidden="true"></span><span>Ready</span></span>
         </div>
         <div class="preview-controls" aria-label="Preview controls">
-          <div>
-            <button type="button" class="active" data-preview-language="de">DE</button>
-            <button type="button" data-preview-language="en">EN</button>
+          <div class="segmented-control" aria-label="Preview language">
+            <button type="button" class="active" data-preview-language="de">Deutsch</button>
+            <button type="button" data-preview-language="en">English</button>
           </div>
-          <div>
+          <div class="segmented-control" aria-label="Card face">
             <button type="button" class="active" data-preview-face="front">Front</button>
             <button type="button" data-preview-face="back">Back</button>
           </div>
@@ -100,71 +125,100 @@
         <div class="preview-frame-shell">
           <iframe id="card-preview" title="Live Swing Thing card preview" sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
         </div>
+        <p class="preview-caption">Unsaved edits appear here after validation.</p>
       </aside>
     </main>
 
-    <main id="image-workspace" hidden>
-      <form id="run-form" class="toolbar">
-        <label>View
-          <select name="view">
-            <option value="attention" selected>Needs attention</option>
-            <option value="new">New candidates</option>
-            <option value="rework">Marked for rework</option>
-            <option value="missing-master">Missing masters</option>
-            <option value="missing-pose">Missing pose references</option>
-            <option value="approved">Approved</option>
-            <option value="all">All figures</option>
-          </select>
-        </label>
-        <label>Mode
-          <select name="mode">
-            <option value="selected">Selected figures</option>
-            <option value="missing">Missing masters</option>
-            <option value="marked">Marked for rework</option>
-            <option value="all">All figures</option>
-          </select>
-        </label>
-        <label>Style
-          <select name="style">
-            <option value="">All styles</option>
-            <option value="lindy">Lindy</option>
-            <option value="charleston">Charleston</option>
-            <option value="shag">Shag</option>
-          </select>
-        </label>
-        <label>Quality
-          <select name="quality">
-            <option value="low">Low draft</option>
-            <option value="medium" selected>Medium production</option>
-            <option value="high">High final</option>
-          </select>
-        </label>
-        <label>Candidates
-          <input name="count" type="number" min="1" max="4" value="1">
-        </label>
-        <label>Parallel jobs
-          <input name="concurrency" type="number" min="1" max="6" value="3">
-        </label>
-        <button id="run-button" type="submit">Generate</button>
-      </form>
+    <main id="image-workspace" class="image-workspace" hidden>
+      <section class="queue-command-bar">
+        <div class="queue-filter-group">
+          <div class="command-heading">
+            <div><p class="eyebrow">Review queue</p><h2>Artwork decisions</h2></div>
+            <p>Filter the catalog before selecting a production batch.</p>
+          </div>
+          <div class="queue-filters">
+            <label>View
+              <select name="view" form="run-form">
+                <option value="attention" selected>Needs attention</option>
+                <option value="new">New candidates</option>
+                <option value="rework">Marked for rework</option>
+                <option value="missing-master">Missing masters</option>
+                <option value="missing-pose">Missing pose references</option>
+                <option value="approved">Approved</option>
+                <option value="all">All figures</option>
+              </select>
+            </label>
+            <label>Dance style
+              <select name="style" form="run-form">
+                <option value="">All styles</option>
+                <option value="lindy">Lindy Hop</option>
+                <option value="charleston">Charleston</option>
+                <option value="shag">Collegiate Shag</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <form id="run-form" class="generation-composer">
+          <div class="composer-heading">
+            <div><p class="eyebrow">Generation run</p><h2>Build candidates</h2></div>
+            <span class="paid-action">External image requests</span>
+          </div>
+          <div class="generation-fields">
+            <label>Target
+              <select name="mode">
+                <option value="selected">Selected figures</option>
+                <option value="missing">Missing masters</option>
+                <option value="marked">Marked for rework</option>
+                <option value="all">All figures</option>
+              </select>
+            </label>
+            <label>Quality
+              <select name="quality">
+                <option value="low">Low draft</option>
+                <option value="medium" selected>Medium production</option>
+                <option value="high">High final</option>
+              </select>
+            </label>
+            <label>Candidates
+              <input name="count" type="number" min="1" max="4" value="1">
+            </label>
+            <label>Parallel jobs
+              <input name="concurrency" type="number" min="1" max="6" value="3">
+            </label>
+          </div>
+          <div class="generation-footer">
+            <div>
+              <strong id="generation-plan">No figures selected</strong>
+              <small>Review the request count before generating.</small>
+            </div>
+            <button id="run-button" type="submit">Generate candidates</button>
+          </div>
+        </form>
+      </section>
 
       <section class="queue-overview" aria-live="polite">
         <div id="summary" class="metric-strip"><span class="metric loading">Loading figure catalog…</span></div>
-        <div class="queue-actions">
-          <button id="select-visible" type="button" class="secondary">Select visible</button>
-          <button id="clear-selection" type="button" class="secondary">Clear selection</button>
-          <strong id="generation-plan">No figures selected</strong>
+        <div class="selection-toolbar">
+          <div class="selection-summary">
+            <strong id="selection-count">0 selected</strong>
+            <span>for an explicit run</span>
+          </div>
+          <div class="queue-actions">
+            <button id="select-visible" type="button" class="secondary">Select visible</button>
+            <button id="clear-selection" type="button" class="quiet">Clear</button>
+          </div>
         </div>
-        <p id="run-status"></p>
+        <p id="run-status" role="status"></p>
       </section>
 
       <section id="figure-grid" class="figure-grid" aria-live="polite"></section>
     </main>
 
-    <dialog id="prompt-dialog">
+    <dialog id="prompt-dialog" class="prompt-dialog">
       <form method="dialog" class="dialog-header">
-        <h2>Effective prompt</h2>
-        <button aria-label="Close">Close</button>
+        <div><p class="eyebrow">Generation input</p><h2>Effective prompt</h2></div>
+        <button class="quiet" aria-label="Close">Close</button>
       </form>
       <pre id="prompt-content"></pre>
     </dialog>
@@ -172,10 +226,11 @@
     <dialog id="image-dialog" class="image-dialog" aria-labelledby="image-dialog-title">
       <header class="image-dialog-header">
         <div>
+          <p class="eyebrow">Original artwork</p>
           <h2 id="image-dialog-title">Image preview</h2>
           <p id="image-dialog-meta">Original size</p>
         </div>
-        <button id="image-dialog-close" type="button" aria-label="Close image preview">Close</button>
+        <button id="image-dialog-close" type="button" class="quiet" aria-label="Close image preview">Close</button>
       </header>
       <div class="image-dialog-viewport">
         <img id="image-dialog-content" alt="">

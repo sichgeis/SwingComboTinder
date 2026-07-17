@@ -51,14 +51,14 @@ Current feature status, validation evidence, and the next action live in [`FEATU
 
 ## Content and image production
 
-Card artwork is generated locally with OpenAI GPT Image through a LiteLLM proxy. Create the ignored `.env` file, replace its placeholder values, and start the studio:
+Card artwork is generated locally with OpenAI GPT Image through a LiteLLM proxy. Create the ignored `.env` file, replace its placeholder values, and start the Dance Card Studio:
 
 ```sh
 task env
 task images:studio
 ```
 
-The studio runs at <http://127.0.0.1:4174> by default. Its Content workspace provides a searchable figure library, structured bilingual copy and resource editing, explicit Draft/Published controls, and the same front/back card presentation used by the app. Draft cards remain fully editable and available to the Image Queue but do not enter the public app catalog until “Include in production” is selected and saved. The Studio validates and saves a complete `figure.ts` atomically and detects external file changes before writing. Its Image Queue previews source frames and candidates, runs independent figure requests concurrently, and only changes live artwork when a candidate is explicitly promoted.
+The studio runs at <http://127.0.0.1:4174> by default. Its desktop workbench separates Content editing from artwork production. Content provides a searchable, resizable figure library, structured bilingual copy and resource editing, explicit Draft/Published controls, keyboard search and save shortcuts, and the same front/back card presentation used by the app. Draft cards remain fully editable and available to the Image Queue but do not enter the public app catalog until “Include in production” is selected and saved. The Studio validates and saves a complete `figure.ts` atomically and detects external file changes before writing. Image Queue keeps review filters separate from the explicit generation composer, previews source frames and candidates, runs independent figure requests concurrently, and only changes live artwork when a candidate is explicitly promoted.
 
 Required settings are `LITELLM_API_KEY` and `LITELLM_BASE_URL`; `IMAGE_MODEL` names the image-capable alias configured on the proxy. See [`.env.example`](.env.example) and [`image-generation/IMAGE_STUDIO.md`](image-generation/IMAGE_STUDIO.md) for configuration, batch modes, storage, and promotion details.
 

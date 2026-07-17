@@ -2,6 +2,18 @@
 
 This file is the compact current-work surface for Swing Thing. Detailed accepted behavior belongs in an approved specification under [`specs/`](specs/); implemented behavior remains authoritative in source code and tests.
 
+## Studio UI workbench
+
+- Status: Done
+- Approved: 2026-07-17
+- Goal: Rework the local Dance Card Studio into a calmer, more polished desktop editorial workbench with clearer hierarchy, safer action emphasis, and faster Content and Image Queue workflows.
+- Scope: Refine the dark art-deco visual system; simplify the Content library, editor command bar, form sections, resources, and live preview; separate Image Queue review filters from generation settings; clarify selection, request planning, card actions, and runtime states.
+- Non-goals: Do not change the figure model, persistence, server APIs, generation defaults, provider configuration, production app, dependency-free architecture, or desktop-only support boundary; do not send paid image requests during validation.
+- Specification: [`specs/studio-ui-workbench.md`](specs/studio-ui-workbench.md)
+- Progress: Shipped the compact Dance Card Studio shell, exception-first catalog, sticky content command bar, refined editor and resources, prominent live preview, keyboard search/save affordances, separated artwork review and generation controls, persistent selection summary, compact metrics, and clearer queue-card decisions.
+- Validation: `npm run check` passes with 21 test files and 62 tests plus the production PWA build. The real 42-figure Studio ran at 1600 × 1000 without browser errors; Content selection, English back preview, keyboard search/resize, Image Queue filtering, 15-card bulk selection, accurate 7-request plan, and clearing selection were verified without saving content or sending an image request.
+- Next action: None; use the redesigned workbench and derive future adjustments from observed production friction.
+
 ## Card publication state
 
 - Status: Done
